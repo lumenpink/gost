@@ -37,6 +37,14 @@ O **GOST** (*General Open Source Standard*, inspirado nos históricos padrões t
 ### 5. Vitrine Pública Obrigatória
 Todo repositório expõe sua documentação pública em `./site/` com cabeçalhos de segurança HTTP em `site/_headers`, publicada continuamente via CI/CD.
 
+### 6. Internacionalização (Matriz das 10 Línguas)
+* **Código e Commits:** Estritamente em Inglês.
+* **Documentação Multilíngue:** Matriz de 10 idiomas oficiais (`en`, `pt`, `es`, `fr`, `de`, `it`, `ru`, `zh`, `ja`, `ar`) com roteamento cliente e suporte a RTL para o árabe.
+
+### 7. Cards Sociais e Safe Zone 4:3 (Padrão KokoroSim)
+* **Banner de Compartilhamento:** 1200 × 630 px com miolo central útil de 720px a 840px e sangrias laterais de 180-240px blindando contra recortes 1:1 do WhatsApp.
+* **Limites Anti-Truncamento:** `og:title` de 50-65 chars (máx 70) e `og:description` de 120-155 chars (máx 160).
+
 ---
 
 ## 🚀 Como Iniciar um Novo Projeto (Perfil Lumen)

@@ -217,7 +217,79 @@ Se o ambiente de execução local não estiver disponível (ex: Docker não inic
 
 ---
 
-## 10. Perfis de Implementação (*Profiles*)
+## 10. Internacionalização (Intl)
+
+A norma GOST impõe disciplina linguística em camadas para conciliar cooperação global com acessibilidade multilíngue.
+
+### 10.1 Segregação por Camadas
+1. **Código-Fonte e Identificadores:** **DEVEM** ser escritos estritamente em **Inglês** (nomes de variáveis, funções, tipos, constantes e endpoints de API).
+2. **Histórico de Commits e Tags:** **DEVEM** ser redigidos em **Inglês** seguindo a especificação de Conventional Commits (`feat:`, `fix:`, `docs:`, etc.).
+3. **Triagem de Tickets:** Usuários **PODEM** relatar problemas e descrever features em qualquer idioma; ferramentas automatizadas de triagem (ex: `diva`) **DEVEM** estruturar o ticket na língua de trabalho configurada no repositório.
+
+### 10.2 A Matriz Canônica das 10 Línguas Oficiais
+Para a documentação pública e vitrines estáticas (`./site`), a norma GOST estabelece a **Matriz Oficial das 10 Línguas**, garantindo alcance global, inclusão demográfica e representação histórica:
+
+| Código ISO | Idioma | Endônimo Nativo | Direção | Papel / Escopo |
+|:---:|---|---|:---:|---|
+| **`en`** | English | English | LTR | Baseline técnico universal e de engenharia |
+| **`pt`** | Portuguese | Português (Brasil / Portugal) | LTR | Língua nativa do ecossistema central |
+| **`es`** | Spanish | Español | LTR | Integração ibérica e América Latina |
+| **`fr`** | French | Français | LTR | Comunidade internacional e difusão francófona |
+| **`de`** | German | Deutsch | LTR | Engenharia e ecossistema de software europeu |
+| **`it`** | Italian | Italiano | LTR | Comunidade técnica e polo de computação mediterrâneo |
+| **`ru`** | Russian | Русский | LTR | Referência estética e técnica da linhagem soviética / GOST |
+| **`zh`** | Chinese | 中文 (简体中文) | LTR | Maior base populacional e polos tecnológicos da Ásia |
+| **`ja`** | Japanese | 日本語 | LTR | Vanguarda técnica, comunidade open source e estética |
+| **`ar`** | Arabic | العربية | **RTL** | Grande bloco linguístico global e representação do Oriente Médio |
+
+### 10.3 Requisito de Direcionalidade (RTL)
+* Projetos que fornecerem a versão em Árabe (`ar`) **DEVEM** assegurar suporte nativo a layouts **Right-to-Left** (`<html dir="rtl" lang="ar">`).
+* Folhas de estilo **DEVEM** utilizar propriedades lógicas de CSS (ex: `margin-inline-start`, `padding-inline`, `text-align: start`) para evitar quebras visuais na alternância de direcionalidade.
+
+### 10.4 Arquitetura Estática de Localização
+* A documentação de cada idioma **DEVE** residir em subdiretórios dedicados: `./site/<lang>/index.html`.
+* A raiz `./site/index.html` **DEVE** atuar como roteador leve cliente:
+  1. Detecta preferência salva em `localStorage.getItem('doc_lang')`.
+  2. Detecta idioma do cliente via `navigator.language`.
+  3. Redireciona com fallback seguro para `en/`.
+  4. Expõe links canônicos `rel="alternate" hreflang="<lang>"` para indexação de motores de busca.
+
+---
+
+## 11. Metadados Sociais e Cards de Compartilhamento (Padrão KokoroSim)
+
+O compartilhamento de links de repositórios em plataformas sociais e mensageiros (WhatsApp, Telegram, Twitter/X, Discord, LinkedIn, iMessage) exige blindagem técnica contra recortes arbitrários e truncamento de texto.
+
+### 11.1 Dimensões e Formato do Banner Gráfico
+* **Resolução Obrigatória:** Exatamente **1200 × 630 pixels** (proporção 1.91:1, formato PNG otimizado, RGB).
+* **Localização Padrão:** `./site/assets/og_preview.png`.
+
+### 11.2 Safe Zone 4:3 Centralizada (Anti-Recorte)
+Plataformas móveis (notadamente o WhatsApp) costumam recortar o banner em **1:1 (quadrado)** ou em balões estreitos de chat. Para garantir legibilidade absoluta:
+* **Miolo Central Útil:** Todo o conteúdo textual, logotipos, badges e selos **DEVE** estar contido dentro de um retângulo central com largura entre **720px e 840px** e altura de **500px**.
+* **Sangrias Laterais de Segurança:** As faixas de **180px a 240px** em cada lateral **NÃO DEVEM** conter texto nem elementos essenciais, servindo unicamente para gradiente ou textura de fundo.
+* **Margens Verticais:** Top padding mínimo de **52px** e Bottom padding mínimo de **85px** (para evitar que carimbos de hora, URLs de rodapé ou botões de sobreposição encubram a mensagem).
+
+### 11.3 Limites Rígidos de Caracteres (Anti-Truncamento)
+Para impedir que redes sociais apliquem elipses (`...`) decepando palavras:
+
+1. **Meta Tag `<meta property="og:title">` e `twitter:title`:**
+   - **Faixa Segura:** **50 a 65 caracteres** (limite absoluto: 70 caracteres).
+2. **Meta Tag `<meta property="og:description">` e `twitter:description`:**
+   - **Faixa Segura:** **120 a 155 caracteres** (limite absoluto: 160 caracteres).
+   - Deve ser auto-contida e evitar redundância com o título.
+3. **Badge Superior Impresso na Imagem:**
+   - **Máximo:** **35 caracteres**, em caixa alta (ex: `OPEN SOURCE // RUST + WASM`).
+4. **Título Principal na Imagem:**
+   - **Máximo:** **35 a 45 caracteres** (distribuído em 1 ou 2 linhas nítidas, tipografia bold de alto contraste).
+5. **Subtítulo / Linha de Apoio na Imagem:**
+   - **Máximo:** **50 a 60 caracteres** em linha única.
+6. **Rodapé Integrado na Imagem:**
+   - Indicador de URL canônica limpa (`<repo>.2lp.in`) e termo de licença contidos na largura de 720px.
+
+---
+
+## 12. Perfis de Implementação (*Profiles*)
 
 Esta norma GOST estabelece requisitos agnósticos a fornecedores e tecnologias. Ambientes específicos (organizações, indivíduos ou ecossistemas) **DEVEM** declarar suas escolhas concretas de infraestrutura em documentos de perfil sob o diretório `profiles/` (ex: `profiles/<nome>.md`).
 
@@ -226,6 +298,8 @@ Um perfil de implementação define:
 - Qual infraestrutura serve o portal de documentação (`*.2lp.in`, Cloudflare Workers, Pages, Nginx).
 - Quais ferramentas e CLI gerenciam versionamento, tickets e hooks (ex: `cccp`).
 - Quais frameworks e utilitários executam a suíte de testes, medem cobertura/mutação e aplicam linters com Zero Warnings.
+- Como são gerados e validados os banners com Safe Zone 4:3 e os pacotes das 10 línguas.
 - Onde se localiza o catálogo central de descoberta de projetos.
+
 
 

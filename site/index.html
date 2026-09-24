@@ -246,7 +246,9 @@
         <li><a href="#testes">4. Estratégia de Testes</a></li>
         <li><a href="#qualidade">5. Análise Estática & Zero Warnings</a></li>
         <li><a href="#vitrine">6. Vitrine Pública</a></li>
-        <li><a href="#perfil-lumen">7. Perfil Lumen</a></li>
+        <li><a href="#intl">7. Internacionalização (10 Línguas)</a></li>
+        <li><a href="#cards">8. Cards Sociais & Safe Zone 4:3</a></li>
+        <li><a href="#perfil-lumen">9. Perfil Lumen</a></li>
       </ul>
     </nav>
 
@@ -400,12 +402,50 @@
   Referrer-Policy: strict-origin-when-cross-origin</code></pre>
     </section>
 
+    <section id="intl">
+      <h2>7. Internacionalização (Matriz das 10 Línguas)</h2>
+      <p>A documentação pública e vitrines estáticas adotam a matriz das 10 línguas oficiais, combinando o alcance demográfico do <code>indieinabox</code> com a linhagem histórica do <code>cccp</code>:</p>
+      
+      <div class="card-grid">
+        <div class="card">
+          <h4>🌍 As 10 Línguas Oficiais</h4>
+          <p><code>en</code> (English), <code>pt</code> (Português), <code>es</code> (Español), <code>fr</code> (Français), <code>de</code> (Deutsch), <code>it</code> (Italiano), <code>ru</code> (Русский), <code>zh</code> (中文), <code>ja</code> (日本語), <code>ar</code> (العربية).</p>
+        </div>
+        <div class="card">
+          <h4>🔄 Roteador Inteligente</h4>
+          <p>Redirecionamento estático na raiz via <code>localStorage.getItem('doc_lang')</code> e <code>navigator.language</code>, com fallback seguro para <code>en/</code>.</p>
+        </div>
+        <div class="card">
+          <h4>📖 Suporte a RTL (Árabe)</h4>
+          <p>Suporte mandatório a <code>dir="rtl"</code> na árvore <code>site/ar/</code> com propriedades lógicas de CSS.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="cards">
+      <h2>8. Cards Sociais e Safe Zone 4:3 (Padrão KokoroSim)</h2>
+      <p>Banners de compartilhamento (Open Graph / Twitter Card) são gerados em 1200x630 com proteção central contra cortes móveis:</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4>📐 Safe Zone 4:3 (720px - 840px)</h4>
+          <p>Todo conteúdo crítico (título, logo, badge, rodapé) fica confinado no miolo central. Sangrias laterais de 180px a 240px blindam contra o recorte 1:1 (quadrado) do WhatsApp.</p>
+        </div>
+        <div class="card">
+          <h4>✂️ Limites Rígidos de Caracteres</h4>
+          <p><code>og:title</code>: 50 a 65 chars (máx 70).<br><code>og:description</code>: 120 a 155 chars (máx 160).<br>Badge na imagem: máx 35 chars.<br>Título na imagem: máx 40 chars.</p>
+        </div>
+      </div>
+    </section>
+
     <section id="perfil-lumen">
-      <h2>7. Perfil de Implementação: Lumen</h2>
+      <h2>9. Perfil de Implementação: Lumen</h2>
       <p>O ecossistema Lumen implementa a norma GOST com os seguintes serviços e convenções:</p>
       <ul>
         <li><strong>Forja Principal:</strong> Codeberg (instância Forgejo) sob <code>lumenpink/&lt;repo&gt;</code>.</li>
         <li><strong>Gestão de Hooks & Tickets:</strong> CLI <code>cccp</code> com validação de tickets obrigatórios (<code>ref #N</code> / <code>closes #N</code>) e versionamento.</li>
+        <li><strong>Internacionalização:</strong> Matriz das 10 línguas sob <code>site/&lt;lang&gt;/</code> e roteador cliente em <code>site/index.html</code>.</li>
+        <li><strong>Cards Sociais:</strong> Script <code>scripts/generate_og_image.py</code> e simulação em <code>site/card_preview.html</code>.</li>
         <li><strong>Testes Shell:</strong> <code>shellspec</code> com cobertura via <code>kcov</code>.</li>
         <li><strong>Testes Rust:</strong> <code>cargo test</code>, cobertura via <code>cargo-tarpaulin</code>/<code>llvm-cov</code> (&gt;90%) e mutação com <code>cargo-mutants</code>.</li>
         <li><strong>Testes PHP:</strong> <code>pest --coverage --min=90</code> e mutação com <code>infection</code>.</li>

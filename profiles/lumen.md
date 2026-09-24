@@ -302,3 +302,57 @@ cccp release minor   # ou patch / major
 git push --tags origin main
 ```
 Isso consolida o `CHANGELOG.md`, atualiza `VERSION` para versão estável e cria a tag Git correspondente.
+
+---
+
+## 9. Internacionalização no Perfil Lumen
+
+O ecossistema Lumen adota o padrão de roteamento e estrutura multilíngue validado no `indieinabox`:
+
+### 9.1 Matriz de 10 Línguas Suportadas no `./site`
+```javascript
+var supported = ['en', 'pt', 'es', 'fr', 'de', 'it', 'ru', 'zh', 'ja', 'ar'];
+```
+
+### 9.2 Roteador Estático Cliente (`site/index.html`)
+Na raiz de documentação `./site/index.html`, inclui-se o script de redirecionamento automático com detecção e persistência:
+```html
+<script>
+    (function() {
+        var supported = ['en', 'pt', 'es', 'fr', 'de', 'it', 'ru', 'zh', 'ja', 'ar'];
+        var saved = localStorage.getItem('doc_lang');
+        if (saved && supported.indexOf(saved) !== -1) {
+            window.location.replace(saved + '/');
+            return;
+        }
+        var navLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase().substring(0, 2);
+        if (supported.indexOf(navLang) !== -1) {
+            window.location.replace(navLang + '/');
+        } else {
+            window.location.replace('en/');
+        }
+    })();
+</script>
+```
+
+### 9.3 Suporte Obrigatório a RTL para o Árabe (`site/ar/`)
+As páginas sob `site/ar/` utilizam:
+```html
+<html lang="ar" dir="rtl">
+```
+
+---
+
+## 10. Banners e Cards Sociais (Padrão KokoroSim)
+
+Todo repositório Lumen que publique site estático deve manter a automação para geração do banner Open Graph em `./site/assets/og_preview.png`.
+
+### 10.1 Script de Geração (`scripts/generate_og_image.py`)
+Utiliza Python + Pillow para renderizar o banner em 1200x630 com Safe Zone 4:3 centralizada (largura de 720px a 840px), evitando cortes em pré-visualizações móveis e do WhatsApp:
+- **Resolução:** 1200x630 px
+- **Safe Zone:** Miolo central com sangria lateral mínima de 180px.
+- **Tipografia:** Fonte condensada geométrica para títulos de alto impacto.
+
+### 10.2 Preview de Cards (`site/card_preview.html`)
+Para validação visual fiel antes do deploy, recomenda-se incluir em `site/card_preview.html` a simulação de renderização em WhatsApp (Dark Mode) e Twitter/X (Summary Large Image), conforme arquitetura do KokoroSim.
+
