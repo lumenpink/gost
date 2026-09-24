@@ -59,11 +59,11 @@ Após criar ou clonar o projeto, os hooks **DEVEM** ser inicializados via:
 cccp install
 ```
 Isso instala:
-* **`commit-msg`:** 
+* **`commit-msg`:**
   - Validador rigoroso de Conventional Commits.
   - **Enforcement de Tickets:** Rejeita qualquer commit que não contenha a referência explícita ao ticket da issue no padrão `(ref #<id>)` ou `(closes #<id>)`. Bloqueia commits sem ticket na raiz.
 * **`post-commit`:** Sincronizador atômico de versão (`VERSION`), atualização do `CHANGELOG.md` e metadados.
-
+* **`pre-push`:** Gate de CI local com `act` (ver Seção 5.6).
 
 ---
 
@@ -141,11 +141,62 @@ Para atender aos requisitos de alta cobertura (>90%, foco em 100%) e mutação d
 * **Shell Scripting:**
   - Linter: `shellcheck` (zero avisos tolerados em todos os scripts)
 
+### 5.6 Gate de Pre-Push com `act` (CI Local Idêntico)
+O ecossistema Lumen usa **`act`** — executor local de Forgejo/GitHub Actions baseado em Docker — para rodar o job `test` do pipeline em um ambiente **bit-for-bit idêntico** ao do Forgejo antes de cada `git push`.
+
+#### Ferramenta
+* **`act`** ([`nektos/act`](https://github.com/nektos/act)): lê `.forgejo/workflows/ci.yml` e executa os jobs dentro dos mesmos containers Docker usados pelo Forgejo Actions.
+* **Pré-requisito:** Docker em execução na máquina de desenvolvimento (sempre presente no ecossistema Lumen).
+
+#### Comportamento do Hook `pre-push`
+```
+git push
+  └─► pre-push hook (instalado por cccp install)
+        ├─ Verifica se act + Docker estão disponíveis
+        │    └─ Não disponíveis: emite aviso, NÃO bloqueia push
+        ├─ Executa: act -j test --no-pull
+        │    └─ Saída completa → .git/act-logs/<data>_<hora>_<branch>_<sha-curto>.log
+        ├─ Mostra: spinner vivo + step atual + tempo decorrido
+        └─ Exit 0: push prossegue  |  Exit 1: push abortado + resumo + path do log
+```
+
+#### Formato dos Logs
+```
+.git/act-logs/
+  2026-09-24_09-41_feat-42-rate-limit_a4b3c2d.log
+  2026-09-24_08-17_main_cd62fd5.log
+```
+* Diretório `.git/act-logs/` é automaticamente ignorado pelo git.
+* Consulta rápida ao log mais recente: `cccp act log`
+
+#### UX do Gate no Terminal
+```
+⠸ [pre-push] Running CI gate locally...
+  Job: test › cargo clippy -- -D warnings     [0:12]
+  Log: .git/act-logs/2026-09-24_09-41_feat-42_a4b3c2d.log
+```
+Sucesso:
+```
+✅ CI gate passed (1m 34s) — pushing to origin/main
+```
+Falha:
+```
+❌ CI gate failed (0m 47s) — push aborted
+   → Step failed: cargo test (3 failures)
+   → Log: .git/act-logs/2026-09-24_09-41_feat-42_a4b3c2d.log
+   → Bypass consciente: git push --no-verify
+```
+
+#### Bypass Explícito
+```bash
+git push --no-verify  # bypass consciente e documentado — não use por hábito
+```
+
 ---
 
 ## 6. Pipeline de CI/CD (`.forgejo/workflows/ci.yml`)
 
-O workflow no Forgejo Actions orquestra validação, testes com bloqueio de cobertura e deploy contínuo:
+O workflow no Forgejo Actions declara **obrigatoriamente** jobs separados: `test` (roda também localmente via `act`) e `deploy-site` (exclusivo do Forgejo, após push):
 
 ```yaml
 name: "CI / CD Pipeline"

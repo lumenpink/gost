@@ -180,11 +180,40 @@ Todo repositório GOST **DEVE** manter uma vitrine pública de documentação es
 
 ## 9. Integração e Validação Contínua (CI/CD)
 
-Todo repositório GOST **DEVE** possuir um pipeline de integração contínua declarativo:
-1. **Validação de Sintaxe, Estilo & Zero Warnings:** Verificação automática de linter e formatação estrita.
-2. **Execução de Testes & Cobertura:** Execução da suíte completa de testes automatizados com bloqueio de quebra de cobertura abaixo de 90%.
-3. **Auditoria de Dependências:** Verificação de segurança contra vulnerabilidades conhecidas.
-4. **Publicação Automatizada:** Deploy automático do diretório `./site` para o serviço de hospedagem de páginas estáticas do projeto.
+### 9.1 Separação Obrigatória de Jobs: Testes vs. Publicação
+Todo pipeline de CI **DEVE** declarar seus estágios em jobs estritamente separados:
+
+* **Job `test`** (obrigatório em todo repositório):
+  - Lint, análise estática e Zero Warnings
+  - Execução completa da suíte de testes (unitários, funcionais, integração, E2E)
+  - Gate de cobertura (≥ 90%)
+  - Auditoria de dependências
+* **Job `deploy-*`** (somente quando aplicável):
+  - **DEVE** declarar `needs: [test]` — nunca roda sem testes aprovados
+  - **DEVE** condicionar execução ao branch principal (`if: github.ref == 'refs/heads/main'`)
+  - Publica artefatos, documentação estática ou binários de release
+
+A separação explícita garante que o gate de pre-push local (Seção 9.2) possa executar exclusivamente o job `test` sem acidentalmente disparar deploys, e que cada estágio seja inspecionável de forma independente nos logs de CI.
+
+### 9.2 Gate de Pre-Push: CI Local com Infraestrutura Idêntica
+O problema do "passa localmente, quebra no CI" origina-se da divergência entre o ambiente local do desenvolvedor e o ambiente de execução do pipeline. Para eliminar essa divergência:
+
+* Os repositórios **DEVERIAM** configurar um *pre-push gate* que execute o job `test` do pipeline em um ambiente **bit-for-bit idêntico** ao da forja remota, antes de permitir o `git push`.
+* O gate é executado como hook `pre-push` do Git, bloqueando o push em caso de falha.
+* O ambiente de execução local **DEVE** ser o mesmo container/VM utilizado pelo runner de CI remoto.
+
+#### Propriedades do Gate de Pre-Push
+1. **Idempotência:** A execução local do job `test` deve produzir resultados idênticos à execução remota.
+2. **Isolamento de Publicação:** O gate **NUNCA DEVE** executar jobs de deploy, publish ou release — apenas `test`.
+3. **Registro Persistente:** A saída completa de cada execução do gate **DEVE** ser armazenada em logs nomeados e datados para rastreabilidade e diagnóstico.
+4. **Feedback Vivo:** O gate **DEVERIA** exibir progresso em tempo real (step atual, tempo decorrido) sem poluir o histórico do terminal.
+5. **Bypass Consciente:** O bypass do gate (`git push --no-verify`) **DEVE** ser sempre possível e documentado como opção explícita e consciente — nunca automático.
+
+### 9.3 Degradação Graciosa do Gate
+Se o ambiente de execução local não estiver disponível (ex: Docker não iniciado, executor não instalado), o gate **DEVE**:
+- Emitir aviso claro indicando que o gate foi ignorado
+- **Nunca** bloquear o push por ausência do executor local
+- Registrar o bypass involuntário para rastreabilidade
 
 ---
 
