@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GOST — Especificação Padrão de Repositórios</title>
+  <meta name="description" content="GOST: Norma técnica aberta e perfil de infraestrutura para criação de repositórios confiáveis, livres e sustentáveis.">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79c0ff;
+      --red: #f85149;
+      --green: #3fb950;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f6f8fa;
+        --card-bg: #ffffff;
+        --border: #d0d7de;
+        --text: #24292f;
+        --text-muted: #57606a;
+        --accent: #0969da;
+        --accent-hover: #218bff;
+        --red: #cf222e;
+        --green: #1a7f37;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    nav.toc {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    nav.toc h2 {
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    nav.toc ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.5rem;
+    }
+
+    nav.toc a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    nav.toc a:hover { text-decoration: underline; }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p { margin-bottom: 1rem; }
+
+    ul, ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    li { margin-bottom: 0.4rem; }
+
+    pre, code {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+
+    code {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    pre {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1.25rem;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    .card h4 {
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+    }
+
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .step-box {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+    }
+
+    .step-num {
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .step-content strong {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 1.05rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      margin-top: 4rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">Norma Técnica • GOST-1.0</span>
+      <h1>ГОСТ — Especificação de Repositórios</h1>
+      <p class="subtitle">Padrão universal para arquitetura de repositórios, ciclo de desenvolvimento e documentação pública.</p>
+    </header>
+
+    <nav class="toc">
+      <h2>Índice da Norma</h2>
+      <ul>
+        <li><a href="#filosofia">1. Filosofia & Licenciamento</a></li>
+        <li><a href="#anatomia">2. Anatomia da Raiz</a></li>
+        <li><a href="#ciclo">3. Ciclo DD-TDD</a></li>
+        <li><a href="#vitrine">4. Vitrine Pública</a></li>
+        <li><a href="#perfil-lumen">5. Perfil Lumen</a></li>
+      </ul>
+    </nav>
+
+    <section id="filosofia">
+      <h2>1. Filosofia e Licenciamento</h2>
+      <p>O GOST orienta a criação de software livre com clareza jurídica e técnica desde o primeiro commit.</p>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Presunção Padrão: Unlicense</h4>
+          <p>Todo repositório deve presumir dedicação direta ao domínio público (The Unlicense ou CC0-1.0), eliminando atrito para cópia, reuso e evolução coletiva.</p>
+        </div>
+        <div class="card">
+          <h4>Exceção Copyleft: GPLv3</h4>
+          <p>Projetos com salvaguarda explícita contra mercantilização predatória ou fechamento de código adotam a GNU GPLv3.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="anatomia">
+      <h2>2. Anatomia Mínima da Raiz</h2>
+      <p>Todo repositório aderente à especificação mantém uma base uniforme previsível:</p>
+      <pre><code>.
+├── LICENSE / UNLICENSE         # Licença declarada (Unlicense como padrão)
+├── VERSION                     # Versão SemVer pura em texto simples (ex: 0.1.0-dev.1)
+├── CHANGELOG.md                # Histórico no padrão Keep a Changelog
+├── README.md                   # Resumo executivo e instrução de partida
+├── .gitignore                  # Regras de higiene de arquivos
+├── site/                       # Portal estático de documentação pública
+│   ├── index.html              # Interface de visualização da documentação
+│   └── _headers                # Cabeçalhos HTTP de segurança obrigatórios
+└── .forgejo/ / .github/        # Workflows declarativos de CI/CD
+    └── workflows/ci.yml</code></pre>
+    </section>
+
+    <section id="ciclo">
+      <h2>3. Ciclo de Desenvolvimento (DD-TDD)</h2>
+      <p>Nenhuma alteração é iniciada ou finalizada sem rastreabilidade. O fluxo formal divide-se em 5 etapas sequenciais:</p>
+
+      <div class="flow-steps">
+        <div class="step-box">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Ticket / Issue</strong>
+            <p>Abertura do ticket formalizando o problema, a nova funcionalidade ou refatoração no issue tracker.</p>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Doc in Develop (Commit de Documentação)</strong>
+            <p>Formalização prévia do comportamento e interfaces esperadas antes de codificar.</p>
+            <code>docs: specify auth endpoint contracts (ref #42)</code>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Failing Test (Commit do Teste Quebrado)</strong>
+            <p>Criação do teste automatizado reproduzindo o bug ou atestando a falta da feature. O teste <strong>deve falhar</strong>.</p>
+            <code>test: add failing integration test for token expiration (ref #42)</code>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong>Fix / Implementação (Commit do Código)</strong>
+            <p>Desenvolvimento da solução estritamente necessária para fazer o teste passar.</p>
+            <code>feat: implement token expiration validation (ref #42)</code>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <strong>Finish Docs & Close (Commit de Fechamento)</strong>
+            <p>Revisão final dos guias, atualização do changelog e encerramento do ticket.</p>
+            <code>docs: update authentication documentation (closes #42)</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="vitrine">
+      <h2>4. Vitrine Pública e Segurança</h2>
+      <p>Todo projeto mantém seu portal estático publicado via pipeline de CI. O arquivo <code>site/_headers</code> deve assegurar:</p>
+      <pre><code>/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin</code></pre>
+    </section>
+
+    <section id="perfil-lumen">
+      <h2>5. Perfil de Implementação: Lumen</h2>
+      <p>O ecossistema Lumen implementa a norma GOST com os seguintes serviços e convenções:</p>
+      <ul>
+        <li><strong>Forja Principal:</strong> Codeberg (instância Forgejo) sob <code>lumenpink/&lt;repo&gt;</code>.</li>
+        <li><strong>Gestão de Hooks:</strong> CLI <code>cccp</code> com validação de Conventional Commits e controle de versão.</li>
+        <li><strong>Hospedagem Web:</strong> Cloudflare Workers via <code>wrangler.jsonc</code> servindo subdomínios <code>*.2lp.in</code> (com fallback no Codeberg Pages).</li>
+        <li><strong>Descoberta:</strong> Registro no catálogo centralizado local <code>~/src/catalog.json</code>.</li>
+      </ul>
+      <p>Consulte o documento completo em <code>profiles/lumen.md</code> no repositório.</p>
+    </section>
+
+    <footer>
+      <p>GOST 1.0 • Liberado sob a <a href="https://unlicense.org" style="color:var(--accent)">The Unlicense</a>.</p>
+    </footer>
+  </div>
+</body>
+</html>

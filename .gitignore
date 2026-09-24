@@ -1,0 +1,22 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Antigravity CLI and IDE artifacts
+.antigravity/
+
+# Cloudflare Wrangler
+.wrangler/
+
+# Temporary files, caches, logs
+*.tmp
+*.log
+*.swp
+*~
+.DS_Store
+
+# Node / JS artifacts (se houver ferramentas de build)
+node_modules/
+dist/
+.cache/
