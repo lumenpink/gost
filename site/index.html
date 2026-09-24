@@ -404,7 +404,7 @@
 
     <section id="intl">
       <h2>7. Internacionalização (Matriz das 10 Línguas)</h2>
-      <p>A documentação pública e vitrines estáticas adotam a matriz das 10 línguas oficiais, combinando o alcance demográfico do <code>indieinabox</code> com a linhagem histórica do <code>cccp</code>:</p>
+      <p>A norma GOST exige cobertura e paridade de 100% nas 10 línguas oficiais tanto no <strong>aplicativo completo</strong> (UI, CLI, logs e erros de runtime) quanto na <strong>documentação pública</strong> (<code>./site</code>). A língua primária é definida no <code>.cccprc</code> e atua como fallback em tempo de execução:</p>
       
       <div class="card-grid">
         <div class="card">
@@ -412,12 +412,16 @@
           <p><code>en</code> (English), <code>pt</code> (Português), <code>es</code> (Español), <code>fr</code> (Français), <code>de</code> (Deutsch), <code>it</code> (Italiano), <code>ru</code> (Русский), <code>zh</code> (中文), <code>ja</code> (日本語), <code>ar</code> (العربية).</p>
         </div>
         <div class="card">
+          <h4>🏛️ Língua Primária (Padrão CCCP)</h4>
+          <p>Declarada via <code>agent_var_lang</code> no <code>.cccprc</code>. Fonte canônica para triagem de tickets e fallback mandatório de strings.</p>
+        </div>
+        <div class="card">
           <h4>🔄 Roteador Inteligente</h4>
-          <p>Redirecionamento estático na raiz via <code>localStorage.getItem('doc_lang')</code> e <code>navigator.language</code>, com fallback seguro para <code>en/</code>.</p>
+          <p>Redirecionamento estático na raiz da documentação via <code>localStorage</code> e <code>navigator.language</code>.</p>
         </div>
         <div class="card">
           <h4>📖 Suporte a RTL (Árabe)</h4>
-          <p>Suporte mandatório a <code>dir="rtl"</code> na árvore <code>site/ar/</code> com propriedades lógicas de CSS.</p>
+          <p>Suporte bidirecional mandatório (<code>dir="rtl"</code>) no aplicativo e na documentação para o árabe.</p>
         </div>
       </div>
     </section>

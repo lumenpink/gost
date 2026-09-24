@@ -219,15 +219,16 @@ Se o ambiente de execução local não estiver disponível (ex: Docker não inic
 
 ## 10. Internacionalização (Intl)
 
-A norma GOST impõe disciplina linguística em camadas para conciliar cooperação global com acessibilidade multilíngue.
+A norma GOST impõe disciplina linguística em camadas para conciliar cooperação global com acessibilidade multilíngue irrestrita.
 
-### 10.1 Segregação por Camadas
-1. **Código-Fonte e Identificadores:** **DEVEM** ser escritos estritamente em **Inglês** (nomes de variáveis, funções, tipos, constantes e endpoints de API).
-2. **Histórico de Commits e Tags:** **DEVEM** ser redigidos em **Inglês** seguindo a especificação de Conventional Commits (`feat:`, `fix:`, `docs:`, etc.).
-3. **Triagem de Tickets:** Usuários **PODEM** relatar problemas e descrever features em qualquer idioma; ferramentas automatizadas de triagem (ex: `diva`) **DEVEM** estruturar o ticket na língua de trabalho configurada no repositório.
+### 10.1 Língua Primária e Segregação por Camadas
+1. **Língua Primária do Repositório (Padrão CCCP):** Cada repositório **DEVE** declarar sua língua de trabalho primária na configuração do CCCP (`agent_var_lang`). Ela atua como idioma canônico para especificação de requisitos, fonte primária para as traduções e **fallback obrigatório** em runtime caso uma chave de tradução em outro idioma não esteja presente.
+2. **Código-Fonte e Identificadores:** **DEVEM** ser escritos estritamente em **Inglês** (nomes de variáveis, funções, tipos, constantes e endpoints de API).
+3. **Histórico de Commits e Tags:** **DEVEM** ser redigidos em **Inglês** seguindo a especificação de Conventional Commits (`feat:`, `fix:`, `docs:`, etc.).
+4. **Triagem de Tickets:** Usuários **PODEM** relatar problemas e descrever features em qualquer idioma; ferramentas automatizadas de triagem (ex: `diva`) **DEVEM** estruturar o ticket na língua primária configurada no CCCP.
 
-### 10.2 A Matriz Canônica das 10 Línguas Oficiais
-Para a documentação pública e vitrines estáticas (`./site`), a norma GOST estabelece a **Matriz Oficial das 10 Línguas**, garantindo alcance global, inclusão demográfica e representação histórica:
+### 10.2 A Matriz Canônica das 10 Línguas Oficiais (App e Documentação)
+**TODO O APLICATIVO** (interfaces de usuário, CLI, menus, mensagens de erro e logs amigáveis) e **TODA A DOCUMENTAÇÃO PÚBLICA** (`./site`) **DEVEM** fornecer paridade completa de tradução nas **10 Línguas Oficiais da Norma GOST**:
 
 | Código ISO | Idioma | Endônimo Nativo | Direção | Papel / Escopo |
 |:---:|---|---|:---:|---|
@@ -242,17 +243,17 @@ Para a documentação pública e vitrines estáticas (`./site`), a norma GOST es
 | **`ja`** | Japanese | 日本語 | LTR | Vanguarda técnica, comunidade open source e estética |
 | **`ar`** | Arabic | العربية | **RTL** | Grande bloco linguístico global e representação do Oriente Médio |
 
-### 10.3 Requisito de Direcionalidade (RTL)
-* Projetos que fornecerem a versão em Árabe (`ar`) **DEVEM** assegurar suporte nativo a layouts **Right-to-Left** (`<html dir="rtl" lang="ar">`).
-* Folhas de estilo **DEVEM** utilizar propriedades lógicas de CSS (ex: `margin-inline-start`, `padding-inline`, `text-align: start`) para evitar quebras visuais na alternância de direcionalidade.
+### 10.3 Requisito de Direcionalidade (RTL) no App e na Doc
+* Tanto a interface gráfica/CLI do aplicativo quanto as páginas de documentação para o Árabe (`ar`) **DEVEM** implementar suporte nativo a layouts **Right-to-Left** (`dir="rtl"`).
+* O design de interface e CSS **DEVE** utilizar propriedades lógicas bidirecionais (ex: `margin-inline-start`, `padding-inline`, `start`/`end`) para alternância fluida entre LTR e RTL sem quebras visuais.
 
-### 10.4 Arquitetura Estática de Localização
-* A documentação de cada idioma **DEVE** residir em subdiretórios dedicados: `./site/<lang>/index.html`.
-* A raiz `./site/index.html` **DEVE** atuar como roteador leve cliente:
-  1. Detecta preferência salva em `localStorage.getItem('doc_lang')`.
-  2. Detecta idioma do cliente via `navigator.language`.
-  3. Redireciona com fallback seguro para `en/`.
-  4. Expõe links canônicos `rel="alternate" hreflang="<lang>"` para indexação de motores de busca.
+### 10.4 Arquitetura de Localização no Aplicativo e no Site
+1. **No Aplicativo:** Pacotes de tradução mantidos em formato estruturado (ex: `locales/<lang>.json` ou catálogos nativos da linguagem) contendo 100% de paridade de chaves com relação à língua primária do CCCP. Em caso de ausência de chave em tempo de execução, o sistema **DEVE** recorrer ao texto na língua primária configurada no CCCP.
+2. **Na Documentação:** Subdiretórios dedicados `./site/<lang>/index.html`. A raiz `./site/index.html` atua como roteador cliente:
+   - Detecta preferência salva em `localStorage.getItem('doc_lang')`.
+   - Detecta idioma do cliente via `navigator.language`.
+   - Redireciona com fallback seguro para a língua primária do CCCP (ou `en/`).
+   - Expõe links canônicos `rel="alternate" hreflang="<lang>"` para indexação de motores de busca.
 
 ---
 

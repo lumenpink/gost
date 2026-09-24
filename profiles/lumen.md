@@ -307,14 +307,22 @@ Isso consolida o `CHANGELOG.md`, atualiza `VERSION` para versão estável e cria
 
 ## 9. Internacionalização no Perfil Lumen
 
-O ecossistema Lumen adota o padrão de roteamento e estrutura multilíngue validado no `indieinabox`:
+O ecossistema Lumen adota o padrão de arquitetura multilíngue validado no `indieinabox` com governança de idioma centralizada pelo `cccp`:
 
-### 9.1 Matriz de 10 Línguas Suportadas no `./site`
-```javascript
-var supported = ['en', 'pt', 'es', 'fr', 'de', 'it', 'ru', 'zh', 'ja', 'ar'];
+### 9.1 Configuração da Língua Primária (`.cccprc`)
+A autoridade canônica do idioma padrão de cada repositório é configurada no `.cccprc`:
+```ini
+agent_var_lang = english   # ou portuguese, etc.
 ```
+- Serve de baseline para o ciclo DD-TDD e triagem de tickets via `diva`.
+- Define o idioma de fallback automático do aplicativo caso alguma chave de tradução em outro idioma não esteja presente.
 
-### 9.2 Roteador Estático Cliente (`site/index.html`)
+### 9.2 Paridade das 10 Línguas no Aplicativo (`resources/locales/` ou `locales/`)
+Todo software deve manter dicionários estruturados para as 10 línguas oficiais:
+`en.json`, `pt-BR.json`, `es.json`, `fr.json`, `de.json`, `it.json`, `ru.json`, `zh.json`, `ja.json`, `ar.json`.
+A suíte de testes de integração (ex: Pest, Cargo, ShellSpec) deve validar a paridade de 100% de chaves em relação ao arquivo de baseline.
+
+### 9.3 Roteador Estático Cliente (`site/index.html`)
 Na raiz de documentação `./site/index.html`, inclui-se o script de redirecionamento automático com detecção e persistência:
 ```html
 <script>
@@ -335,8 +343,8 @@ Na raiz de documentação `./site/index.html`, inclui-se o script de redireciona
 </script>
 ```
 
-### 9.3 Suporte Obrigatório a RTL para o Árabe (`site/ar/`)
-As páginas sob `site/ar/` utilizam:
+### 9.4 Suporte Obrigatório a RTL para o Árabe (`site/ar/`)
+As páginas sob `site/ar/` e as interfaces da aplicação utilizam:
 ```html
 <html lang="ar" dir="rtl">
 ```
