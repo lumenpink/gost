@@ -66,40 +66,106 @@ Arquivos de configuração e metadados específicos de ferramentas **NÃO DEVEM*
 
 ## 5. Ciclo de Desenvolvimento GOST (DD-TDD)
 
-O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **Documentation-Driven & Test-Driven Development (DD-TDD)**, composto por 5 etapas sequenciais com rastreabilidade formal via commits:
+O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **Documentation-Driven & Test-Driven Development (DD-TDD)**, governado pela regra de rastreabilidade estrita de tickets.
+
+### 5.1 Cláusula Pétrea: Zero Commits sem Ticket
+* **Regra Inviolável:** **NENHUM COMMIT DEVE EXISTIR SEM UM TICKET ASSOCIADO**.
+* Todo trabalho (nova funcionalidade, correção de bug, refatoração, documentação ou manutenção) **DEVE** obrigatoriamente nascer de um ticket formal registrado no issue tracker antes de qualquer alteração no código.
+* **Commits Intermediários:** Durante o ciclo de desenvolvimento, todo commit **DEVE** incluir a referência ao ticket no formato `(ref #<id>)`.
+* **Commit de Fechamento:** O último commit do ciclo, após satisfazer todos os critérios de conclusão, **DEVE** conter `(closes #<id>)` para encerrar formalmente o ticket.
+* **Bloqueio Automático:** Hooks de commit (`commit-msg`) e o pipeline de CI/CD **DEVEM** rejeitar imediatamente qualquer commit que não contenha a referência explícita a um ticket.
+
+### 5.2 Estratégia de Branches por Ticket
+* É estritamente **PROIBIDO** commitar diretamente no branch principal (`main`) durante o ciclo de trabalho.
+* Todo ticket **DEVE** ser desenvolvido em um branch dedicado derivado de `develop` (ou `main`), com nomenclatura padronizada contendo o ID do ticket:
+  - `feat/<id>-<slug-curto>` (ex: `feat/42-rate-limiting`)
+  - `fix/<id>-<slug-curto>` (ex: `fix/55-jwt-timestamp-overflow`)
+  - `docs/<id>-<slug-curto>` (ex: `docs/12-api-spec-update`)
+  - `refactor/<id>-<slug-curto>`
+* O merge do branch para a linha principal só é permitido após aprovação completa de testes, cobertura e linter no CI.
+
+### 5.3 As 5 Etapas do Ciclo DD-TDD
 
 ```
 [1. Ticket] ──> [2. Doc in Develop] ──> [3. Failing Test] ──> [4. Fix / Implement] ──> [5. Finish Docs & Close]
 ```
 
-### Etapa 1: Ticket / Issue
-* Nenhuma modificação substancial (nova funcionalidade, correção de bug ou refatoração estrutural) **DEVE** ser iniciada sem um ticket ou issue de referência registrado no rastreador do projeto.
-* O ticket define o problema, o objetivo e os critérios de aceitação.
+1. **Etapa 1: Ticket / Issue**
+   - Abertura formal da issue com Contexto, Comportamento Esperado e Critérios de Aceite.
+2. **Etapa 2: Documentação em Desenvolvimento (`Doc in develop`)**
+   - Escrita prévia da documentação, interfaces e formatos no branch do ticket antes de codificar.
+   - Commit: `docs: specify <comportamento> (ref #<id>)`
+3. **Etapa 3: Teste Falho (`Failing Test`)**
+   - Criação de teste automatizado comprovando a ausência da funcionalidade ou reproduzindo o defeito. O teste **DEVE falhar**.
+   - Commit: `test: add failing test for <requisito> (ref #<id>)`
+4. **Etapa 4: Correção ou Implementação (`Fix / Implement`)**
+   - Escrita do código funcional estritamente necessário para fazer a suíte passar.
+   - Commit: `feat: implement <funcionalidade> (ref #<id>)` ou `fix: resolve <bug> (ref #<id>)`
+5. **Etapa 5: Finalização da Documentação e Encerramento (`Finish Docs & Close`)**
+   - Polimento final dos manuais, guias, documentação estática do site e `CHANGELOG.md`.
+   - Commit: `docs: finalize documentation and guides (closes #<id>)`
 
-### Etapa 2: Documentação em Desenvolvimento (`Doc in develop`)
-* **Ação:** Antes de escrever qualquer linha de código produtivo, o autor **DEVE** documentar o comportamento esperado, arquitetura, formato de dados ou interface pretendida.
-* **Commit:** **DEVE** ser feito um commit dedicado documentando o design no branch de desenvolvimento.
-* **Mensagem:** `docs: specify <comportamento> (ref #<ticket>)`
-
-### Etapa 3: Teste Falho (`Failing Test`)
-* **Ação:** O autor **DEVE** escrever um teste automatizado (unitário, de integração ou especificação) que comprove o bug ou a ausência da funcionalidade planejada.
-* **Condição:** O teste **DEVE FALHAR** obrigatoriamente.
-* **Commit:** **DEVE** ser feito um commit dedicado contendo exclusivamente o teste falho.
-* **Mensagem:** `test: add failing test for <requisito> (ref #<ticket>)`
-
-### Etapa 4: Correção ou Implementação (`Fix / Implement`)
-* **Ação:** Implementação do código estritamente necessário para fazer o teste da Etapa 3 passar com sucesso.
-* **Commit:** **DEVE** ser feito um commit com o código produtivo e os testes agora verdes.
-* **Mensagem:** `feat: implement <funcionalidade> (ref #<ticket>)` ou `fix: resolve <bug> (ref #<ticket>)`
-
-### Etapa 5: Finalização da Documentação e Encerramento (`Finish Docs & Close`)
-* **Ação:** Polimento final da documentação pública, atualização de exemplos, guias no site estático e atualização do `CHANGELOG.md`.
-* **Commit:** **DEVE** ser feito um commit final referenciando o encerramento do ticket.
-* **Mensagem:** `docs: finalize documentation and guides (closes #<ticket>)`
+### 5.4 Critérios de Conclusão / Definition of Done (DoD)
+Um ticket só pode ser considerado concluído e encerrado via `(closes #<id>)` se satisfizer integralmente o seguinte checklist:
+- [ ] Ticket aberto previamente detalhando o problema e critérios.
+- [ ] Branch dedicado criado no formato `<tipo>/<id>-<slug>`.
+- [ ] Commit com teste falho registrado no histórico antes da implementação.
+- [ ] Código funcional implementado e todos os testes passando.
+- [ ] Cobertura global mantida comprovadamente **acima de 90%** (mirando 100%).
+- [ ] Ausência de mutantes críticos sobreviventes (verificação de mutação).
+- [ ] Documentação do `./site`, `README.md` e `CHANGELOG.md` atualizadas.
+- [ ] Análise estática limpa (Zero Warnings).
+- [ ] Pipeline de CI/CD 100% verde.
 
 ---
 
-## 6. Vitrine Pública e Documentação Web
+## 6. Estratégia e Qualidade de Testes
+
+A integridade do software no padrão GOST baseia-se na verificação automatizada contínua com alta densidade de asserções e cobertura quantitativa e qualitativa.
+
+### 6.1 Taxonomia de Testes Obrigatória
+Todo projeto **DEVE** estruturar sua validação nas seguintes camadas, conforme aplicável à natureza do componente:
+
+1. **Testes Unitários:**
+   - Testam funções, métodos, tipos e módulos em isolamento absoluto.
+   - Devem ter execução instantânea (milissegundos) e zero dependências de I/O externo.
+2. **Testes Funcionais:**
+   - Validam regras de negócio, transformações de dados e casos de uso específicos (dada uma entrada X, a saída deve ser Y).
+3. **Testes de Integração:**
+   - Validam a interoperabilidade entre componentes internos, persistência em disco (ex: SQLite), variáveis de ambiente ou protocolos de comunicação local (IPC/sockets).
+4. **Testes Ponta a Ponta (E2E):**
+   - Para aplicações com interface com usuário (web ou desktop), os testes **DEVEM** exercitar o sistema completo simulando a interação real de usuários em navegadores headless utilizando **Playwright**.
+
+### 6.2 Política de Cobertura (*Code Coverage*)
+* **Piso Mínimo Inviolável:** A cobertura global de código automatizada **DEVE** ser mantida permanentemente em no mínimo **`90%`**.
+* **Meta de Excelência:** Todo projeto **DEVE** focar ativamente na meta de **`100%`** de cobertura nos módulos centrais de domínio e utilitários.
+* **Critério de Bloqueio:** Qualquer alteração, pull request ou commit que rebaixe a cobertura global abaixo de 90% **DEVE** falhar o pipeline de integração contínua.
+
+### 6.3 Validação Qualitativa: Testes de Mutação
+* A cobertura percentual pura não atesta a eficácia das verificações. Para evitar testes cosméticos (linhas executadas sem asserções de valor real), o projeto **DEVERIA** empregar **Testes de Mutação** (*Mutation Testing*).
+* O teste de mutação introduz falhas sintéticas no código (mutantes); se a suíte de testes continuar passando, o teste é considerado deficiente.
+
+### 6.4 Hermeticidade e Determinismo
+* **Isolamento de Rede:** As suítes de testes unitários, funcionais e de integração **NÃO DEVEM** depender de acesso à internet pública ou serviços remotos. Chamadas externas devem ser simuladas via *mocks*, *stubs* ou *fixtures*.
+* **Limpeza de Estado:** Todo teste que instanciar arquivos, diretórios temporários ou registros em banco **DEVE** destruí-los ao término da execução, garantindo que os testes sejam estritamente idempotentes e executáveis em qualquer ordem.
+
+---
+
+## 7. Análise Estática e Tolerância Zero a Avisos (*Zero Warnings*)
+
+A excelência e longevidade do código exigem rigor estrito antes de qualquer execução:
+
+### 7.1 Tolerância Zero a Warnings
+* Todo projeto **DEVE** configurar seus linters e analisadores estáticos com nível de severidade máximo.
+* Avisos (*warnings*) **DEVEM** ser tratados como erros fatais (ex: flags equivalentes a `-D warnings`). Qualquer commit ou PR com alertas pendentes **DEVE quebrar o CI**.
+
+### 7.2 Filosofia de Dependências Mínimas e Auditoria de Segurança
+* **Princípio Anti-Bloat:** A adição de bibliotecas de terceiros **DEVE** ser estritamente justificada no ticket do projeto. Favorece-se soluções leves, bibliotecas padrão e código autônomo.
+* **Auditoria de Vulnerabilidades:** O pipeline de CI **DEVE** executar verificações automatizadas de vulnerabilidades em dependências (*dependency auditing*).
+
+---
+
+## 8. Vitrine Pública e Documentação Web
 
 Todo repositório GOST **DEVE** manter uma vitrine pública de documentação estática no diretório `./site`.
 
@@ -112,21 +178,25 @@ Todo repositório GOST **DEVE** manter uma vitrine pública de documentação es
 
 ---
 
-## 7. Integração e Validação Contínua (CI/CD)
+## 9. Integração e Validação Contínua (CI/CD)
 
 Todo repositório GOST **DEVE** possuir um pipeline de integração contínua declarativo:
-1. **Validação de Sintaxe & Estilo:** Verificação automática de linter e formatação.
-2. **Execução de Testes:** Execução da suíte completa de testes automatizados a cada branch e Pull/Merge Request.
-3. **Publicação Automatizada:** Deploy automático do diretório `./site` para o serviço de hospedagem de páginas estáticas do projeto.
+1. **Validação de Sintaxe, Estilo & Zero Warnings:** Verificação automática de linter e formatação estrita.
+2. **Execução de Testes & Cobertura:** Execução da suíte completa de testes automatizados com bloqueio de quebra de cobertura abaixo de 90%.
+3. **Auditoria de Dependências:** Verificação de segurança contra vulnerabilidades conhecidas.
+4. **Publicação Automatizada:** Deploy automático do diretório `./site` para o serviço de hospedagem de páginas estáticas do projeto.
 
 ---
 
-## 8. Perfis de Implementação (*Profiles*)
+## 10. Perfis de Implementação (*Profiles*)
 
 Esta norma GOST estabelece requisitos agnósticos a fornecedores e tecnologias. Ambientes específicos (organizações, indivíduos ou ecossistemas) **DEVEM** declarar suas escolhas concretas de infraestrutura em documentos de perfil sob o diretório `profiles/` (ex: `profiles/<nome>.md`).
 
 Um perfil de implementação define:
 - Qual forja de código hospeda os repositórios (Codeberg, GitHub, GitLab, etc.).
 - Qual infraestrutura serve o portal de documentação (`*.2lp.in`, Cloudflare Workers, Pages, Nginx).
-- Quais ferramentas e CLI gerenciam versionamento e hooks (ex: `cccp`).
+- Quais ferramentas e CLI gerenciam versionamento, tickets e hooks (ex: `cccp`).
+- Quais frameworks e utilitários executam a suíte de testes, medem cobertura/mutação e aplicam linters com Zero Warnings.
 - Onde se localiza o catálogo central de descoberta de projetos.
+
+

@@ -242,9 +242,11 @@
       <ul>
         <li><a href="#filosofia">1. Filosofia & Licenciamento</a></li>
         <li><a href="#anatomia">2. Anatomia da Raiz</a></li>
-        <li><a href="#ciclo">3. Ciclo DD-TDD</a></li>
-        <li><a href="#vitrine">4. Vitrine Pública</a></li>
-        <li><a href="#perfil-lumen">5. Perfil Lumen</a></li>
+        <li><a href="#ciclo">3. Ciclo DD-TDD & Tickets</a></li>
+        <li><a href="#testes">4. Estratégia de Testes</a></li>
+        <li><a href="#qualidade">5. Análise Estática & Zero Warnings</a></li>
+        <li><a href="#vitrine">6. Vitrine Pública</a></li>
+        <li><a href="#perfil-lumen">7. Perfil Lumen</a></li>
       </ul>
     </nav>
 
@@ -328,10 +330,69 @@
           </div>
         </div>
       </div>
+
+      <div class="card-grid" style="margin-top: 1.5rem;">
+        <div class="card">
+          <h4>🎟️ Zero Commits sem Ticket</h4>
+          <p>Cláusula pétrea: nenhum commit existe sem issue aberta. Commits intermediários exigem <code>(ref #N)</code> e o final exige <code>(closes #N)</code>. Hooks locais bloqueiam commits soltos.</p>
+        </div>
+        <div class="card">
+          <h4>🌿 Branches por Ticket</h4>
+          <p>Proibido commitar na <code>main</code>. Desenvolvimento sempre em branches dedicados: <code>feat/&lt;id&gt;-slug</code> ou <code>fix/&lt;id&gt;-slug</code>.</p>
+        </div>
+        <div class="card">
+          <h4>✅ Definition of Done (DoD)</h4>
+          <p>Critérios objetivos: teste falho histórico comprovado, código verde, cobertura &gt; 90%, zero mutantes críticos, docs atualizadas e CI verde.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="testes">
+      <h2>4. Estratégia e Qualidade de Testes</h2>
+      <p>A norma exige validação automatizada em camadas com asserções rigorosas e cobertura permanentemente mantida:</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4>🧪 Unitários & Funcionais</h4>
+          <p>Isolamento total de dependências externas para execução instantânea. Validação de regras e contratos de domínio.</p>
+        </div>
+        <div class="card">
+          <h4>🔗 Integração</h4>
+          <p>Validação de persistência, banco de dados (SQLite), IPC e daemons com fixtures isoladas e auto-destrutivas.</p>
+        </div>
+        <div class="card">
+          <h4>🎭 Ponta a Ponta (E2E)</h4>
+          <p>Jornadas completas do usuário em navegadores headless (Chromium, Firefox, WebKit) via <strong>Playwright</strong>.</p>
+        </div>
+        <div class="card">
+          <h4>🎯 Cobertura &gt; 90% (Foco 100%)</h4>
+          <p>Piso obrigatório de 90% com bloqueio imediato no CI para qualquer regressão. Meta ativa de 100% no core.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h4>🧬 Testes de Mutação & Hermeticidade</h4>
+        <p>Validação da eficácia real dos asserts (evitando testes cosméticos) através de injeção sintética de falhas. Execução estritamente hermética no CI, sem dependência de rede pública externa.</p>
+      </div>
+    </section>
+
+    <section id="qualidade">
+      <h2>5. Análise Estática & Zero Warnings</h2>
+      <p>A integridade do código exige severidade máxima de linters antes mesmo dos testes:</p>
+      <div class="card-grid">
+        <div class="card">
+          <h4>🚫 Tolerância Zero a Avisos</h4>
+          <p>Linters e compiladores rodam com tratamento de warnings como erros fatais (<code>-D warnings</code>). Avisos quebram o build imediatamente.</p>
+        </div>
+        <div class="card">
+          <h4>🛡️ Filosofia Anti-Bloat & Auditoria</h4>
+          <p>Dependências externas mínimas e justificadas no ticket. Auditoria automatizada de segurança de pacotes no CI (<code>cargo audit</code>, <code>composer audit</code>).</p>
+        </div>
+      </div>
     </section>
 
     <section id="vitrine">
-      <h2>4. Vitrine Pública e Segurança</h2>
+      <h2>6. Vitrine Pública e Segurança</h2>
       <p>Todo projeto mantém seu portal estático publicado via pipeline de CI. O arquivo <code>site/_headers</code> deve assegurar:</p>
       <pre><code>/*
   X-Content-Type-Options: nosniff
@@ -340,11 +401,16 @@
     </section>
 
     <section id="perfil-lumen">
-      <h2>5. Perfil de Implementação: Lumen</h2>
+      <h2>7. Perfil de Implementação: Lumen</h2>
       <p>O ecossistema Lumen implementa a norma GOST com os seguintes serviços e convenções:</p>
       <ul>
         <li><strong>Forja Principal:</strong> Codeberg (instância Forgejo) sob <code>lumenpink/&lt;repo&gt;</code>.</li>
-        <li><strong>Gestão de Hooks:</strong> CLI <code>cccp</code> com validação de Conventional Commits e controle de versão.</li>
+        <li><strong>Gestão de Hooks & Tickets:</strong> CLI <code>cccp</code> com validação de tickets obrigatórios (<code>ref #N</code> / <code>closes #N</code>) e versionamento.</li>
+        <li><strong>Testes Shell:</strong> <code>shellspec</code> com cobertura via <code>kcov</code>.</li>
+        <li><strong>Testes Rust:</strong> <code>cargo test</code>, cobertura via <code>cargo-tarpaulin</code>/<code>llvm-cov</code> (&gt;90%) e mutação com <code>cargo-mutants</code>.</li>
+        <li><strong>Testes PHP:</strong> <code>pest --coverage --min=90</code> e mutação com <code>infection</code>.</li>
+        <li><strong>Testes E2E:</strong> <code>playwright</code> para navegação e cenários de interface.</li>
+        <li><strong>Análise Estática:</strong> <code>clippy -D warnings</code>, <code>cargo fmt</code>, <code>phpstan</code> max, <code>pint</code> e <code>shellcheck</code>.</li>
         <li><strong>Hospedagem Web:</strong> Cloudflare Workers via <code>wrangler.jsonc</code> servindo subdomínios <code>*.2lp.in</code> (com fallback no Codeberg Pages).</li>
         <li><strong>Descoberta:</strong> Registro no catálogo centralizado local <code>~/src/catalog.json</code>.</li>
       </ul>
