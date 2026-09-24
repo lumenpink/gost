@@ -17,7 +17,7 @@ jobs:
         run: |
           test -f SPEC.md || { echo "SPEC.md missing"; exit 1; }
           test -f README.md || { echo "README.md missing"; exit 1; }
-          test -f UNLICENSE || { echo "UNLICENSE missing"; exit 1; }
+          test -f LICENSE || { echo "LICENSE missing"; exit 1; }
           test -f VERSION || { echo "VERSION missing"; exit 1; }
           test -f site/index.html || { echo "site/index.html missing"; exit 1; }
           test -f site/_headers || { echo "site/_headers missing"; exit 1; }

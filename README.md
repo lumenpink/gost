@@ -16,7 +16,7 @@ O **GOST** (*General Open Source Standard*, inspirado nos históricos padrões t
 ## ⚡ Pilares da Especificação
 
 ### 1. Filosofia de Licenciamento
-* **Presunção Padrão:** **`The Unlicense`** (dedicação direta ao domínio público, sem atritos burocráticos).
+* **Presunção Padrão:** **`CC0-1.0`** (dedicação direta ao domínio público com salvaguardas internacionais, sem atritos burocráticos).
 * **Exceção Estratégica:** **`GPLv3`** (ou `AGPL-3.0`) para projetos que exigem salvaguarda explícita contra fechamento ou comercialização predatória.
 
 ### 2. O Ciclo de Desenvolvimento (DD-TDD) & Tickets Obrigatórios
@@ -59,4 +59,4 @@ A documentação estática desta especificação está publicada em:
 
 ## 📄 Licença
 
-Este projeto e toda a especificação GOST são dedicados ao domínio público sob a [The Unlicense](./UNLICENSE).
+Este projeto e toda a especificação GOST são dedicados ao domínio público sob a [CC0 1.0 Universal](./LICENSE).

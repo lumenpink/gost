@@ -248,7 +248,7 @@ Todo repositório sob o perfil Lumen deve ser registrado no arquivo central de d
   "slug": "lumenpink/<nome-do-projeto>",
   "description": "<Descrição objetiva em uma linha>",
   "topics": ["palavra-chave-1", "palavra-chave-2"],
-  "license": "Unlicense",
+  "license": "CC0-1.0",
   "website": "https://<nome-do-projeto>.2lp.in",
   "is_upstream": false
 }

@@ -17,15 +17,15 @@ As palavras-chave **DEVE** (*MUST*), **NÃO DEVE** (*MUST NOT*), **DEVERIA** (*S
 
 ## 2. Filosofia e Licenciamento
 
-Todo projeto em conformidade com o GOST **DEVE** declarar sua licença de forma explícita na raiz do repositório através de um arquivo `LICENSE` ou `UNLICENSE`.
+Todo projeto em conformidade com o GOST **DEVE** declarar sua licença de forma explícita na raiz do repositório através de um arquivo `LICENSE`.
 
-### 2.1 Presunção de Domínio Público (`Unlicense`)
-* **Regra Geral:** Todo repositório **DEVE** presumir, por padrão, a renúncia de direitos autorais e liberação irrestrita em domínio público via **`The Unlicense`** (ou alternativamente **`CC0-1.0`**).
-* **Justificativa:** O conhecimento, ferramentas e códigos devem fluir com o menor atrito burocrático e jurídico possível, permitindo reuso irrestrito para qualquer finalidade.
+### 2.1 Presunção de Domínio Público (`CC0-1.0`)
+* **Regra Geral:** Todo repositório **DEVE** presumir, por padrão, a renúncia de direitos autorais e liberação irrestrita em domínio público via **`CC0-1.0`** (Creative Commons Zero 1.0 Universal).
+* **Justificativa:** O conhecimento, ferramentas e códigos devem fluir com o menor atrito burocrático e jurídico possível, garantindo validade jurídica internacional e reuso irrestrito para qualquer finalidade.
 
 ### 2.2 Exceção de Copyleft Forte (`GPL-3.0`)
 * **Regra de Exceção:** Quando um projeto possuir natureza estratégica que exija proteção contra apropriação predatória, fechamento de código derivado ou mercantilização comercial sem repasse à comunidade, o projeto **DEVE** adotar a **`GNU General Public License v3.0` (GPL-3.0)** (ou `AGPL-3.0` para serviços web).
-* Qualquer exceção à presunção padrão de `Unlicense` **DEVE** ser justificada no `README.md` do projeto.
+* Qualquer exceção à presunção padrão de `CC0-1.0` **DEVE** ser justificada no `README.md` do projeto.
 
 ---
 
@@ -35,7 +35,7 @@ Todo repositório GOST **DEVE** conter em sua raiz a seguinte estrutura mínima 
 
 ```
 .
-├── LICENSE / UNLICENSE         # Termo legal de licenciamento (Seção 2)
+├── LICENSE                     # Termo legal de licenciamento (Seção 2)
 ├── VERSION                     # Versão semântica em texto plano (Seção 4)
 ├── CHANGELOG.md                # Registro cronológico de mudanças (Seção 4)
 ├── README.md                   # Apresentação executiva e guia rápido
