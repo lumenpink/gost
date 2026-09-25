@@ -350,7 +350,81 @@ A estrutura arquitetural do repositório **DEVE** ser proporcional à sua respon
 
 ---
 
-## 13. Perfis de Implementação (*Profiles*)
+## 13. Aderência a Padrões de Sistema e Operação (XDG, 12-Factor & OCI)
+
+A integridade e interoperabilidade do software exigem conformidade com convenções maduras do ecossistema Unix/Linux e da computação em nuvem moderna.
+
+### 13.1 Diretórios e Sistema de Arquivos (XDG Base Directory)
+Todo software em conformidade com o GOST que manipule configurações, dados persistentes, caches ou sockets em disco **DEVE** seguir a especificação [XDG Base Directory](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html).
+* **Proibição de Poluição da `$HOME`:** É estritamente proibido criar arquivos e diretórios ocultos soltos na raiz de `$HOME` (ex: `~/.app` ou `~/.app_history`).
+* **Mapeamento de Variáveis e Fallbacks Canônicos:** Caso a variável de ambiente não esteja definida ou esteja em branco, o software **DEVE** aplicar obrigatoriamente os seguintes caminhos padrão:
+  - **Configurações:** `$XDG_CONFIG_HOME` ➔ Fallback: `~/.config/<app>/`
+  - **Dados Persistentes:** `$XDG_DATA_HOME` ➔ Fallback: `~/.local/share/<app>/`
+  - **Estado Dinâmico & Histórico:** `$XDG_STATE_HOME` ➔ Fallback: `~/.local/state/<app>/`
+  - **Cache Volátil:** `$XDG_CACHE_HOME` ➔ Fallback: `~/.cache/<app>/`
+  - **Sockets e IPC em Runtime:** `$XDG_RUNTIME_DIR` ➔ Fallback: `/run/user/$UID/<app>/` (ou `/tmp/<app>-$UID/` com permissão restrita).
+* **Permissões de Segurança:** Diretórios e arquivos contendo credenciais, tokens ou certificados sob o padrão XDG **DEVEM** ser criados com permissões restritas de acesso (`chmod 0700` para diretórios e `chmod 0600` para arquivos).
+
+### 13.2 Precedência de Configuração e Formato de Parâmetros
+O software **DEVE** resolver parâmetros operacionais seguindo a seguinte hierarquia estrita de precedência (da **maior** para a **menor** prioridade):
+1. **Flags de Linha de Comando (CLI):** Parâmetros passados explicitamente na chamada (`--port 8080`).
+2. **Variáveis de Ambiente do Processo:** Variáveis exportadas no shell ou container (`APP_PORT=8080`).
+3. **Arquivo `.env` Local:** Arquivo de conveniência no diretório atual de execução (*cwd*).
+4. **Configuração Local do Projeto:** Arquivos de projeto no repositório (`./config.env` ou `./.apprc`).
+5. **Configuração de Usuário no XDG:** `$XDG_CONFIG_HOME/<app>/config.env`.
+6. **Configuração Global do Sistema:** `/etc/<app>/config.env`.
+7. **Defaults Embutidos no Binário:** Valores padrão seguros compilados internamente.
+
+* **Formato de Configuração Plano (`CHAVE=VALOR`):** Para garantir interoperabilidade direta com scripts POSIX Shell sem dependências pesadas de compilação ou parsing (anti-bloat), arquivos de configuração editáveis **DEVEM** adotar formato de pares chave-valor compatíveis com Shell (`KEY="value"`). Para metadados hierárquicos complexos que ultrapassem chave-valor simples, o formato canônico é o **JSON**.
+
+### 13.3 Filosofia Universal Twelve-Factor (12-Factor)
+O manifesto [Twelve-Factor App](https://12factor.net/) **DEVE** orientar o design não apenas de microsserviços web, mas universalmente de qualquer serviço, daemon, bot ou ferramenta de linha de comando:
+1. **I. Codebase Único:** Rastreado em controle de versão com histórico rastreável via tickets (Seção 5).
+2. **II. Dependências Explícitas:** Declaradas em manifestos e congeladas em arquivos de lock (`Cargo.lock`, `composer.lock`), sem dependências implícitas do sistema hospedeiro.
+3. **III. Configurações no Ambiente:** Toda configuração que varie entre execuções ou ambientes (dev, test, prod) reside estritamente em variáveis de ambiente.
+4. **IV. Backing Services como Recursos Anexados:** Bancos de dados, filas e serviços de terceiros são vinculados por endereços/URLs configuráveis via ambiente.
+5. **V. Segregação de Build, Release, Run:** O processo de compilação produz artefato imutável; a execução apenas injeta o ambiente.
+6. **VI. Processos Stateless:** O processo pode ser encerrado ou replicado a qualquer momento; estado persistente reside em backing services ou no caminho XDG correto.
+7. **VII. Port & Socket Binding:** A aplicação provê serviços conectando-se diretamente a portas TCP ou a Unix Domain Sockets locais.
+8. **VIII. Concorrência via Modelo de Processos:** Escala através da multiplicação de processos independentes.
+9. **IX. Descartabilidade (*Disposability*):** Inicialização instantânea e encerramento gracioso reagindo a `SIGTERM` e `SIGINT`.
+10. **X. Paridade Dev/Prod:** Minimização de divergências entre ambiente local e produção (validada via gate de pre-push com `act`).
+11. **XI. Logs como Fluxos de Eventos (*Event Streams*):** O software **NUNCA** gerencia ou rotaciona arquivos de log internamente. Ele escreve eventos contínuos em `stdout`/`stderr` e delega a coleta ao ambiente (systemd journal, docker logging).
+12. **XII. Processos de Administração Pontuais:** Migrações e tarefas de manutenção rodam como processos pontuais efêmeros.
+
+### 13.4 Disciplina de Streams Unix, Sinais POSIX e `NO_COLOR`
+1. **Segregação de Streams:**
+   - `stdout` é reservado **exclusivamente para a saída de dados útil** (payloads puros para encadeamento em pipes `|`).
+   - `stderr` **DEVE** concentrar todos os logs, avisos, spinners interativos de progresso e mensagens de erro.
+2. **Aderência ao Padrão `NO_COLOR`:** O software **DEVE** aderir à especificação [no-color.org](https://no-color.org/). Se a variável de ambiente `NO_COLOR` estiver presente (com qualquer valor), todas as sequências de escape ANSI de cores **DEVEM** ser desativadas.
+3. **Detecção Automática de TTY:** Quando `stdout` ou `stderr` não estiverem conectados a um terminal interativo (`!isatty()`), cores, animações e spinners interativos devem ser desabilitados automaticamente, prevenindo poluição em logs de automação e pipelines CI.
+4. **Tratamento de Sinais:** Daemons **DEVEM** interceptar `SIGINT` e `SIGTERM` para graceful shutdown (finalizando transações e destruindo sockets/locks) e `SIGHUP` para recarregar arquivos de configuração em tempo de execução.
+5. **Códigos de Saída (Exit Codes):** `0` para sucesso; `1` para falhas gerais; `2` ou `64` (`EX_USAGE`) para erros de argumentos de CLI; `130` quando interrompido por `SIGINT` (Ctrl+C).
+
+### 13.5 Protocolos de Rede, Criptografia e Transporte
+1. **Banimento de Protocolos Obsoletos:** É estritamente **PROIBIDO** o uso ou suporte a SSLv2, SSLv3, TLS 1.0 e TLS 1.1 (conforme RFC 8996). O piso aceito é **TLS 1.2**, com padrão mandatório em **TLS 1.3**.
+2. **Hierarquia de Transporte:** Comunicações de rede e APIs web **DEVEM** priorizar a pilha moderna: **QUIC / HTTP/3** > **HTTP/2 (Multiplexado sobre TLS 1.3)** > **HTTP/1.1**.
+3. **Unix Domain Sockets para IPC Local:** Serviços e daemons comunicando-se na mesma máquina **DEVEM** priorizar **UNIX Domain Sockets** em vez de binds em loopback TCP `127.0.0.1`, reduzindo latência de rede e aplicando controle de acesso nativo baseado no UID/GID do processo chamador.
+
+### 13.6 Padrões Normativos para Docker e OCI Containers
+Projetos que distribuem imagens ou executam via containers OCI **DEVEM** satisfazer:
+1. **Multi-Stage Builds:** Todo `Dockerfile` **DEVE** separar explicitamente a etapa de compilação/build da imagem final de distribuição.
+2. **Imagens Finais Mínimas:** Imagens de runtime **NÃO DEVEM** conter compiladores, headers ou utilitários dispensáveis. Binários compilados (Rust/Go) devem utilizar bases `scratch` ou `distroless`; stacks interpretadas (PHP) devem utilizar `alpine` ou `debian-slim`.
+3. **Execução Obrigatória Sem Root (*Non-Root User*):** É proibido executar o serviço como `root`. O `Dockerfile` **DEVE** declarar explicitamente um usuário não privilegiado (`USER 1000:1000`, `USER app` ou `USER nobody`) antes do ponto de entrada.
+4. **Banimento da Tag `:latest`:** Imagens base **DEVEM** fixar versões imutáveis semânticas (ex: `debian:bookworm-slim`, `rust:1.80-alpine3.20`), prevenindo quebras silenciosas por mutação externa de tags.
+5. **Arquivo `.dockerignore`:** Presente na raiz, bloqueando a cópia acidental de `.git`, `.env*`, credenciais locais, caches e diretórios de build para as camadas da imagem.
+6. **Gerenciamento de PID 1:** Aplicações em container devem utilizar gerenciadores de init leves (ex: `tini` ou flag `--init`) caso o processo não trate diretamente sinais de encerramento do kernel.
+7. **Padrão `compose.yaml`:** A orquestração local para múltiplos serviços deve adotar o nome canônico aberto `compose.yaml` (especificação aberta do Compose).
+
+### 13.7 Autenticação Single-User com Chave de API
+Para microsserviços, APIs e daemons sob operação de usuário único:
+1. **Esquema de Autorização:** A autenticação HTTP **DEVE** aceitar o cabeçalho `Authorization: Bearer <CHAVE>` (com suporte a `X-Api-Key: <CHAVE>` para flexibilidade).
+2. **Injeção de Credenciais e Padrão `_FILE`:** A chave deve ser lida a partir de variável de ambiente (`<APP>_API_KEY`) ou via arquivo através do sufixo `_FILE` (`<APP>_API_KEY_FILE=/run/secrets/key`), garantindo suporte nativo a Docker e Systemd Secrets.
+3. **Comparação Timing-Safe:** A verificação da chave de API em memória **DEVE** utilizar comparação em tempo constante (`hash_equals` em PHP, `subtle::ConstantTimeEq` em Rust), blindando contra ataques de temporização (*timing attacks*).
+
+---
+
+## 14. Perfis de Implementação (*Profiles*)
 
 Esta norma GOST estabelece requisitos agnósticos a fornecedores e tecnologias. Ambientes específicos (organizações, indivíduos ou ecossistemas) **DEVEM** declarar suas escolhas concretas de infraestrutura em documentos de perfil sob o diretório `profiles/` (ex: `profiles/<nome>.md`).
 
@@ -361,6 +435,7 @@ Um perfil de implementação define:
 - Quais frameworks e utilitários executam a suíte de testes, medem cobertura/mutação e aplicam linters com Zero Warnings.
 - Como são gerados e validados os banners com Safe Zone 4:3 e os pacotes das 10 línguas.
 - Onde se localiza o catálogo central de descoberta de projetos.
+
 
 
 

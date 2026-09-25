@@ -505,4 +505,122 @@ test('autentica usuário com storage em memória', function () {
   - Rust: `pub enum TaskState { Pending, Running, Finished { exit_code: i32 } }`
   - PHP: `enum OrderStatus: string { case Pending = 'pending'; case Approved = 'approved'; case Cancelled = 'cancelled'; }`
 
+---
+
+## 12. Padrões de Sistema e Containers no Perfil Lumen
+
+O ecossistema Lumen adota padrões rígidos de interoperabilidade Unix, priorizando ferramentas leves e compatíveis com shell scripting e ambientes conteinerizados seguros.
+
+### 12.1 Resolução Canônica de Diretórios XDG
+Todo utilitário ou serviço Lumen implementa o mapeamento estrito da especificação XDG com fallbacks universais.
+
+#### Em Shell Scripting (POSIX):
+```sh
+APP_NAME="meu-app"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/$APP_NAME"
+DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/$APP_NAME"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/$APP_NAME"
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/$APP_NAME"
+RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/$APP_NAME"
+
+mkdir -p "$CONFIG_DIR" "$DATA_DIR" "$STATE_DIR" "$CACHE_DIR" 2>/dev/null
+```
+
+#### Em Rust:
+```rust
+pub fn config_path(app: &str) -> std::path::PathBuf {
+    let base = std::env::var("XDG_CONFIG_HOME")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| {
+            let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
+            std::path::PathBuf::from(home).join(".config")
+        });
+    base.join(app)
+}
+```
+
+### 12.2 Configuração Plana Baseada em Shell e Env (`KEY=VALOR`)
+Para eliminar dependências pesadas de parsing (como bibliotecas TOML/YAML) em scripts de automação, os arquivos de configuração locais e de usuário adotam formato plano compatível com shell:
+
+```bash
+# $XDG_CONFIG_HOME/meu-app/config.env
+MATRACA_PORT="8080"
+MATRACA_BIND="127.0.0.1"
+MATRACA_LOG_LEVEL="info"
+```
+
+#### Carregamento Nativo em Shell:
+```sh
+if [ -f "$CONFIG_FILE" ]; then
+    set -a
+    # shellcheck source=/dev/null
+    . "$CONFIG_FILE"
+    set +a
+fi
+```
+
+### 12.3 Dockerfiles Canônicos no Perfil Lumen
+
+#### Template Rust (Multi-stage + `scratch` estático):
+```dockerfile
+# Estágio de compilação
+FROM rust:1.80-alpine3.20 AS builder
+RUN apk add --no-cache musl-dev
+WORKDIR /build
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
+RUN cargo build --release --target x86_64-unknown-linux-musl
+
+# Imagem final de produção (Zero Inchaço)
+FROM scratch
+USER 1000:1000
+COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/app /usr/local/bin/app
+ENTRYPOINT ["/usr/local/bin/app"]
+```
+
+#### Template PHP (Multi-stage + `alpine` com Non-root):
+```dockerfile
+# Estágio de dependências
+FROM composer:2 AS vendor
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+# Imagem final de execução
+FROM php:8.3-cli-alpine
+RUN adduser -D -u 1000 appuser
+WORKDIR /app
+COPY --chown=appuser:appuser . /app
+COPY --chown=appuser:appuser --from=vendor /app/vendor /app/vendor
+USER 1000:1000
+ENTRYPOINT ["php", "/app/bin/console"]
+```
+
+### 12.4 Higiene de Containers (`.dockerignore` e `compose.yaml`)
+Todo repositório com suporte a Docker **DEVE** incluir `.dockerignore` rigoroso na raiz:
+```dockerignore
+.git
+.env*
+!*.example
+target/
+vendor/
+tests/
+site/
+*.log
+```
+
+E para orquestração de desenvolvimento local, adotar `compose.yaml`:
+```yaml
+services:
+  app:
+    build: .
+    user: "1000:1000"
+    env_file:
+      - .env
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    restart: unless-stopped
+```
+
+
 

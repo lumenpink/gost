@@ -249,7 +249,8 @@
         <li><a href="#intl">7. Internacionalização (10 Línguas)</a></li>
         <li><a href="#cards">8. Cards Sociais & Safe Zone 4:3</a></li>
         <li><a href="#arquitetura">9. Arquitetura & SOLID Pragmático</a></li>
-        <li><a href="#perfil-lumen">10. Perfil Lumen</a></li>
+        <li><a href="#padroes-sistema">10. Padrões de Sistema & 12-Factor</a></li>
+        <li><a href="#perfil-lumen">11. Perfil Lumen</a></li>
       </ul>
     </nav>
 
@@ -495,13 +496,50 @@
       </div>
     </section>
 
+    <section id="padroes-sistema">
+      <h2>10. Aderência a Padrões de Sistema, 12-Factor & Containers</h2>
+      <p>O GOST impõe conformidade com convenções maduras do ecossistema Unix/Linux e da computação em nuvem para máxima previsibilidade e portabilidade:</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4>📂 XDG Base Directory</h4>
+          <p>Proibição de arquivos soltos na <code>$HOME</code>. Fallbacks canônicos obrigatórios: config em <code>~/.config</code>, data em <code>~/.local/share</code>, state/logs em <code>~/.local/state</code> e runtime sockets em <code>/run/user/$UID</code>.</p>
+        </div>
+        <div class="card">
+          <h4>⚙️ Precedência de Configuração</h4>
+          <p>Hierarquia estrita: Flags CLI &gt; Variáveis de Ambiente &gt; <code>.env</code> local &gt; Config do repositório &gt; XDG Config &gt; <code>/etc</code> &gt; Defaults. Formato plano <code>KEY=VALOR</code> amigável a shell.</p>
+        </div>
+        <div class="card">
+          <h4>☁️ Twelve-Factor Universal</h4>
+          <p>Aplicação dos princípios do 12-Factor em qualquer software: dependências explícitas, config no ambiente, processos stateless, port/socket binding, logs como fluxos contínuos e descartabilidade com graceful shutdown.</p>
+        </div>
+        <div class="card">
+          <h4>🖥️ Disciplina Unix & NO_COLOR</h4>
+          <p><code>stdout</code> exclusivo para saída de dados útil encadeável em pipes. <code>stderr</code> para logs, avisos e progresso. Aderência ao padrão <code>NO_COLOR</code> e detecção automática de TTY.</p>
+        </div>
+        <div class="card">
+          <h4>🔒 Modern TLS & Unix Sockets</h4>
+          <p>Banimento expresso de SSL/TLS &lt; 1.2 (RFC 8996). Negociação QUIC/HTTP3 &gt; HTTP/2 TLS 1.3. Preferência mandatória por UNIX Domain Sockets para IPC local entre daemons.</p>
+        </div>
+        <div class="card">
+          <h4>🐳 Containers OCI / Docker</h4>
+          <p>Multi-stage builds obrigatórios com bases mínimas (<code>scratch</code>/<code>alpine</code>). Execução estritamente não-root (<code>USER 1000:1000</code>), banimento de <code>:latest</code>, <code>.dockerignore</code> e <code>compose.yaml</code>.</p>
+        </div>
+        <div class="card">
+          <h4>🔑 Autenticação Single-User</h4>
+          <p>Cabeçalho <code>Authorization: Bearer &lt;key&gt;</code>, suporte à injeção via env ou sufixo <code>_FILE</code> para Docker Secrets e validação timing-safe obrigatória contra ataques de temporização.</p>
+        </div>
+      </div>
+    </section>
+
     <section id="perfil-lumen">
-      <h2>10. Perfil de Implementação: Lumen</h2>
+      <h2>11. Perfil de Implementação: Lumen</h2>
       <p>O ecossistema Lumen implementa a norma GOST com os seguintes serviços e convenções:</p>
       <ul>
         <li><strong>Forja Principal:</strong> Codeberg (instância Forgejo) sob <code>lumenpink/&lt;repo&gt;</code>.</li>
         <li><strong>Gestão de Hooks & Tickets:</strong> CLI <code>cccp</code> com validação de tickets obrigatórios (<code>ref #N</code> / <code>closes #N</code>) e versionamento.</li>
         <li><strong>Arquitetura & Pastas:</strong> Desacoplamento via Portas & Adaptadores (<code>src/domain/</code>, <code>src/adapters/</code> em Rust e <code>src/Domain/</code>, <code>src/Infrastructure/</code> em PHP) com In-Memory Fakes para testes herméticos.</li>
+        <li><strong>Padrões de Sistema & Containers:</strong> Resolução XDG em Shell/Rust/PHP, arquivos de config <code>KEY=VALOR</code>, Dockerfile multi-stage com <code>scratch</code> (Rust) e <code>alpine</code> non-root (PHP).</li>
         <li><strong>Internacionalização:</strong> Matriz das 10 línguas sob <code>site/&lt;lang&gt;/</code> e roteador cliente em <code>site/index.html</code>.</li>
         <li><strong>Cards Sociais:</strong> Script <code>scripts/generate_og_image.py</code> e simulação em <code>site/card_preview.html</code>.</li>
         <li><strong>Testes Shell:</strong> <code>shellspec</code> com cobertura via <code>kcov</code>.</li>
