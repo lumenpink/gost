@@ -248,7 +248,8 @@
         <li><a href="#vitrine">6. Vitrine Pública</a></li>
         <li><a href="#intl">7. Internacionalização (10 Línguas)</a></li>
         <li><a href="#cards">8. Cards Sociais & Safe Zone 4:3</a></li>
-        <li><a href="#perfil-lumen">9. Perfil Lumen</a></li>
+        <li><a href="#arquitetura">9. Arquitetura & SOLID Pragmático</a></li>
+        <li><a href="#perfil-lumen">10. Perfil Lumen</a></li>
       </ul>
     </nav>
 
@@ -465,12 +466,42 @@
       </div>
     </section>
 
+    <section id="arquitetura">
+      <h2>9. Arquitetura de Domínio e SOLID Pragmático</h2>
+      <p>O GOST orienta a construção de software com foco no isolamento rigoroso do Core em relação a subsistemas de I/O, hermeticidade em testes e rejeição ao overengineering cerimonial:</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4>🔌 Portas & Adaptadores (DIP)</h4>
+          <p>O Core (regras e use cases) nunca depende de banco, rede ou frameworks. Interfaces/traits definem as portas de entrada e saída. Dependências apontam sempre para dentro.</p>
+        </div>
+        <div class="card">
+          <h4>⚡ Hermeticidade & In-Memory Fakes</h4>
+          <p>Testes de domínio executam em microssegundos em memória pura. Preferência absoluta por Fakes leves em vez de frameworks pesados de mocks dinâmicos frágeis.</p>
+        </div>
+        <div class="card">
+          <h4>🛡️ Parse, Don't Validate (Anti-Bloat)</h4>
+          <p>Validação estrita na borda externa (adaptadores/controllers). O Core opera com primitivos confiáveis, eliminando Value Objects vazios e anêmicos sem comportamento real.</p>
+        </div>
+        <div class="card">
+          <h4>🏷️ Enums Nativos para Estado</h4>
+          <p>Proibição de tipos fracos (strings mágicas) para máquinas de estado e transições de ciclo de vida. Uso de <code>enum</code> nativo da linguagem com exaustividade no linter.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h4>⚖️ Princípio de Gradação Arquitetural</h4>
+        <p>A complexidade estrutural deve ser proporcional ao escopo. Micro-ferramentas CLI e scripts simples mantêm estrutura direta sem camadas artificiais; serviços e aplicações complexas segregam Core e Adaptadores.</p>
+      </div>
+    </section>
+
     <section id="perfil-lumen">
-      <h2>9. Perfil de Implementação: Lumen</h2>
+      <h2>10. Perfil de Implementação: Lumen</h2>
       <p>O ecossistema Lumen implementa a norma GOST com os seguintes serviços e convenções:</p>
       <ul>
         <li><strong>Forja Principal:</strong> Codeberg (instância Forgejo) sob <code>lumenpink/&lt;repo&gt;</code>.</li>
         <li><strong>Gestão de Hooks & Tickets:</strong> CLI <code>cccp</code> com validação de tickets obrigatórios (<code>ref #N</code> / <code>closes #N</code>) e versionamento.</li>
+        <li><strong>Arquitetura & Pastas:</strong> Desacoplamento via Portas & Adaptadores (<code>src/domain/</code>, <code>src/adapters/</code> em Rust e <code>src/Domain/</code>, <code>src/Infrastructure/</code> em PHP) com In-Memory Fakes para testes herméticos.</li>
         <li><strong>Internacionalização:</strong> Matriz das 10 línguas sob <code>site/&lt;lang&gt;/</code> e roteador cliente em <code>site/index.html</code>.</li>
         <li><strong>Cards Sociais:</strong> Script <code>scripts/generate_og_image.py</code> e simulação em <code>site/card_preview.html</code>.</li>
         <li><strong>Testes Shell:</strong> <code>shellspec</code> com cobertura via <code>kcov</code>.</li>

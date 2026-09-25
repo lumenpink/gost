@@ -318,7 +318,39 @@ Para impedir que redes sociais apliquem elipses (`...`) decepando palavras:
 
 ---
 
-## 12. Perfis de Implementação (*Profiles*)
+## 12. Arquitetura de Domínio e SOLID Pragmático
+
+A longevidade, manutenibilidade e velocidade de evolução de um projeto dependem do desacoplamento estrito entre as regras centrais de negócio e os subsistemas voláteis de entrada/saída (I/O). O GOST adota uma abordagem de arquitetura hexagonal (Portas e Adaptadores) pragmática, orientada à hermeticidade e avessa a overengineering.
+
+### 12.1 Desacoplamento de Domínio e DIP (Ports & Adapters)
+1. **Inversão de Dependência (DIP):** Módulos centrais de alto nível (*Core / Domínio*) **NÃO DEVEM** depender de módulos de baixo nível (bancos de dados, frameworks web, bibliotecas de rede, filesystem, drivers de terminal). Ambos **DEVEM** depender de abstrações (interfaces ou traits).
+2. **Direção Unidirecional de Dependências:** A dependência aponta invariavelmente para dentro. O Core **NUNCA DEVE** importar ou referenciar adaptadores de infraestrutura.
+3. **Portas de Entrada (*Driving / Input Ports*):** Interfaces expostas pelo Core que definem os casos de uso do sistema (invocadas por controllers HTTP, comandos CLI, consumidores de fila).
+4. **Portas de Saída (*Driven / Output Ports*):** Contratos (interfaces/traits) declarados pelo Core para suprir suas necessidades de comunicação externa (persistência, envio de eventos, relógio do sistema, clientes HTTP). Os adaptadores de infraestrutura implementam esses contratos.
+
+### 12.2 Hermeticidade Absoluta e Testes em Memória
+1. **Determinismo em Milissegundos:** A suíte de testes unitários do Core **DEVE** executar em isolamento absoluto de I/O, rodando em microssegundos ou milissegundos sem depender de sockets, containers, daemons externos ou arquivos em disco.
+2. **Adoção Canônica de In-Memory Fakes:** Para satisfazer as Portas de Saída nos testes de domínio, o projeto **DEVE** priorizar o uso de **Adaptadores em Memória** (*In-Memory Fakes* ou *stubs* leves) em vez de bibliotecas pesadas de mock dinâmico.
+3. **Repositórios em Memória:** Estruturas simples baseadas em arrays, listas ou mapas nativos da linguagem que simulam o armazenamento preservando a semântica da porta. Isso elimina complexidade de mocking frágil, facilita refatorações seguras e garante hermeticidade total.
+
+### 12.3 Filosofia de Tipos Primitivos e Validação na Borda (*Parse, Don't Validate*)
+1. **Princípio Anti-Bloat:** O GOST rejeita o excesso de cerimônia de *Value Objects* anêmicos (proliferação de classes invólucro vazias para cada string ou número básico sem comportamento real associado).
+2. **Validação e Parse na Borda (*Edge Validation*):** Toda entrada de dados brutos (requisições HTTP, argumentos de linha de comando, mensagens de fila, payloads JSON) **DEVE** ser sanitizada, validada e tipada na borda do sistema (adaptadores de entrada, DTOs de request, validadores de borda).
+3. **Primitivos Confiáveis no Core:** Uma vez que os dados ultrapassam a fronteira da borda e adentram o Core, este opera com tipos primitivos nativos da linguagem (`string`, `int`, `float`, `bool`, tuplas, structs transparentes) ou tipos agregados claros, confiando nos dados já parsed. Tipos dedicados são reservados para conceitos que realmente encerram invariantes complexas ou regras de negócio vivas.
+
+### 12.4 Modelagem de Estados Finitos com Enums Nativos
+1. **Proibição de Tipos Fracos para Estado:** É estritamente **PROIBIDO** o uso de strings soltas (*stringly-typed*) ou inteiros arbitrários para representar estados de processos, status de ciclo de vida ou categorias fixas.
+2. **Enums Nativos da Linguagem:** Estados de entidades e máquinas de estado finitas **DEVEM** ser expressos através de `enum` nativo da linguagem (ex: *backed enums* em PHP 8.1+, `enum` em Rust).
+3. **Coesão Comportamental:** Métodos de verificação de transições válidas, predicados e propriedades derivadas **DEVEM** ser encapsulados no próprio enum ou no modelo de domínio, permitindo verificação estática de exaustividade em tempo de compilação ou análise estática (Zero Warnings).
+
+### 12.5 Princípio de Gradação Arquitetural para Ferramentas e Serviços
+A estrutura arquitetural do repositório **DEVE** ser proporcional à sua responsabilidade:
+1. **Micro-ferramentas e Scripts Únicos:** Utilitários de CLI de escopo restrito ou filtros de terminal **NÃO DEVEM** adotar camadas excessivas de indireção. Devem manter estrutura modular direta (ex: arquivo único ou módulo único contendo funções puras e ponto de entrada).
+2. **Aplicações e Serviços:** Sistemas com regras de domínio ricas, múltiplos casos de uso ou múltiplos adaptadores de transporte **DEVEM** implementar a segregação estrita entre Core (Domínio/Aplicação) e Infraestrutura (Adaptadores/Configuração).
+
+---
+
+## 13. Perfis de Implementação (*Profiles*)
 
 Esta norma GOST estabelece requisitos agnósticos a fornecedores e tecnologias. Ambientes específicos (organizações, indivíduos ou ecossistemas) **DEVEM** declarar suas escolhas concretas de infraestrutura em documentos de perfil sob o diretório `profiles/` (ex: `profiles/<nome>.md`).
 
@@ -329,6 +361,7 @@ Um perfil de implementação define:
 - Quais frameworks e utilitários executam a suíte de testes, medem cobertura/mutação e aplicam linters com Zero Warnings.
 - Como são gerados e validados os banners com Safe Zone 4:3 e os pacotes das 10 línguas.
 - Onde se localiza o catálogo central de descoberta de projetos.
+
 
 
 

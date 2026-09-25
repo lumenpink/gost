@@ -379,3 +379,130 @@ Utiliza Python + Pillow para renderizar o banner em 1200x630 com Safe Zone 4:3 c
 ### 10.2 Preview de Cards (`site/card_preview.html`)
 Para validação visual fiel antes do deploy, recomenda-se incluir em `site/card_preview.html` a simulação de renderização em WhatsApp (Dark Mode) e Twitter/X (Summary Large Image), conforme arquitetura do KokoroSim.
 
+---
+
+## 11. Arquitetura Pragmática & Estrutura de Código no Perfil Lumen
+
+O perfil Lumen materializa os princípios de Inversão de Dependência (DIP), hermeticidade e anti-bloat através de padrões objetivos adaptados às linguagens centrais do ecossistema (**Rust** e **PHP**).
+
+### 11.1 Regra de Gradação: Micro-ferramenta vs. Aplicação
+1. **Micro-ferramentas e Scripts Utilitários:** Ferramentas de escopo pontual (ex: CLI de 100 linhas ou filtro de texto) **NÃO DEVEM** ser fracionadas em múltiplas pastas cerimoniais. Ficam contidas diretamente em `src/main.rs` (Rust) ou arquivo executável único (PHP/Bash).
+2. **Aplicações e Serviços:** Projetos que envolvam persistência, múltiplos protocolos ou casos de uso complexos **DEVEM** adotar a divisão canônica entre Domínio e Adaptadores.
+
+### 11.2 Padrão de Diretórios para Rust
+Em sistemas, daemons e milters:
+
+```text
+src/
+├── domain/             # Regras de negócio puras (sem dependências de I/O)
+│   ├── mod.rs
+│   ├── entity.rs       # Modelos e invariantes de domínio
+│   ├── status.rs       # Enums nativos para máquinas de estado
+│   └── ports.rs        # Traits de I/O (Output Ports: ex: MessageStore, ClientApi)
+├── application/        # Orquestração e Casos de Uso
+│   ├── mod.rs
+│   └── use_cases.rs    # Lógica que opera sobre os traits de domínio
+├── adapters/           # Implementações de I/O e interfaces de transporte
+│   ├── mod.rs
+│   ├── in_memory.rs    # Fake em memória para testes unitários herméticos
+│   ├── sqlite.rs       # Adaptador real de persistência
+│   └── cli.rs          # Entrada via linha de comando (ex: clap)
+└── main.rs             # Composition Root: instancia adaptadores e orquestra o bootstrap
+```
+
+#### Exemplo Canônico de Fake em Memória (Rust):
+```rust
+// src/domain/ports.rs
+pub trait MessageStore {
+    fn save(&mut self, id: &str, content: &str) -> Result<(), String>;
+    fn find(&self, id: &str) -> Option<String>;
+}
+
+// src/adapters/in_memory.rs
+use std::collections::HashMap;
+use crate::domain::ports::MessageStore;
+
+#[derive(Default)]
+pub struct InMemoryMessageStore {
+    items: HashMap<String, String>,
+}
+
+impl MessageStore for InMemoryMessageStore {
+    fn save(&mut self, id: &str, content: &str) -> Result<(), String> {
+        self.items.insert(id.to_string(), content.to_string());
+        Ok(())
+    }
+    fn find(&self, id: &str) -> Option<String> {
+        self.items.get(id).cloned()
+    }
+}
+```
+*Zero mocks dinâmicos:* Os testes unitários do caso de uso instanciam `InMemoryMessageStore` diretamente, rodando em microssegundos sem rede nem arquivos.
+
+### 11.3 Padrão de Diretórios para PHP
+Em APIs, aplicações IndieWeb e serviços web:
+
+```text
+src/
+├── Domain/             # Núcleo de domínio (PHP puro, zero dependências externas)
+│   ├── Models/         # Entidades de negócio
+│   ├── Enums/          # Backed Enums nativos (estados e categorias)
+│   └── Ports/          # Contratos e Interfaces (Input/Output Ports)
+├── Application/        # Casos de uso e orquestração
+│   └── UseCases/       # Handlers executando fluxos de domínio
+└── Infrastructure/     # Adaptadores concretos
+    ├── Persistence/    # Implementações reais (SQLite/Pdo) e In-Memory Fakes
+    ├── Http/           # Controllers e Middlewares
+    └── Console/        # Comandos CLI
+tests/
+├── Unit/               # Testes herméticos usando In-Memory Fakes (milissegundos)
+└── Integration/        # Testes com fixtures de banco SQLite em arquivo temporário
+```
+
+#### Exemplo Canônico de Fake em Memória e Pest (PHP):
+```php
+// src/Domain/Ports/TokenStorageInterface.php
+namespace App\Domain\Ports;
+
+interface TokenStorageInterface {
+    public function store(string $token, string $userId): void;
+    public function find(string $token): ?string;
+}
+
+// src/Infrastructure/Persistence/InMemoryTokenStorage.php
+namespace App\Infrastructure\Persistence;
+
+use App\Domain\Ports\TokenStorageInterface;
+
+final class InMemoryTokenStorage implements TokenStorageInterface {
+    /** @var array<string, string> */
+    private array $tokens = [];
+
+    public function store(string $token, string $userId): void {
+        $this->tokens[$token] = $userId;
+    }
+
+    public function find(string $token): ?string {
+        return $this->tokens[$token] ?? null;
+    }
+}
+```
+No teste Pest (`tests/Unit/AuthenticateUserTest.php`):
+```php
+test('autentica usuário com storage em memória', function () {
+    $storage = new \App\Infrastructure\Persistence\InMemoryTokenStorage();
+    $storage->store('tok-123', 'usr-456');
+
+    expect($storage->find('tok-123'))->toBe('usr-456')
+        ->and($storage->find('inexistente'))->toBeNull();
+});
+```
+
+### 11.4 Filosofia Anti-Bloat: Tipos Primitivos & Validação na Borda
+* **Parse, Don't Validate na Entrada:** A validação e desinfecção de strings, limites numéricos e decodificação JSON ocorrem no adaptador de entrada (ex: validação de request HTTP ou parser do CLI).
+* **Primitivos Confiáveis no Domínio:** Evita-se criar Value Objects cerimoniais (ex: `UsernameString`, `IdInt`) quando tipos primitivos nativos (`string`, `int`) com tipagem estrita da linguagem atendem com clareza.
+* **Modelagem com Enums Nativos:**
+  - Rust: `pub enum TaskState { Pending, Running, Finished { exit_code: i32 } }`
+  - PHP: `enum OrderStatus: string { case Pending = 'pending'; case Approved = 'approved'; case Cancelled = 'cancelled'; }`
+
+
