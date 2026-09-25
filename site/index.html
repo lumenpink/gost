@@ -270,19 +270,26 @@
     </section>
 
     <section id="anatomia">
-      <h2>2. Anatomia Mínima da Raiz</h2>
+      <h2>2. Anatomia Mínima da Raiz & Declaração GOSTVER</h2>
       <p>Todo repositório aderente à especificação mantém uma base uniforme previsível:</p>
       <pre><code>.
+├── GOSTVER                     # Declaração da norma e perfil (ex: GOST_VERSION="1.0.0")
 ├── LICENSE                     # Licença declarada (CC0-1.0 como padrão)
 ├── VERSION                     # Versão SemVer pura em texto simples (ex: 0.1.0-dev.1)
 ├── CHANGELOG.md                # Histórico no padrão Keep a Changelog
 ├── README.md                   # Resumo executivo e instrução de partida
 ├── .gitignore                  # Regras de higiene de arquivos
+├── .editorconfig               # Configuração canônica de formatação
 ├── site/                       # Portal estático de documentação pública
 │   ├── index.html              # Interface de visualização da documentação
 │   └── _headers                # Cabeçalhos HTTP de segurança obrigatórios
 └── .forgejo/ / .github/        # Workflows declarativos de CI/CD
     └── workflows/ci.yml</code></pre>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h4>🏷️ Separação: Meta-Norma (GOSTVER) vs. Especificação de Domínio (SPEC.md)</h4>
+        <p>Aplicações que adotam o GOST não copiam a norma técnica. Elas utilizam seu próprio <code>SPEC.md</code> para descrever as regras de negócio e interfaces do projeto (criado na Etapa 2 do DD-TDD), enquanto declaram conformidade com o GOST através do arquivo <code>GOSTVER</code> na raiz.</p>
+      </div>
     </section>
 
     <section id="ciclo">

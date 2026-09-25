@@ -2,14 +2,33 @@
 
 > **Norma Técnica Unificada para Repositórios, Governança, Ciclo de Desenvolvimento e Documentação Pública.**
 
-O **GOST** (*General Open Source Standard*, inspirado nos históricos padrões técnicos ГОСТ) é uma especificação aberta que estabelece os requisitos mínimos de higiene, arquitetura de arquivos, rastreabilidade de desenvolvimento e publicação de documentação para novos projetos.
+O **GOST** (*General Open Source Standard*, inspirado nos históricos padrões técnicos ГОСТ) é uma especificação aberta que estabelece os requisitos mínimos de higiene, arquitetura de arquivos, rastreabilidade de desenvolvimento, padrões operacionais e publicação de documentação para novos projetos.
 
 ---
 
-## 📑 Documentos da Especificação
+## 📑 Estrutura da Especificação e Plataforma
 
-* **[Norma Técnica Universal (`SPEC.md`)](./SPEC.md)**: A especificação normativa completa, agnóstica a fornecedores e tecnologias (requisitos de licenciamento, anatomia da raiz, ciclo DD-TDD, CI/CD e vitrine estática).
+* **[Norma Técnica Universal (`SPEC.md`)](./SPEC.md)**: A especificação normativa completa consolidada.
+* **[Especificações por Idioma (`specs/`)](./specs/)**:
+  - **[Português (`specs/pt/SPEC.md`)](./specs/pt/SPEC.md)**: Fonte primária em Português.
+  - **[English (`specs/en/SPEC.md`)](./specs/en/SPEC.md)**: Canonical international technical baseline.
+  - **[Regras como Dado (`specs/rules.json`)](./specs/rules.json)**: Schema de validação formal consumível por linters e CLI (`cccp`).
+* **[Guias de Migração (`upgrades/`)](./upgrades/)**: Diff e passos de transição entre versões (ex: [de 0.1 para 1.0.0](./upgrades/from-0.1-to-1.0.md)).
 * **[Perfil Lumen (`profiles/lumen.md`)](./profiles/lumen.md)**: O perfil de implementação concreto do ecossistema Lumen (Codeberg/Forgejo, CLI `cccp`, deploy em `*.2lp.in` via Cloudflare Workers e registro no `catalog.json`).
+
+---
+
+## 🏷️ Como Declarar Conformidade em Aplicações (`GOSTVER`)
+
+Repositórios desenvolvidos sob o padrão GOST **não copiam a norma inteira**. Eles mantêm seu próprio `SPEC.md` de regras de negócio da aplicação e declaram conformidade com a norma através do arquivo **`GOSTVER`** na raiz:
+
+```bash
+# GOSTVER — Declaração de Conformidade com o Padrão GOST
+GOST_VERSION="1.0.0"
+GOST_PROFILE_URL="https://codeberg.org/lumenpink/profiles/raw/branch/main/lumen.md"
+```
+
+O CLI `cccp` utiliza essas variáveis para sincronizar o cache local em `.gost/` e auditar a conformidade técnica do repositório (`cccp gost check`).
 
 ---
 
@@ -23,7 +42,7 @@ O **GOST** (*General Open Source Standard*, inspirado nos históricos padrões t
 * **Zero Commits sem Ticket:** Nenhum commit é aceito sem referência formal a um ticket (`(ref #<id>)` nos intermediários e `(closes #<id>)` na finalização). Hooks locais bloqueiam commits soltos.
 * **Branches por Ticket:** Desenvolvimento estritamente isolado em `feat/<id>-<slug>` ou `fix/<id>-<slug>`. Proibido commitar na `main`.
 * **As 5 Etapas:** Ticket $\to$ Doc in develop $\to$ Failing Test $\to$ Fix / Implement $\to$ Finish Docs & Close.
-* **Definition of Done (DoD):** Checklist objetivo para encerramento de qualquer issue.
+* **Protocolo para Agentes de IA:** Comandos mnemônicos determinísticos (`DCPD`, `DCP`, `PLAN`, `TDD`, `AUDIT`, `FIX`, `RELEASE`).
 
 ### 3. Estratégia e Qualidade de Testes
 * **Pirâmide Completa:** Validação em camadas com testes unitários, funcionais, de integração e E2E (via **Playwright**).
@@ -34,16 +53,22 @@ O **GOST** (*General Open Source Standard*, inspirado nos históricos padrões t
 * **Zero Warnings:** Linters e compiladores executam com flags equivalentes a `-D warnings`. Qualquer aviso pendente quebra o build.
 * **Anti-Bloat & Segurança:** Dependências externas mínimas e justificadas no ticket com auditoria automática contínua.
 
-### 5. Vitrine Pública Obrigatória
-Todo repositório expõe sua documentação pública em `./site/` com cabeçalhos de segurança HTTP em `site/_headers`, publicada continuamente via CI/CD.
+### 5. Arquitetura de Domínio & SOLID Pragmático
+* **Portas & Adaptadores (DIP):** Desacoplamento estrito entre o Core e I/O.
+* **In-Memory Fakes:** Testes unitários herméticos rodando em microssegundos sem mocks dinâmicos pesados.
+* **Parse, Don't Validate:** Validação na borda com tipos primitivos confiáveis no Core e Enums nativos para máquinas de estado.
 
-### 6. Internacionalização (Matriz das 10 Línguas)
-* **Código e Commits:** Estritamente em Inglês.
-* **Documentação Multilíngue:** Matriz de 10 idiomas oficiais (`en`, `pt`, `es`, `fr`, `de`, `it`, `ru`, `zh`, `ja`, `ar`) com roteamento cliente e suporte a RTL para o árabe.
+### 6. Padrões de Sistema, 12-Factor & Containers OCI
+* **XDG Base Directory:** Conformidade obrigatória com fallbacks universais (`~/.config`, `~/.local/share`, `~/.local/state`, `~/.cache`, `/run/user/$UID`).
+* **Precedência de Config:** Flags > Env > `.env` > Config Local > XDG Config > `/etc` > Defaults. Formato plano `CHAVE=VALOR` amigável a POSIX Shell.
+* **Twelve-Factor Universal:** Princípios aplicados a daemons, microsserviços e ferramentas de terminal.
+* **Streams Unix & NO_COLOR:** `stdout` puro para dados, `stderr` para logs; suporte nativo a `NO_COLOR` e detecção de TTY.
+* **Containers OCI:** Multi-stage obrigatório com imagens base mínimas (`scratch`/`alpine`), execução non-root (`USER 1000:1000`), banimento de `:latest` e padrão `compose.yaml`.
 
-### 7. Cards Sociais e Safe Zone 4:3 (Padrão KokoroSim)
-* **Banner de Compartilhamento:** 1200 × 630 px com miolo central útil de 720px a 840px e sangrias laterais de 180-240px blindando contra recortes 1:1 do WhatsApp.
-* **Limites Anti-Truncamento:** `og:title` de 50-65 chars (máx 70) e `og:description` de 120-155 chars (máx 160).
+### 7. Vitrine Pública & Internacionalização
+* **Vitrine `./site/`:** Publicação estática contínua na borda com cabeçalhos de segurança HTTP.
+* **Matriz das 10 Línguas:** Paridade total nas 10 línguas oficiais (`en`, `pt`, `es`, `fr`, `de`, `it`, `ru`, `zh`, `ja`, `ar`) e suporte a RTL.
+* **Cards Sociais KokoroSim:** Banners em 1200x630 com Safe Zone 4:3 centralizada contra recortes móveis.
 
 ---
 
@@ -52,7 +77,7 @@ Todo repositório expõe sua documentação pública em `./site/` com cabeçalho
 Consulte o passo a passo completo no [Perfil Lumen](./profiles/lumen.md):
 1. Crie o repositório remoto no Codeberg via API.
 2. Inicialize o git local (`git init -b main`).
-3. Crie os arquivos base (`.cccprc`, `.gitignore`, `VERSION`, `CHANGELOG.md`, `LICENSE`, `wrangler.jsonc`, `site/`).
+3. Crie os arquivos base (`GOSTVER`, `.cccprc`, `.gitignore`, `VERSION`, `CHANGELOG.md`, `LICENSE`, `wrangler.jsonc`, `site/`).
 4. Execute `cccp install` para ativar os hooks de validação e release.
 5. Registre no catálogo central `~/src/catalog.json`.
 

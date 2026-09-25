@@ -16,12 +16,17 @@ jobs:
       - name: "Verify Essential Files"
         run: |
           test -f SPEC.md || { echo "SPEC.md missing"; exit 1; }
+          test -f GOSTVER || { echo "GOSTVER missing"; exit 1; }
           test -f README.md || { echo "README.md missing"; exit 1; }
           test -f LICENSE || { echo "LICENSE missing"; exit 1; }
           test -f VERSION || { echo "VERSION missing"; exit 1; }
           test -f site/index.html || { echo "site/index.html missing"; exit 1; }
           test -f site/_headers || { echo "site/_headers missing"; exit 1; }
-          echo "All essential GOST baseline files are present."
+          test -f specs/pt/SPEC.md || { echo "specs/pt/SPEC.md missing"; exit 1; }
+          test -f specs/en/SPEC.md || { echo "specs/en/SPEC.md missing"; exit 1; }
+          test -f specs/rules.json || { echo "specs/rules.json missing"; exit 1; }
+          test -f upgrades/from-0.1-to-1.0.md || { echo "upgrades/from-0.1-to-1.0.md missing"; exit 1; }
+          echo "All essential GOST baseline files and specifications are present."
 
   deploy-site:
     name: "Deploy Documentation Site"
