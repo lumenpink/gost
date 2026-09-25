@@ -131,6 +131,14 @@
       "severity": "SHOULD",
       "check": "file_exists",
       "target": "GOSTVER"
+    },
+    {
+      "id": "GOST-17-LANGUAGE-SPECS",
+      "section": 14,
+      "title": "Adoção de Especificações Modulares por Linguagem",
+      "severity": "SHOULD",
+      "check": "language_spec_adherence",
+      "supported_languages": ["php", "rust", "shell", "javascript", "r"]
     }
   ]
 }

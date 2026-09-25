@@ -25,8 +25,13 @@ jobs:
           test -f specs/pt/SPEC.md || { echo "specs/pt/SPEC.md missing"; exit 1; }
           test -f specs/en/SPEC.md || { echo "specs/en/SPEC.md missing"; exit 1; }
           test -f specs/rules.json || { echo "specs/rules.json missing"; exit 1; }
+          test -f specs/languages/php.md || { echo "specs/languages/php.md missing"; exit 1; }
+          test -f specs/languages/rust.md || { echo "specs/languages/rust.md missing"; exit 1; }
+          test -f specs/languages/shell.md || { echo "specs/languages/shell.md missing"; exit 1; }
+          test -f specs/languages/javascript.md || { echo "specs/languages/javascript.md missing"; exit 1; }
+          test -f specs/languages/r.md || { echo "specs/languages/r.md missing"; exit 1; }
           test -f upgrades/from-0.1-to-1.0.md || { echo "upgrades/from-0.1-to-1.0.md missing"; exit 1; }
-          echo "All essential GOST baseline files and specifications are present."
+          echo "All essential GOST baseline files, language modules and specifications are present."
 
   deploy-site:
     name: "Deploy Documentation Site"

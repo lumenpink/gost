@@ -13,6 +13,12 @@ O **GOST** (*General Open Source Standard*, inspirado nos históricos padrões t
   - **[Português (`specs/pt/SPEC.md`)](./specs/pt/SPEC.md)**: Fonte primária em Português.
   - **[English (`specs/en/SPEC.md`)](./specs/en/SPEC.md)**: Canonical international technical baseline.
   - **[Regras como Dado (`specs/rules.json`)](./specs/rules.json)**: Schema de validação formal consumível por linters e CLI (`cccp`).
+* **[Módulos Técnicos por Linguagem (`specs/languages/`)](./specs/languages/)**:
+  - **[PHP (`specs/languages/php.md`)](./specs/languages/php.md)**: Pest, PHPStan (max), Pint, Infection, Composer.
+  - **[Rust (`specs/languages/rust.md`)](./specs/languages/rust.md)**: Cargo test, Clippy, rustfmt, cargo-mutants, Tarpaulin/llvm-cov.
+  - **[POSIX Shell (`specs/languages/shell.md`)](./specs/languages/shell.md)**: ShellSpec, kcov, ShellCheck, shfmt, XDG nativo.
+  - **[JavaScript / TypeScript (`specs/languages/javascript.md`)](./specs/languages/javascript.md)**: Biome/Prettier, Playwright E2E, Lockfiles.
+  - **[R (`specs/languages/r.md`)](./specs/languages/r.md)**: testthat, covr, lintr, styler, renv (Twelve-Factor R reprodutível).
 * **[Guias de Migração (`upgrades/`)](./upgrades/)**: Diff e passos de transição entre versões (ex: [de 0.1 para 1.0.0](./upgrades/from-0.1-to-1.0.md)).
 * **[Perfil Lumen (`profiles/lumen.md`)](./profiles/lumen.md)**: O perfil de implementação concreto do ecossistema Lumen (Codeberg/Forgejo, CLI `cccp`, deploy em `*.2lp.in` via Cloudflare Workers e registro no `catalog.json`).
 
@@ -20,12 +26,13 @@ O **GOST** (*General Open Source Standard*, inspirado nos históricos padrões t
 
 ## 🏷️ Como Declarar Conformidade em Aplicações (`GOSTVER`)
 
-Repositórios desenvolvidos sob o padrão GOST **não copiam a norma inteira**. Eles mantêm seu próprio `SPEC.md` de regras de negócio da aplicação e declaram conformidade com a norma através do arquivo **`GOSTVER`** na raiz:
+Repositórios desenvolvidos sob o padrão GOST **não copiam a norma inteira**. Eles mantêm seu próprio `SPEC.md` de regras de negócio da aplicação e declaram conformidade com a norma através do arquivo **`GOSTVER`** na raiz, especificando opcionalmente as linguagens ativas para carregar apenas os módulos necessários (anti-bloat):
 
 ```bash
 # GOSTVER — Declaração de Conformidade com o Padrão GOST
 GOST_VERSION="1.0.0"
 GOST_PROFILE_URL="https://codeberg.org/lumenpink/profiles/raw/branch/main/lumen.md"
+GOST_LANGUAGES="php,javascript"   # Baixa apenas php.md e javascript.md em .gost/languages/
 ```
 
 O CLI `cccp` utiliza essas variáveis para sincronizar o cache local em `.gost/` e auditar a conformidade técnica do repositório (`cccp gost check`).
