@@ -349,6 +349,20 @@
           <p>Critérios objetivos: teste falho histórico comprovado, código verde, cobertura &gt; 90%, zero mutantes críticos, docs atualizadas e CI verde.</p>
         </div>
       </div>
+
+      <div class="card" style="margin-top: 1.5rem;">
+        <h4>🤖 Protocolo de Comandos para Agentes de IA (Agent Dispatch)</h4>
+        <p>Para mitigar ações não autorizadas e acelerar o fluxo entre humanos e agentes autônomos, o GOST padroniza comandos operacionais diretos:</p>
+        <ul style="margin-left: 1.25rem; margin-top: 0.5rem; font-size: 0.95rem;">
+          <li><code>DCPD</code> <strong>(Do, Commit, Push, Deploy)</strong>: Execução completa de ponta a ponta com testes, commit com <code>(closes #N)</code>, push, merge na <code>main</code> e deploy contínuo.</li>
+          <li><code>DCP</code> <strong>(Do, Commit, Push)</strong>: Implementação e push restrito à branch da feature, mantendo o PR aberto no Codeberg para revisão humana prévia.</li>
+          <li><code>PLAN</code> <strong>(Plan &amp; Propose)</strong>: Diagnóstico e formulação de proposta sem modificar arquivos de código e sem commitar.</li>
+          <li><code>TDD</code> <strong>(Ticket, Doc, Test, Do)</strong>: Execução estrita das 5 etapas DD-TDD com commits separados de documentação preliminar e teste falho.</li>
+          <li><code>AUDIT</code> <strong>(Audit &amp; Check)</strong>: Auditoria passiva de linters (<code>-D warnings</code>), testes, cobertura (&ge;90%), mutantes e segurança.</li>
+          <li><code>FIX</code> <strong>(Fix &amp; Clean)</strong>: Saneamento técnico de avisos de análise estática e formatação sem alteração de regra de negócio.</li>
+          <li><code>RELEASE</code> <strong>(Release &amp; Tag)</strong>: Bump semântico no <code>VERSION</code>, consolidação do changelog e publicação de tags Git via <code>cccp</code>.</li>
+        </ul>
+      </div>
     </section>
 
     <section id="testes">

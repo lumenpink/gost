@@ -118,6 +118,21 @@ Um ticket só pode ser considerado concluído e encerrado via `(closes #<id>)` s
 - [ ] Análise estática limpa (Zero Warnings).
 - [ ] Pipeline de CI/CD 100% verde.
 
+### 5.5 Protocolo de Comandos para Agentes de IA (*Agent Dispatch*)
+Em repositórios GOST desenvolvidos ou mantidos em colaboração com agentes de inteligência artificial (LLM/CLI), a interação entre o humano e o agente **DEVE** aderir a um vocabulário determinístico de comandos operacionais para mitigar ações não autorizadas (como commits arbitrários, quebra do fluxo de tickets ou merges indevidos):
+
+| Comando | Significado Canônico | Escopo de Autorização Concedida ao Agente |
+|:---:|---|---|
+| **`DCPD`** | **Do, Commit, Push, Deploy** | Autorização total de ponta a ponta: implementa código e testes, valida linters/gates locais, cria commit convencional com `(closes #<id>)`, faz push da branch, executa merge na `main` e dispara o pipeline de deploy. |
+| **`DCP`** | **Do, Commit, Push** | Implementa, testa, commita e envia o push **exclusivamente para a branch de trabalho**, deixando o Pull Request aberto no Codeberg/Forgejo para revisão e validação humana prévia. |
+| **`PLAN`** | **Plan & Propose** | Modo estritamente consultivo e investigativo: pesquisa o código, elabora diagnóstico e formula proposta detalhada de plano/ticket, **sem editar arquivos e sem commitar**. |
+| **`TDD`** | **Ticket, Doc, Test, Do** | Execução rigorosa das 5 etapas sequenciais do ciclo DD-TDD: criação formal de ticket, commit de contrato preliminar (*Doc in develop*), commit de teste quebrado (*Failing test*) e código funcional. |
+| **`AUDIT`** | **Audit & Check** | Inspeção passiva do repositório: executa linters em severidade máxima (`-D warnings`), verifica cobertura (≥90%), testa mutantes, audita vulnerabilidades em dependências e checa integridade de links sem alterar o código. |
+| **`FIX`** | **Fix & Clean** | Saneamento e polimento técnico: correção exclusiva de avisos de linters, eliminação de mutantes sobreviventes e aplicação de formatadores determinísticos, preservando o comportamento funcional. |
+| **`RELEASE`** | **Release & Tag** | Consolidação de marcos semânticos: consolidação do `CHANGELOG.md`, bump semântico no `VERSION` (`patch`, `minor` ou `major`) via `cccp release`, geração da tag Git correspondente e push de tags. |
+
+* **Regra de Ouro:** Agentes de IA **NUNCA DEVEM** presumir autorização para commits, merges ou modificações funcionais amplas sem instrução inequívoca ou uso dos comandos deste protocolo.
+
 ---
 
 ## 6. Estratégia e Qualidade de Testes

@@ -318,6 +318,16 @@ git push --tags origin main
 ```
 Isso consolida o `CHANGELOG.md`, atualiza `VERSION` para versão estável e cria a tag Git correspondente.
 
+### 8.3 Comandos Operacionais para Agentes de IA no Perfil Lumen
+No dia a dia com agentes de IA (assistentes CLI/IDE), o perfil Lumen adota o protocolo canônico de comandos curtos:
+* **`DCPD` (Do, Commit, Push, Deploy):** Autorização expressa para implementação da demanda, validação local com testes e Zero Warnings, commit no padrão Conventional Commits com fechamento de issue (`closes #ID`), push da branch do ticket, merge na branch principal (`main`) e push remoto disparando o deploy contínuo no Cloudflare Workers e Codeberg Pages.
+* **`DCP` (Do, Commit, Push):** Implementação, testes locais e push restritos à branch de trabalho (`feat/<id>-*`), gerando a URL do Pull Request no Codeberg para revisão humana prévia.
+* **`PLAN` (Plan & Propose):** Pesquisa e diagnóstico aprofundado sem qualquer alteração em arquivos de código nem commits.
+* **`TDD` (Ticket, Doc, Test, Do):** Execução estrita das 5 etapas do ciclo GOST com commits separados para documentação (`docs: ... ref #ID`), teste quebrado (`test: ... ref #ID`) e código funcional.
+* **`AUDIT` (Audit & Check):** Auditoria técnica passiva rodando linters no máximo (`-D warnings`), cobertura (`llvm-cov` / `pest --coverage`), testes de mutação (`cargo-mutants` / `infection`) e `composer/cargo audit`.
+* **`FIX` (Fix & Clean):** Saneamento direcionado para eliminar alertas de análise estática e corrigir formatação com `cargo fmt`, `pint` ou `shfmt`.
+* **`RELEASE` (Release & Tag):** Execução automatizada de `cccp release <patch|minor|major>` e sincronização com tags remotas.
+
 ---
 
 ## 9. Internacionalização no Perfil Lumen
