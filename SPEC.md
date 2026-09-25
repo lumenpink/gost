@@ -40,7 +40,8 @@ Todo repositório GOST **DEVE** conter em sua raiz a seguinte estrutura mínima 
 ├── CHANGELOG.md                # Registro cronológico de mudanças (Seção 4)
 ├── README.md                   # Apresentação executiva e guia rápido
 ├── .gitignore                  # Higiene do repositório e arquivos ignorados
-├── site/                       # Portal estático de documentação pública (Seção 6)
+├── .editorconfig               # Configuração canônica de formatação para editores
+├── site/                       # Portal estático de documentação pública (Seção 8)
 │   ├── index.html              # Ponto de entrada da documentação
 │   └── _headers                # Cabeçalhos HTTP de segurança
 └── .forgejo/ / .github/        # Automação de CI/CD (Seção 7)
@@ -163,6 +164,22 @@ A excelência e longevidade do código exigem rigor estrito antes de qualquer ex
 * **Princípio Anti-Bloat:** A adição de bibliotecas de terceiros **DEVE** ser estritamente justificada no ticket do projeto. Favorece-se soluções leves, bibliotecas padrão e código autônomo.
 * **Auditoria de Vulnerabilidades:** O pipeline de CI **DEVE** executar verificações automatizadas de vulnerabilidades em dependências (*dependency auditing*).
 
+### 7.3 Formatação Determinística Obrigatória (*Zero Bikeshedding*)
+* **Autoridade Automatizada:** Todo repositório **DEVE** adotar um formatador oficial determinístico para cada linguagem do projeto (ex: `rustfmt`, `pint`, `shfmt`, `prettier`/`biome`).
+* **Gate de Verificação no CI:** A conformidade de formatação **DEVE** ser verificada no pipeline de CI com flags equivalentes a `--check` ou `--test`. Qualquer inconsistência visual ou de espaçamento quebra o build.
+* **Fim das Discussões de Estilo:** Nenhuma revisão de código humana ou automatizada deve debater tabs, espaços ou quebras de linha; o formatador é a única fonte da verdade.
+
+### 7.4 Higiene Universal de Editores (`.editorconfig`)
+* Todo repositório **DEVE** conter na raiz o arquivo `.editorconfig` padronizando:
+  - Codificação de caracteres: `charset = utf-8`
+  - Fim de linha: `end_of_line = lf`
+  - Inserção de quebra ao final: `insert_final_newline = true`
+  - Remoção de espaços no final de linhas: `trim_trailing_whitespace = true`
+  - Indentação canônica por extensão de arquivo.
+
+### 7.5 Validação de Integridade Documental e Hiperlinks
+* Repositórios com documentação pública **DEVERIAM** integrar no pipeline de CI utilitários de auditoria de links (ex: `lychee`) para prevenir referências quebradas (404), links canônicos `hreflang` inconsistentes ou âncoras órfãs.
+
 ---
 
 ## 8. Vitrine Pública e Documentação Web
@@ -175,6 +192,17 @@ Todo repositório GOST **DEVE** manter uma vitrine pública de documentação es
    - `X-Frame-Options: DENY`
    - `Referrer-Policy: strict-origin-when-cross-origin`
 3. **Publicação Contínua:** A documentação **DEVE** ser publicada automaticamente via pipeline de CI/CD a cada push no branch principal (`main`).
+
+### 8.1 Segregação Canônica: Vitrine Estática vs. Serviços Dinâmicos
+* **Papel do `./site`:** A vitrine pública estática (publicada em `*.2lp.in` via Cloudflare Workers / Pages) destina-se estritamente à documentação, tutoriais e interfaces de demonstração estáticas.
+* **Isolamento de Backends:** Aplicações dinâmicas, APIs, REPLs e daemons locais **NÃO DEVEM** expor credenciais, chaves ou sockets diretamente no diretório estático.
+* **Guia de Conectividade:** A documentação estática de projetos dinâmicos **DEVE** conter uma seção clara descrevendo como acessar o serviço vivo (portas padrão, variáveis de ambiente e topologia de acesso).
+
+### 8.2 Padrão de Resiliência para Clientes Móveis e Redes Instáveis
+Sistemas que exponham interfaces web para uso em smartphones ou sob redes suscetíveis a oscilações (4G/5G, trocas de antenas, conexões móveis fracas) **DEVEM** adotar o padrão assíncrono resiliente:
+1. **Idempotência no Envio:** Cada requisição do cliente deve portar um identificador exclusivo (`client_id`). Retentativas automáticas sob perda de sinal nunca devem duplicar ações no servidor.
+2. **Desacoplamento de Requisição:** O backend deve persistir o job na fila e devolver resposta imediata (`HTTP 200/202`) em milissegundos, liberando a conexão de rede móvel.
+3. **Short Polling Indestrutível:** Preferência por sondagem curta periódica sobre conexões persistentes contínuas (WebSockets/SSE), as quais tendem a quebrar silenciosamente durante trocas de torres de celular ou transições de rede.
 
 ---
 

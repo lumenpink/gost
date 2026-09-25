@@ -101,6 +101,14 @@ A vitrine de documentação pública (`./site`) é publicada na borda da Cloudfl
 ### 4.4 Fallback: Codeberg Pages
 Como contingência e redundância estática, o pipeline de CI publica a pasta `./site` também no Codeberg Pages (`https://lumenpink.codeberg.page/<nome-do-repo>/`).
 
+### 4.5 Topologia de Serviços Dinâmicos no Perfil Lumen
+Para repositórios que implementam serviços web dinâmicos, daemons ou REPLs (como o Matraca):
+1. **Camada Privada Primária (Mesh VPN):**
+   - Acesso via **Tailscale** (`http://100.x.y.z:<porta>`).
+   - Todo tráfego entre smartphones, laptops e estações de desenvolvimento permanece criptografado ponto a ponto na rede WireGuard privada sem abertura de portas no firewall.
+2. **Camada de Borda Autenticada (Cloudflare Tunnel):**
+   - Quando for conveniente o acesso web com certificado SSL público sem a VPN ativa no cliente móvel, utiliza-se o **`cloudflared`** direcionando para o subdomínio `app.<repo>.2lp.in` com autenticação obrigatória no aplicativo.
+
 ---
 
 ## 5. Stack e Ferramental Padrão de Testes
@@ -129,17 +137,24 @@ Para atender aos requisitos de alta cobertura (>90%, foco em 100%) e mutação d
 * **Runner E2E:** **`playwright`** (`npx playwright test`).
 * **Escopo:** Navegação automatizada *headless* em Chromium, Firefox e WebKit simulando as jornadas reais do usuário e garantindo ausência de erros de console, layout e renderização.
 
-### 5.5 Análise Estática & Zero Warnings por Stack
+### 5.5 Análise Estática, Formatação Determinística & Zero Warnings por Stack
+O ecossistema Lumen adota um pipeline estrito onde **erros de linter e desvios de formatação quebram o build**:
+
 * **Rust:**
   - Linter: `cargo clippy --all-targets --all-features -- -D warnings`
   - Formatação: `cargo fmt -- --check`
   - Auditoria de Dependências: `cargo audit`
 * **PHP:**
   - Análise Estática: `vendor/bin/phpstan analyse --level=max`
-  - Estilo de Código: `vendor/bin/pint --test`
+  - Formatação: `vendor/bin/pint --test`
   - Auditoria de Dependências: `composer audit`
-* **Shell Scripting:**
+* **POSIX Shell:**
   - Linter: `shellcheck` (zero avisos tolerados em todos os scripts)
+  - Formatação: `shfmt -d -i 2 -ci -bn .` (2 espaços, recuo de case, operadores no início)
+* **Web, JS/TS, JSON, YAML e Markdown:**
+  - Formatação e Linter: `biome check` ou `npx prettier --check "**/*.{json,yaml,md,js,ts,html,css}"`
+* **Higiene Universal de Editores:**
+  - Arquivo `.editorconfig` na raiz de todo repositório para impor LF, UTF-8, ausência de trailing whitespaces e indentação correta.
 
 ### 5.6 Gate de Pre-Push com `act` (CI Local Idêntico)
 O ecossistema Lumen usa **`act`** — executor local de Forgejo/GitHub Actions baseado em Docker — para rodar o job `test` do pipeline em um ambiente **bit-for-bit idêntico** ao do Forgejo antes de cada `git push`.

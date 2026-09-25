@@ -379,27 +379,50 @@
     </section>
 
     <section id="qualidade">
-      <h2>5. Análise Estática & Zero Warnings</h2>
-      <p>A integridade do código exige severidade máxima de linters antes mesmo dos testes:</p>
+      <h2>5. Análise Estática, Formatação & Zero Warnings</h2>
+      <p>A integridade do código exige severidade máxima de linters e formatação determinística antes mesmo dos testes:</p>
       <div class="card-grid">
         <div class="card">
           <h4>🚫 Tolerância Zero a Avisos</h4>
           <p>Linters e compiladores rodam com tratamento de warnings como erros fatais (<code>-D warnings</code>). Avisos quebram o build imediatamente.</p>
         </div>
         <div class="card">
-          <h4>🛡️ Filosofia Anti-Bloat & Auditoria</h4>
-          <p>Dependências externas mínimas e justificadas no ticket. Auditoria automatizada de segurança de pacotes no CI (<code>cargo audit</code>, <code>composer audit</code>).</p>
+          <h4>📐 Formatação Determinística</h4>
+          <p>Zero discussões de estilo em code review. Formatadores oficiais estritos no CI (<code>rustfmt</code>, <code>pint</code>, <code>shfmt</code>, <code>prettier/biome</code> com <code>--check</code>).</p>
+        </div>
+        <div class="card">
+          <h4>⚙️ Higiene com .editorconfig</h4>
+          <p>Arquivo <code>.editorconfig</code> canônico na raiz de todo projeto para impor UTF-8, LF e indentação homogênea entre editores.</p>
+        </div>
+        <div class="card">
+          <h4>🛡️ Anti-Bloat & Auditoria</h4>
+          <p>Dependências mínimas e justificadas. Auditoria contínua de vulnerabilidades e verificação de hiperlinks quebrados (<code>lychee</code>).</p>
         </div>
       </div>
     </section>
 
     <section id="vitrine">
-      <h2>6. Vitrine Pública e Segurança</h2>
-      <p>Todo projeto mantém seu portal estático publicado via pipeline de CI. O arquivo <code>site/_headers</code> deve assegurar:</p>
+      <h2>6. Vitrine Pública & Topologia de Serviços</h2>
+      <p>Todo projeto mantém seu portal estático publicado na borda via pipeline de CI. O arquivo <code>site/_headers</code> deve assegurar:</p>
       <pre><code>/*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin</code></pre>
+
+      <div class="card-grid" style="margin-top: 1rem;">
+        <div class="card">
+          <h4>🌐 Vitrine Estática vs. Backend Vivo</h4>
+          <p>A pasta <code>./site</code> publicada em <code>*.2lp.in</code> destina-se exclusivamente a documentação e vitrine pública. Segredos e portas dinâmicas nunca são expostos na vitrine.</p>
+        </div>
+        <div class="card">
+          <h4>🔒 Topologia de Acesso Seguro</h4>
+          <p>Serviços locais/daemons utilizam <strong>Tailscale</strong> (rede privada criptografada ponto a ponto) ou <strong>Cloudflare Tunnel</strong> autenticado sob subdomínio dedicado.</p>
+        </div>
+        <div class="card">
+          <h4>📱 Resiliência em Redes Móveis</h4>
+          <p>Aplicações sob sinal oscilante adotam fila assíncrona com idempotência (<code>client_id</code>) e short polling leve contra quebras de conexão.</p>
+        </div>
+      </div>
     </section>
 
     <section id="intl">
