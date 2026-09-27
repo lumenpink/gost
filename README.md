@@ -20,8 +20,8 @@ O **GOST** (*General Open Source Standard*, inspirado nos históricos padrões t
   - **[POSIX Shell (`specs/languages/shell.md`)](./specs/languages/shell.md)**: ShellSpec, kcov, ShellCheck, shfmt, XDG nativo.
   - **[JavaScript / TypeScript (`specs/languages/javascript.md`)](./specs/languages/javascript.md)**: Biome/Prettier, Playwright E2E, Lockfiles.
   - **[R (`specs/languages/r.md`)](./specs/languages/r.md)**: testthat, covr, lintr, styler, renv (Twelve-Factor R reprodutível).
-* **[Guias de Migração (`upgrades/`)](./upgrades/)**: Diff e passos de transição entre versões (ex: [de 0.1 para 1.0.0](./upgrades/from-0.1-to-1.0.md)).
 * **[Perfis de Implementação (`profiles/`)](./profiles/)**: Modelo canônico ([`profiles/template.md`](./profiles/template.md)) e diretrizes para declaração de infraestrutura e ferramental por organizações e ecossistemas.
+* **[Scripts de Automação (`scripts/`)](./scripts/)**: Utilitários canônicos para inicialização ([`gost-init.sh`](./scripts/gost-init.sh)) e auditoria/adequação ([`gost-conform.sh`](./scripts/gost-conform.sh)).
 
 ---
 
@@ -83,6 +83,20 @@ O CLI `cccp` utiliza essas variáveis para sincronizar o cache local em `.gost/`
 
 ## 🚀 Como Iniciar um Novo Projeto com o Padrão GOST
 
+### Método Automatizado (Recomendado)
+Execute o script canônico de inicialização informando as linguagens e parâmetros desejados:
+
+```bash
+# Inicialização automatizada
+./scripts/gost-init.sh --root ~/src/meu-projeto --name meu-projeto --lang rust,shell --license MIT --git
+```
+
+Para auditar ou adequar um projeto existente:
+```bash
+./scripts/gost-conform.sh --root ~/src/meu-projeto --fix
+```
+
+### Método Manual
 1. Crie o repositório na forja Git de sua escolha (Codeberg, GitHub, GitLab, etc.).
 2. Inicialize o repositório local (`git init -b main`).
 3. Adicione os arquivos base (`GOSTVER`, `.gitignore`, `VERSION`, `CHANGELOG.md`, `LICENSE`, `site/`).

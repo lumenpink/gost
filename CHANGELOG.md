@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 
-- Routine maintenance, documentation updates, and operational improvements.
+### Features
+  - (scripts) criar scripts de inicializacao e adequacao dos repositorios (closes #15)
 
 ## Previous Releases
 
