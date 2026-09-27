@@ -9,9 +9,10 @@ O **GOST** (*General Open Source Standard*, inspirado nos históricos padrões t
 ## 📑 Estrutura da Especificação e Plataforma
 
 * **[Norma Técnica Universal (`SPEC.md`)](./SPEC.md)**: A especificação normativa completa consolidada.
-* **[Especificações por Idioma (`specs/`)](./specs/)**:
+* **[Especificações por Idioma & Normas Modulares (`specs/`)](./specs/)**:
   - **[Português (`specs/pt/SPEC.md`)](./specs/pt/SPEC.md)**: Fonte primária em Português.
   - **[English (`specs/en/SPEC.md`)](./specs/en/SPEC.md)**: Canonical international technical baseline.
+  - **[Política & Arquitetura de Licenciamento (`specs/legal/licenses.md`)](./specs/legal/licenses.md)**: Matriz de perfis, licença raiz e satélites.
   - **[Regras como Dado (`specs/rules.json`)](./specs/rules.json)**: Schema de validação formal consumível por linters e CLI (`cccp`).
 * **[Módulos Técnicos por Linguagem (`specs/languages/`)](./specs/languages/)**:
   - **[PHP (`specs/languages/php.md`)](./specs/languages/php.md)**: Pest, PHPStan (max), Pint, Infection, Composer.
@@ -41,9 +42,10 @@ O CLI `cccp` utiliza essas variáveis para sincronizar o cache local em `.gost/`
 
 ## ⚡ Pilares da Especificação
 
-### 1. Filosofia de Licenciamento
-* **Presunção Padrão:** **`CC0-1.0`** (dedicação direta ao domínio público com salvaguardas internacionais, sem atritos burocráticos).
-* **Exceção Estratégica:** **`GPLv3`** (ou `AGPL-3.0`) para projetos que exigem salvaguarda explícita contra fechamento ou comercialização predatória.
+### 1. Filosofia de Licenciamento & Arquitetura Modular
+* **Princípio da Menor Permissividade:** O arquivo raiz `LICENSE` define a licença padrão do repositório (GPLv3 para apps, Apache-2.0 para comrades/libs, CC-BY-SA para specs).
+* **Satélites Canônicos:** Exceções declaradas e mapeadas no `README.md` (`LICENSE-MEDIA`, `LICENSE-LOGO`, `LICENSE-APACHE`).
+* **Anti-Boilerplate:** Cada repositório implementa estritamente o seu perfil real, sem textos genéricos desnecessários.
 
 ### 2. O Ciclo de Desenvolvimento (DD-TDD) & Tickets Obrigatórios
 * **Zero Commits sem Ticket:** Nenhum commit é aceito sem referência formal a um ticket (`(ref #<id>)` nos intermediários e `(closes #<id>)` na finalização). Hooks locais bloqueiam commits soltos.
@@ -99,4 +101,6 @@ A documentação estática desta especificação está publicada em:
 
 ## 📄 Licença
 
-Este projeto e toda a especificação GOST são dedicados ao domínio público sob a [CC0 1.0 Universal](./LICENSE).
+* **Especificação Técnica e Textos Normativos:** Licenciados sob [Creative Commons Atribuição-CompartilhaIgual 4.0 Internacional (CC-BY-SA 4.0)](./LICENSE).
+* **Esquemas JSON, Metadados e Templates de Configuração:** Dedicados ao domínio público sob [Creative Commons Zero 1.0 Universal (CC0-1.0)](https://creativecommons.org/publicdomain/zero/1.0/).
+* **Identidade Visual, Insígnias e Escudo GOST:** Licenciados sob [Creative Commons Atribuição-SemDerivações 4.0 Internacional (CC-BY-ND 4.0)](./LICENSE-LOGO).

@@ -17,15 +17,30 @@ The key words **MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, and **MAY** in
 
 ## 2. Philosophy and Licensing
 
-Every GOST-compliant repository **MUST** explicitly declare its license in the root directory via a `LICENSE` file.
+Every GOST-compliant repository **MUST** explicitly declare its license in the root directory via a `LICENSE` file. The detailed modular technical specification is in [specs/legal/licenses.md](../legal/licenses.md).
 
-### 2.1 Default Presumption: Public Domain (`CC0-1.0`)
-* **General Rule:** Every repository **MUST** presume copyright waiver and unrestricted release into the public domain via **`CC0-1.0`** (Creative Commons Zero 1.0 Universal).
-* **Rationale:** Knowledge, tools, and code must flow with minimal legal and bureaucratic friction, ensuring global legal validity and unrestricted reuse for any purpose.
+### 2.1 Least Permissive Root License Principle
+* **Root Rule:** The root `LICENSE` file **MUST** be the default, general license for the entire repository.
+* In repositories with mixed artifacts (monorepos or hybrid applications), the root `LICENSE` **MUST** declare the least permissive (most restrictive) license applicable (e.g., `GPL-3.0`).
+* More permissive licenses (e.g., `Apache-2.0` for sub-crates or `CC-BY-SA-4.0` for media) operate as explicit modular exceptions.
 
-### 2.2 Strong Copyleft Exception (`GPL-3.0`)
-* **Exception Rule:** When a project is of a strategic nature requiring protection against predatory appropriation or proprietary derivation, it **MUST** adopt the **`GNU General Public License v3.0` (GPL-3.0)** (or `AGPL-3.0` for web services).
-* Any exception to `CC0-1.0` **MUST** be explicitly justified in the `README.md`.
+### 2.2 Repository Profile Typology
+1. **Full Applications / Hybrid Monorepos (e.g., Mayak, Navalha):** Adopt `GPL-3.0` (or `AGPL-3.0` for web services) in the root `LICENSE`.
+2. **Microapps & Comrades (e.g., comrades/cli):** Adopt `Apache-2.0` in the root `LICENSE` directly, without superfluous satellite files.
+3. **Libraries, Protocols & SDKs:** Adopt `Apache-2.0` in the root `LICENSE` for maximum interoperability.
+4. **Specifications and Norms (e.g., GOST):** Adopt `CC-BY-SA-4.0` for normative texts in the root `LICENSE`, with schemas and templates in `CC0-1.0` and logos protected via satellites.
+
+### 2.3 Standardized Satellite Files
+When artifacts require distinct legal frameworks, the following canonical files **MUST** be used in root:
+* `LICENSE-MEDIA`: Creative Commons Attribution-ShareAlike 4.0 International (`CC-BY-SA-4.0`) for media, audio, video, fonts, and illustrations.
+* `LICENSE-LOGO`: Creative Commons Attribution-NoDerivatives 4.0 International (`CC-BY-ND-4.0`) for trademarks, insignia, official icons, and brand logos.
+* `LICENSE-APACHE`: Apache License 2.0 (`Apache-2.0`) for internal modules, sub-crates, or decoupled libraries exposed to the ecosystem.
+
+### 2.4 Mandatory Mapping in `README.md`
+Repositories with multiple artifact types or satellite licenses **MUST** include a mapping matrix in their `README.md` under `## License`, explicitly stating which paths and files fall under each license.
+
+### 2.5 Anti-Boilerplate Principle
+Each repository implements solely the licenses suited to its actual profile. Blindly copying universal boilerplate tables and empty satellite files into simple micro-utilities is strictly forbidden.
 
 ---
 
@@ -36,7 +51,10 @@ Every GOST repository **MUST** maintain the following minimal baseline in its ro
 ```text
 .
 ├── GOSTVER                     # Standard version and profile declaration
-├── LICENSE                     # Legal licensing declaration (CC0-1.0 by default)
+├── LICENSE                     # Default legal licensing declaration (Section 2)
+├── LICENSE-MEDIA               # (Optional) CC-BY-SA license for media and assets
+├── LICENSE-LOGO                # (Optional) CC-BY-ND license for brand and logos
+├── LICENSE-APACHE              # (Optional) Apache-2.0 license for internal libraries
 ├── VERSION                     # Semantic version in plain text (SemVer 2.0.0)
 ├── CHANGELOG.md                # Chronological change record (Keep a Changelog)
 ├── README.md                   # Executive summary and quickstart guide
