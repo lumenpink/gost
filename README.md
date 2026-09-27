@@ -21,7 +21,7 @@ O **GOST** (*General Open Source Standard*, inspirado nos históricos padrões t
   - **[JavaScript / TypeScript (`specs/languages/javascript.md`)](./specs/languages/javascript.md)**: Biome/Prettier, Playwright E2E, Lockfiles.
   - **[R (`specs/languages/r.md`)](./specs/languages/r.md)**: testthat, covr, lintr, styler, renv (Twelve-Factor R reprodutível).
 * **[Guias de Migração (`upgrades/`)](./upgrades/)**: Diff e passos de transição entre versões (ex: [de 0.1 para 1.0.0](./upgrades/from-0.1-to-1.0.md)).
-* **[Perfil Lumen (`profiles/lumen.md`)](./profiles/lumen.md)**: O perfil de implementação concreto do ecossistema Lumen (Codeberg/Forgejo, CLI `cccp`, deploy em `*.2lp.in` via Cloudflare Workers e registro no `catalog.json`).
+* **[Perfis de Implementação (`profiles/`)](./profiles/)**: Modelo canônico ([`profiles/template.md`](./profiles/template.md)) e diretrizes para declaração de infraestrutura e ferramental por organizações e ecossistemas.
 
 ---
 
@@ -32,7 +32,7 @@ Repositórios desenvolvidos sob o padrão GOST **não copiam a norma inteira**. 
 ```bash
 # GOSTVER — Declaração de Conformidade com o Padrão GOST
 GOST_VERSION="1.0.0"
-GOST_PROFILE_URL="https://codeberg.org/lumenpink/profiles/raw/branch/main/lumen.md"
+GOST_PROFILE_URL="https://codeberg.org/lumenpink/gost-profile-lumen/raw/branch/main/profile.md"
 GOST_LANGUAGES="php,javascript"   # Baixa apenas php.md e javascript.md em .gost/languages/
 ```
 
@@ -81,14 +81,13 @@ O CLI `cccp` utiliza essas variáveis para sincronizar o cache local em `.gost/`
 
 ---
 
-## 🚀 Como Iniciar um Novo Projeto (Perfil Lumen)
+## 🚀 Como Iniciar um Novo Projeto com o Padrão GOST
 
-Consulte o passo a passo completo no [Perfil Lumen](./profiles/lumen.md):
-1. Crie o repositório remoto no Codeberg via API.
-2. Inicialize o git local (`git init -b main`).
-3. Crie os arquivos base (`GOSTVER`, `.cccprc`, `.gitignore`, `VERSION`, `CHANGELOG.md`, `LICENSE`, `wrangler.jsonc`, `site/`).
-4. Execute `cccp install` para ativar os hooks de validação e release.
-5. Registre no catálogo central `~/src/catalog.json`.
+1. Crie o repositório na forja Git de sua escolha (Codeberg, GitHub, GitLab, etc.).
+2. Inicialize o repositório local (`git init -b main`).
+3. Adicione os arquivos base (`GOSTVER`, `.gitignore`, `VERSION`, `CHANGELOG.md`, `LICENSE`, `site/`).
+4. Configure o arquivo `GOSTVER` declarando a versão da norma, as linguagens ativas e a URL do perfil da sua organização (consulte o modelo em [`profiles/template.md`](./profiles/template.md)).
+5. Configure os hooks de validação de commits semânticos e rastreabilidade de tickets da sua ferramenta de governança (ex: `cccp install`).
 
 ---
 

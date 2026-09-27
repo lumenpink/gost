@@ -459,14 +459,14 @@ Para microsserviços, APIs e daemons sob operação de usuário único:
 
 ## 14. Perfis de Implementação (*Profiles*)
 
-Esta norma GOST estabelece requisitos agnósticos a fornecedores e tecnologias. Ambientes específicos (organizações, indivíduos ou ecossistemas) **DEVEM** declarar suas escolhas concretas de infraestrutura em documentos de perfil sob o diretório `profiles/` (ex: `profiles/<nome>.md`).
+Esta norma GOST estabelece requisitos agnósticos a fornecedores e tecnologias. Ambientes específicos (organizações, indivíduos ou ecossistemas) **DEVEM** declarar suas escolhas concretas de infraestrutura em documentos de perfil desacoplados da norma raiz, referenciados através de `GOST_PROFILE_URL` no arquivo `GOSTVER` e baseados no modelo canônico disponível em `profiles/template.md`.
 
 Um perfil de implementação define:
-- Qual forja de código hospeda os repositórios (Codeberg, GitHub, GitLab, etc.).
-- Qual infraestrutura serve o portal de documentação (`*.2lp.in`, Cloudflare Workers, Pages, Nginx).
+- Qual forja de código hospeda os repositórios (Codeberg, GitHub, GitLab, Forgejo auto-hospedado, etc.).
+- Qual infraestrutura serve o portal de documentação e sites públicos (Cloudflare Workers, Pages, Nginx, etc.).
 - Quais ferramentas e CLI gerenciam versionamento, tickets e hooks (ex: `cccp`).
 - Quais frameworks e utilitários executam a suíte de testes, medem cobertura/mutação e aplicam linters com Zero Warnings.
-- Como são gerados e validados os banners com Safe Zone 4:3 e os pacotes das 10 línguas.
+- Como são gerados e validados os banners com Safe Zone 4:3 e os pacotes de internacionalização.
 - Onde se localiza o catálogo central de descoberta de projetos.
 
 

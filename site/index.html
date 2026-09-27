@@ -250,7 +250,7 @@
         <li><a href="#cards">8. Cards Sociais & Safe Zone 4:3</a></li>
         <li><a href="#arquitetura">9. Arquitetura & SOLID Pragmático</a></li>
         <li><a href="#padroes-sistema">10. Padrões de Sistema & 12-Factor</a></li>
-        <li><a href="#perfil-lumen">11. Perfil Lumen</a></li>
+        <li><a href="#perfis">11. Perfis de Implementação</a></li>
       </ul>
     </nav>
 
@@ -565,25 +565,18 @@
       </div>
     </section>
 
-    <section id="perfil-lumen">
-      <h2>11. Perfil de Implementação: Lumen</h2>
-      <p>O ecossistema Lumen implementa a norma GOST com os seguintes serviços e convenções:</p>
+    <section id="perfis">
+      <h2>11. Perfis de Implementação (Profiles)</h2>
+      <p>A norma GOST estabelece princípios e metas de engenharia rigorosos de forma agnóstica a provedores de nuvem, forjas de código e ecossistemas proprietários. Para operacionalizar essas regras, cada organização ou mantenedor declara suas escolhas concretas de infraestrutura em um <strong>Perfil de Implementação</strong>:</p>
       <ul>
-        <li><strong>Forja Principal:</strong> Codeberg (instância Forgejo) sob <code>lumenpink/&lt;repo&gt;</code>.</li>
-        <li><strong>Gestão de Hooks & Tickets:</strong> CLI <code>cccp</code> com validação de tickets obrigatórios (<code>ref #N</code> / <code>closes #N</code>) e versionamento.</li>
-        <li><strong>Arquitetura & Pastas:</strong> Desacoplamento via Portas & Adaptadores (<code>src/domain/</code>, <code>src/adapters/</code> em Rust e <code>src/Domain/</code>, <code>src/Infrastructure/</code> em PHP) com In-Memory Fakes para testes herméticos.</li>
-        <li><strong>Padrões de Sistema & Containers:</strong> Resolução XDG em Shell/Rust/PHP, arquivos de config <code>KEY=VALOR</code>, Dockerfile multi-stage com <code>scratch</code> (Rust) e <code>alpine</code> non-root (PHP).</li>
-        <li><strong>Internacionalização:</strong> Matriz das 10 línguas sob <code>site/&lt;lang&gt;/</code> e roteador cliente em <code>site/index.html</code>.</li>
-        <li><strong>Cards Sociais:</strong> Script <code>scripts/generate_og_image.py</code> e simulação em <code>site/card_preview.html</code>.</li>
-        <li><strong>Testes Shell:</strong> <code>shellspec</code> com cobertura via <code>kcov</code>.</li>
-        <li><strong>Testes Rust:</strong> <code>cargo test</code>, cobertura via <code>cargo-tarpaulin</code>/<code>llvm-cov</code> (&gt;90%) e mutação com <code>cargo-mutants</code>.</li>
-        <li><strong>Testes PHP:</strong> <code>pest --coverage --min=90</code> e mutação com <code>infection</code>.</li>
-        <li><strong>Testes E2E:</strong> <code>playwright</code> para navegação e cenários de interface.</li>
-        <li><strong>Análise Estática:</strong> <code>clippy -D warnings</code>, <code>cargo fmt</code>, <code>phpstan</code> max, <code>pint</code> e <code>shellcheck</code>.</li>
-        <li><strong>Hospedagem Web:</strong> Cloudflare Workers via <code>wrangler.jsonc</code> servindo subdomínios <code>*.2lp.in</code> (com fallback no Codeberg Pages).</li>
-        <li><strong>Descoberta:</strong> Registro no catálogo centralizado local <code>~/src/catalog.json</code>.</li>
+        <li><strong>Forja de Código:</strong> Definição do provedor Git (Codeberg, GitHub, GitLab, Forgejo auto-hospedado), namespaces e convenções de branches.</li>
+        <li><strong>Governança de Commits:</strong> Ferramentas de validação semântica (ex: <code>cccp</code>, <code>husky</code>) com bloqueio estrito de commits sem ticket.</li>
+        <li><strong>Qualidade &amp; Testes por Stack:</strong> Runners de teste, metas de cobertura (&ge;90%), testes de mutação e linters com Zero Warnings padronizados por linguagem.</li>
+        <li><strong>Pipeline de CI/CD:</strong> Definição dos workflows remotos e gates de validação local pré-push bit-for-bit idênticos (via containers/<code>act</code>).</li>
+        <li><strong>Publicação Web &amp; Docs:</strong> Infraestrutura estática de hospedagem, zonas de DNS e cabeçalhos de segurança (CSP/HSTS).</li>
+        <li><strong>Padrões de Sistema &amp; Containers:</strong> Diretórios canônicos XDG, arquivos de configuração planos e Dockerfiles multi-stage mínimos.</li>
       </ul>
-      <p>Consulte o documento completo em <code>profiles/lumen.md</code> no repositório.</p>
+      <p>Consulte o modelo canônico de perfil em <code>profiles/template.md</code> e o guia de criação em <code>profiles/README.md</code>.</p>
     </section>
 
     <footer>
