@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 
-- Routine maintenance, documentation updates, and operational improvements.
+### Features
+  - (legal) definir politica de licencas modular por perfil de repositorio (closes #13)
 
 ## Previous Releases
 
