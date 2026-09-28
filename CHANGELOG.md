@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (meta) gerar card oficial de opengraph e banner social (closes #17)
   - (scripts) criar scripts de inicializacao e adequacao dos repositorios (closes #15)
 
 ## Previous Releases
