@@ -171,13 +171,37 @@ gost_conform_main() {
   fi
 
   # 1. GOSTVER
-  _fix_gostver="cat > \"${GC_ROOT}/GOSTVER\" << 'EOF'
+  _total_items=$((_total_items + 1))
+  _gostver_path="${GC_ROOT}/GOSTVER"
+  if [ -f "$_gostver_path" ] && grep -q 'GOST_VERSION="1.2.0"' "$_gostver_path" 2>/dev/null; then
+    _passed_items=$((_passed_items + 1))
+    if [ "$GC_QUIET" -eq 0 ]; then
+      printf "  %b[PASS]%b  %-22s : %s (GOSTVER v1.2.0)\n" "$GC_C_GREEN" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
+    fi
+  else
+    if [ "$GC_MODE" = "fix" ]; then
+      if [ -f "$_gostver_path" ]; then
+        sed -i 's/GOST_VERSION=.*/GOST_VERSION="1.2.0"/' "$_gostver_path"
+      else
+        cat > "$_gostver_path" << EOF
 # GOSTVER — Declaração de Conformidade com o Padrão GOST
-GOST_VERSION=\"1.2.0\"
-GOST_PROFILE_URL=\"\"
-GOST_LANGUAGES=\"$_detected_lang\"
-EOF"
-  _check_file "GOSTVER" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST" "$_fix_gostver"
+GOST_VERSION="1.2.0"
+GOST_PROFILE_URL=""
+GOST_LANGUAGES="$_detected_lang"
+EOF
+      fi
+      _fixed_items=$((_fixed_items + 1))
+      _passed_items=$((_passed_items + 1))
+      if [ "$GC_QUIET" -eq 0 ]; then
+        printf "  %b[FIXED]%b %-22s : %s (atualizado para v1.2.0 em GOSTVER)\n" "$GC_C_CYAN" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
+      fi
+    else
+      _failed_items=$((_failed_items + 1))
+      if [ "$GC_QUIET" -eq 0 ]; then
+        printf "  %b[FAIL]%b  %-22s : %s (GOSTVER ausente ou versão anterior)\n" "$GC_C_RED" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
+      fi
+    fi
+  fi
 
   # 2. LICENSE
   _fix_license="cat > \"${GC_ROOT}/LICENSE\" << 'EOF'
