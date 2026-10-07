@@ -5,7 +5,9 @@
 ---
 
 ## 1. Visão Geral e Filosofia
-Esta especificação define os requisitos de engenharia, ferramentas e padrões para desenvolvimento em **JavaScript** / **TypeScript** (Node.js LTS, navegadores ou Cloudflare Workers) no ecossistema GOST.
+Esta especificação define os requisitos de engenharia, ferramentas e padrões para desenvolvimento em **JavaScript** e **TypeScript** no ecossistema GOST.
+
+O ecossistema adota **Node.js 24 LTS** (`>= 24.16.0`) como runtime canônico de servidor e build do estado da arte, impondo **ESM nativo obrigatório** (`"type": "module"` no `package.json`), **TypeScript 5.8+** em modo estrito (`"strict": true`) e Web Standards nativos para Cloudflare Workers e navegadores.
 
 ---
 
@@ -14,10 +16,10 @@ Esta especificação define os requisitos de engenharia, ferramentas e padrões 
 | Requisito GOST | Ferramenta Padrão | Comando de Validação no CI |
 |---|---|---|
 | **Test Runner (E2E / Browser)** | **Playwright** | `npx playwright test` |
-| **Test Runner (Unit)** | **Node Test Runner** / **Vitest** | `npm test -- --coverage` |
-| **Cobertura (≥ 90%)** | **v8 / c8 / istanbul** | `npx c8 check-coverage --lines 90` |
+| **Test Runner (Unit)** | **Vitest** / **Node Test Runner** | `npx vitest run --coverage` (ou `node --test`) |
+| **Cobertura (≥ 90%)** | **v8 / Vitest Coverage** | `npx vitest run --coverage --coverage.thresholds.lines 90` |
 | **Testes de Mutação** | **Stryker Mutator** | `npx stryker run` |
-| **Linter & Formatação** | **Biome** (ou ESLint + Prettier) | `npx biome check .` (ou `prettier --check`) |
+| **Linter & Formatação** | **Biome** (Canônico) | `npx biome check .` |
 | **Auditoria de Segurança** | **npm/pnpm audit** | `npm audit --audit-level=high` |
 
 ---
@@ -61,14 +63,14 @@ Esta especificação define os requisitos de engenharia, ferramentas e padrões 
    ```
 2. **Dockerfile Canônico (Multi-stage + Alpine Non-Root):**
    ```dockerfile
-   FROM node:22-alpine AS builder
+   FROM node:24-alpine AS builder
    WORKDIR /app
    COPY package*.json ./
    RUN npm ci
    COPY . .
    RUN npm run build --if-present
 
-   FROM node:22-alpine
+   FROM node:24-alpine
    USER 1000:1000
    WORKDIR /app
    COPY --chown=node:node --from=builder /app ./

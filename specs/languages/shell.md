@@ -5,7 +5,9 @@
 ---
 
 ## 1. Visão Geral e Filosofia
-Esta especificação define os requisitos de engenharia, ferramentas e padrões para desenvolvimento de scripts e utilitários de sistema em **POSIX Shell** / **Bash** no ecossistema GOST.
+Esta especificação define os requisitos de engenharia, ferramentas e padrões para desenvolvimento de scripts e utilitários de sistema em **POSIX Shell** e **Bash** no ecossistema GOST.
+
+O padrão universal e prioritário é **POSIX Shell estrito (`/bin/sh`)** visando máxima portabilidade e execução determinística em contêineres e distribuições minimalistas (Alpine, Debian, BusyBox). Quando recursos avançados de interpretador forem indispensáveis (como arrays associativos ou manipulação robusta de descritores), adota-se **Bash 5.2+** como baseline canônico do estado da arte, com shebang explícita `#!/usr/bin/env bash`.
 
 ---
 
@@ -15,7 +17,7 @@ Esta especificação define os requisitos de engenharia, ferramentas e padrões 
 |---|---|---|
 | **Test Runner** | **ShellSpec** (BDD Framework) | `shellspec` |
 | **Cobertura (≥ 90%)** | **kcov** integrado | `shellspec --kcov` |
-| **Linter (Zero Warnings)** | **ShellCheck** | `shellcheck -s sh -e SC... *.sh lib/*.sh` |
+| **Linter (Zero Warnings)** | **ShellCheck** | `shellcheck -s sh *.sh lib/*.sh` (ou `-s bash`) |
 | **Formatação Determinística** | **shfmt** | `shfmt -d -i 2 -ci -bn .` |
 
 ---

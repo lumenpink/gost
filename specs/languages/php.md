@@ -5,7 +5,9 @@
 ---
 
 ## 1. Visão Geral e Filosofia
-Esta especificação define os requisitos de engenharia, ferramentas e padrões para desenvolvimento em **PHP** (versão 8.2 ou superior) no ecossistema GOST.
+Esta especificação define os requisitos de engenharia, ferramentas e padrões para desenvolvimento em **PHP** no ecossistema GOST.
+
+O ecossistema adota **PHP 8.5+** como estado da arte canônico de runtime e compilação, mantendo **suporte reverso mandatório a partir do PHP 8.2** (`"php": "^8.2 || ^8.3 || ^8.4 || ^8.5"` ou `>=8.2` no `composer.json`). O código de bibliotecas e serviços deve ser validado para operar sem quebra no baseline 8.2, impondo `declare(strict_types=1);` em todos os arquivos de código-fonte.
 
 ---
 
@@ -77,7 +79,7 @@ Esta especificação define os requisitos de engenharia, ferramentas e padrões 
    COPY composer.json composer.lock ./
    RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-   FROM php:8.3-cli-alpine
+   FROM php:8.5-cli-alpine
    RUN adduser -D -u 1000 appuser
    WORKDIR /app
    COPY --chown=appuser:appuser . /app

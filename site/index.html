@@ -325,10 +325,10 @@
         <h4>📦 Módulos Especializados por Linguagem (Anti-Bloat)</h4>
         <p>Para não poluir o repositório nem sobrecarregar o contexto de agentes de IA com regras de stacks não utilizadas, o GOST provê especificações técnicas modulares isoladas em <code>specs/languages/</code>:</p>
         <ul style="margin-left: 1.25rem; margin-top: 0.5rem; font-size: 0.95rem;">
-          <li><strong>PHP (<code>php.md</code>):</strong> Pest (&gt;90%), PHPStan max, Pint, Infection (MSI&gt;80%), Composer lock e Docker alpine non-root.</li>
-          <li><strong>Rust (<code>rust.md</code>):</strong> Cargo test, Clippy (<code>-D warnings</code>), rustfmt, cargo-mutants, llvm-cov e Docker scratch estático.</li>
-          <li><strong>POSIX Shell (<code>shell.md</code>):</strong> ShellSpec com kcov, ShellCheck, shfmt determinístico e resolução nativa XDG.</li>
-          <li><strong>JavaScript/TypeScript (<code>javascript.md</code>):</strong> Biome/Prettier, Playwright E2E, c8 e lockfiles imutáveis.</li>
+          <li><strong>PHP (<code>php.md</code>):</strong> PHP 8.5+ com suporte reverso a 8.2, Pest (&gt;90%), PHPStan max, Pint, Infection (MSI&gt;80%), Composer lock e Docker alpine non-root.</li>
+          <li><strong>Rust (<code>rust.md</code>):</strong> Rust 1.99 (Edição 2024), Cargo test, Clippy (<code>-D warnings</code>), rustfmt, cargo-mutants, llvm-cov e Docker scratch estático.</li>
+          <li><strong>POSIX Shell (<code>shell.md</code>):</strong> POSIX /bin/sh e Bash 5.2+, ShellSpec com kcov (&gt;90%), ShellCheck zero warnings, shfmt determinístico e XDG.</li>
+          <li><strong>JavaScript/TypeScript (<code>javascript.md</code>):</strong> Node.js 24 LTS, ESM nativo, TypeScript 5.8+, Biome canônico, Vitest/Playwright e c8.</li>
           <li><strong>R (<code>r.md</code>):</strong> testthat, covr, lintr, styler e gestão hermética de dependências com <code>renv</code> (Twelve-Factor R).</li>
         </ul>
       </div>
