@@ -252,7 +252,7 @@ gost_init_main() {
   # 2. GOSTVER
   _gostver_content=$(cat << EOF
 # GOSTVER — Declaração de Conformidade com o Padrão GOST
-GOST_VERSION="1.1.0"
+GOST_VERSION="1.2.0"
 GOST_PROFILE_URL="$GI_PROFILE"
 GOST_LANGUAGES="$GI_LANG"
 EOF

@@ -48,10 +48,11 @@ O CLI `cccp` utiliza essas variáveis para sincronizar o cache local em `.gost/`
 * **Anti-Boilerplate:** Cada repositório implementa estritamente o seu perfil real, sem textos genéricos desnecessários.
 
 ### 2. O Ciclo de Desenvolvimento (DD-TDD) & Tickets Obrigatórios
-* **Zero Commits sem Ticket:** Nenhum commit é aceito sem referência formal a um ticket (`(ref #<id>)` nos intermediários e `(closes #<id>)` na finalização). Hooks locais bloqueiam commits soltos.
-* **Branches por Ticket:** Desenvolvimento estritamente isolado em `feat/<id>-<slug>` ou `fix/<id>-<slug>`. Proibido commitar na `main`.
-* **As 5 Etapas:** Ticket $\to$ Doc in develop $\to$ Failing Test $\to$ Fix / Implement $\to$ Finish Docs & Close.
-* **Protocolo para Agentes de IA:** Comandos mnemônicos determinísticos (`DCPD`, `DCP`, `PLAN`, `TDD`, `AUDIT`, `FIX`, `RELEASE`).
+* **Zero Commits sem Ticket:** Nenhum commit é aceito sem referência formal a um ticket (`(ref #<id>)` nos intermediários e `(closes #<id>)` na finalização). Hooks locais e CI bloqueiam commits soltos.
+* **Branches por Ticket:** Desenvolvimento estritamente isolado em `<tipo>/<id>-<slug>`. Proibido commitar na `main`.
+* **Zero Código sem Ticket e Spec:** Nenhuma alteração em código de produção sem ticket e documentação prévia de contrato. Na fase de doc (Fase 3), é proibido alterar código.
+* **As 9 Fases Canônicas:** Ticket $\to$ New Branch $\to$ Doc/Spec Contract $\to$ Red (Failing Test) $\to$ Green (Implement) $\to$ Refactor to Excellence $\to$ Mutation Test & Fortify $\to$ Quality Gate & Audit $\to$ Finish Docs & Close.
+* **Protocolo para Agentes de IA:** Comandos mnemônicos determinísticos (`DCPD`, `DCP`, `PLAN`, `TDD`, `AUDIT`, `FIX`, `RELEASE`), com `TDD` governando o cumprimento sequencial estrito das 9 fases.
 
 ### 3. Estratégia e Qualidade de Testes
 * **Pirâmide Completa:** Validação em camadas com testes unitários, funcionais, de integração e E2E (via **Playwright**).

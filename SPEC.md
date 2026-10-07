@@ -85,58 +85,93 @@ Arquivos de configuração e metadados específicos de ferramentas **NÃO DEVEM*
 
 ## 5. Ciclo de Desenvolvimento GOST (DD-TDD)
 
-O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **Documentation-Driven & Test-Driven Development (DD-TDD)**, governado pela regra de rastreabilidade estrita de tickets.
+O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **Documentation-Driven & Test-Driven Development (DD-TDD)** em 9 fases sequenciais e indivisíveis, governado pela regra de rastreabilidade estrita de tickets e isolamento em branches.
 
-### 5.1 Cláusula Pétrea: Zero Commits sem Ticket
-* **Regra Inviolável:** **NENHUM COMMIT DEVE EXISTIR SEM UM TICKET ASSOCIADO**.
-* Todo trabalho (nova funcionalidade, correção de bug, refatoração, documentação ou manutenção) **DEVE** obrigatoriamente nascer de um ticket formal registrado no issue tracker antes de qualquer alteração no código.
-* **Commits Intermediários:** Durante o ciclo de desenvolvimento, todo commit **DEVE** incluir a referência ao ticket no formato `(ref #<id>)`.
-* **Commit de Fechamento:** O último commit do ciclo, após satisfazer todos os critérios de conclusão, **DEVE** conter `(closes #<id>)` para encerrar formalmente o ticket.
-* **Bloqueio Automático:** Hooks de commit (`commit-msg`) e o pipeline de CI/CD **DEVEM** rejeitar imediatamente qualquer commit que não contenha a referência explícita a um ticket.
+### 5.1 Cláusulas Pétreas do Ciclo
+
+1. **Inviolabilidade das 9 Fases:** Todas as 9 etapas **DEVEM** ser seguidas em ordem sequencial estrita para toda e qualquer alteração no repositório (funcionalidade, bugfix, refatoração ou manutenção). É expressamente proibido pular etapas, invertê-las ou executá-las em lote.
+2. **Zero Código sem Ticket e Documentação Prévia:** **NENHUMA ALTERAÇÃO EM CÓDIGO DE PRODUÇÃO É PERMITIDA SEM TICKET ABERTO E ESPECIFICAÇÃO PRELIMINAR DE DOCUMENTAÇÃO/CONTRATO**. Nenhuma linha funcional nasce sem rastreabilidade documental prévia.
+3. **Isolamento Estrito da Fase de Documentação:** Na etapa de documentação/especificação (Fase 3), é **TERMINANTEMENTE PROIBIDO alterar qualquer linha de código de produção**. Apenas contratos de interface, tipos, assinaturas, diagramas e especificações funcionais são permitidos.
+4. **Rastreabilidade Estrita de Commits por Ticket:**
+   - Todo trabalho **DEVE** nascer de uma issue formal registrada no issue tracker antes de qualquer modificação.
+   - Todo commit intermediário **DEVE** incluir a referência ao ticket no formato `(ref #<id>)`.
+   - O commit final de encerramento da Fase 9 **DEVE** conter `(closes #<id>)` para liquidar formalmente o ticket.
+   - Hooks de commit (`commit-msg`) e o pipeline de CI/CD **DEVEM** rejeitar imediatamente qualquer commit sem referência a ticket.
+5. **Proibição Absoluta de Commit na Linha Base:** É estritamente **PROIBIDO** commitar diretamente no branch principal (`main` ou `develop`). Todo o trabalho reside exclusivamente no branch dedicado do ticket até sua aprovação e merge.
 
 ### 5.2 Estratégia de Branches por Ticket
-* É estritamente **PROIBIDO** commitar diretamente no branch principal (`main`) durante o ciclo de trabalho.
 * Todo ticket **DEVE** ser desenvolvido em um branch dedicado derivado de `develop` (ou `main`), com nomenclatura padronizada contendo o ID do ticket:
   - `feat/<id>-<slug-curto>` (ex: `feat/42-rate-limiting`)
   - `fix/<id>-<slug-curto>` (ex: `fix/55-jwt-timestamp-overflow`)
   - `docs/<id>-<slug-curto>` (ex: `docs/12-api-spec-update`)
-  - `refactor/<id>-<slug-curto>`
+  - `refactor/<id>-<slug-curto>` (ex: `refactor/18-extract-auth-module`)
+  - `test/<id>-<slug-curto>`
+  - `chore/<id>-<slug-curto>`
 * O merge do branch para a linha principal só é permitido após aprovação completa de testes, cobertura e linter no CI.
 
-### 5.3 As 5 Etapas do Ciclo DD-TDD
+### 5.3 As 9 Fases Canônicas do Ciclo DD-TDD
 
-```
-[1. Ticket] ──> [2. Doc in Develop] ──> [3. Failing Test] ──> [4. Fix / Implement] ──> [5. Finish Docs & Close]
+```text
+[1. Ticket] 
+    └──> [2. New Branch] 
+            └──> [3. Doc / Spec Contract] 
+                    └──> [4. Red: Failing Test] 
+                            └──> [5. Green: Implement] 
+                                    └──> [6. Refactor to Excellence] 
+                                            └──> [7. Mutation Test & Fortify] 
+                                                    └──> [8. Quality Gate & Local Audit] 
+                                                            └──> [9. Finish Docs & Close]
 ```
 
-1. **Etapa 1: Ticket / Issue**
-   - Abertura formal da issue com Contexto, Comportamento Esperado e Critérios de Aceite.
-2. **Etapa 2: Documentação em Desenvolvimento (`Doc in develop`)**
-   - Escrita prévia da documentação, interfaces e formatos no branch do ticket antes de codificar.
+1. **Fase 1: Ticket / Issue (Planejamento & Escopo)**
+   - Abertura formal da issue no tracker com: Contexto, Comportamento Esperado e Critérios de Aceite detalhados.
+   - Proibido qualquer commit ou alteração no repositório nesta fase.
+2. **Fase 2: New Branch (Isolamento Estrito)**
+   - Criação da branch dedicada a partir da base (`develop` ou `main`) no formato `<tipo>/<id>-<slug>`.
+   - Nenhuma linha é alterada na branch base.
+3. **Fase 3: Doc / Spec Contract (Design e Contrato Preliminar)**
+   - Formalização prévia do contrato, interfaces públicas, assinaturas, diagramas e comportamento esperado.
+   - **Regra Inviolável:** Zero alterações em código de produção nesta etapa. Apenas documentação e contratos.
    - Commit: `docs: specify <comportamento> (ref #<id>)`
-3. **Etapa 3: Teste Falho (`Failing Test`)**
-   - Criação de teste automatizado comprovando a ausência da funcionalidade ou reproduzindo o defeito. O teste **DEVE falhar**.
+4. **Fase 4: Red - Failing Test (Comprovação Automatizada)**
+   - Criação de testes automatizados unitários ou funcionais exercitando o contrato definido na Fase 3.
+   - O teste **DEVE falhar**, comprovando a ausência da funcionalidade ou reproduzindo fielmente o bug.
    - Commit: `test: add failing test for <requisito> (ref #<id>)`
-4. **Etapa 4: Correção ou Implementação (`Fix / Implement`)**
-   - Escrita do código funcional estritamente necessário para fazer a suíte passar.
+5. **Fase 5: Green - Implement / Fix (Implementação Funcional)**
+   - Primeira escrita em código de produção: implementação estritamente necessária e suficiente para fazer a suíte passar.
    - Commit: `feat: implement <funcionalidade> (ref #<id>)` ou `fix: resolve <bug> (ref #<id>)`
-5. **Etapa 5: Finalização da Documentação e Encerramento (`Finish Docs & Close`)**
-   - Polimento final dos manuais, guias, documentação estática do site e `CHANGELOG.md`.
-   - Commit: `docs: finalize documentation and guides (closes #<id>)`
+6. **Fase 6: Refactor to Excellence (Polimento e Qualidade)**
+   - Refatoração do código de produção e testes: eliminação de duplicações, nomes idiomáticos, separação de responsabilidades e Zero Warnings. Testes continuam 100% verdes.
+   - Commit: `refactor: optimize and polish <escopo> (ref #<id>)`
+7. **Fase 7: Mutation Test & Fortify (Blindagem contra Mutantes)**
+   - Execução da ferramenta de testes de mutação. Cada mutante sobrevivente exige **novos testes ou asserções adicionais** até exterminar 100% dos mutantes críticos nas áreas modificadas.
+   - Commit: `test: eliminate surviving mutants in <escopo> (ref #<id>)`
+8. **Fase 8: Quality Gate & Local Audit (Auditoria Local)**
+   - Execução e validação dos gates locais: linter rigoroso com `-D warnings` (Zero Warnings), formatação determinística (`fmt`), compilação/tipos limpos e piso de cobertura ≥ 90% (mirando 100%).
+   - *(Validação local estrita; commit de ajuste se necessário: `fix: lint and formatting hygiene (ref #<id>)`)*
+9. **Fase 9: Finish Docs & Close Ticket (Consolidação e Encerramento)**
+   - Atualização da documentação para usuário (`./site`, `README.md`), consolidação do `CHANGELOG.md` e commit final de encerramento formal contendo obrigatoriamente a diretiva de fechamento.
+   - Commit: `docs: finalize documentation and changelog (closes #<id>)`
 
-### 5.4 Critérios de Conclusão / Definition of Done (DoD)
+### 5.4 Tratamento para Casos Específicos
+* **Em Bugfixes (`fix`):** Na Fase 3 (Spec), documenta-se a violação do contrato anterior e o comportamento correto esperado; na Fase 4 (Red), o teste falho é o teste de regressão exato que reproduz o defeito.
+* **Em Refatorações (`refactor`):** Na Fase 3 (Spec), definem-se as invariantes de negócio que não podem ser quebradas; na Fase 4 (Red), adicionam-se testes cobrindo lacunas ou casos de borda antes não testados garantindo as invariantes.
+* **Em Documentação Pura (`docs`):** Quando a tarefa for exclusivamente documental, as etapas de código funcional (4 a 7) registram `N/A` explícito no checklist do ticket, mantendo-se obrigatórias a branch dedicada (Fase 2), a referência intermediária `(ref #<id>)` e o fechamento `(closes #<id>)` na Fase 9.
+
+### 5.5 Critérios de Conclusão / Definition of Done (DoD)
 Um ticket só pode ser considerado concluído e encerrado via `(closes #<id>)` se satisfizer integralmente o seguinte checklist:
-- [ ] Ticket aberto previamente detalhando o problema e critérios.
-- [ ] Branch dedicado criado no formato `<tipo>/<id>-<slug>`.
-- [ ] Commit com teste falho registrado no histórico antes da implementação.
-- [ ] Código funcional implementado e todos os testes passando.
-- [ ] Cobertura global mantida comprovadamente **acima de 90%** (mirando 100%).
-- [ ] Ausência de mutantes críticos sobreviventes (verificação de mutação).
-- [ ] Documentação do `./site`, `README.md` e `CHANGELOG.md` atualizadas.
-- [ ] Análise estática limpa (Zero Warnings).
+- [ ] Ticket aberto previamente detalhando o problema e critérios (Fase 1).
+- [ ] Branch dedicado criado no formato `<tipo>/<id>-<slug>` (Fase 2).
+- [ ] Documentação preliminar de contrato registrada antes do código (Fase 3).
+- [ ] Commit com teste falho registrado no histórico antes da implementação (Fase 4).
+- [ ] Código funcional implementado e todos os testes passando (Fase 5).
+- [ ] Refatoração concluída com código limpo e idiomático (Fase 6).
+- [ ] Ausência de mutantes críticos sobreviventes (Fase 7).
+- [ ] Quality gates locais 100% verdes: cobertura ≥ 90%, zero warnings, formatação determinística (Fase 8).
+- [ ] Documentação do `./site`, `README.md` e `CHANGELOG.md` atualizadas (Fase 9).
 - [ ] Pipeline de CI/CD 100% verde.
 
-### 5.5 Protocolo de Comandos para Agentes de IA (*Agent Dispatch*)
+### 5.6 Protocolo de Comandos para Agentes de IA (*Agent Dispatch*)
 Em repositórios GOST desenvolvidos ou mantidos em colaboração com agentes de inteligência artificial (LLM/CLI), a interação entre o humano e o agente **DEVE** aderir a um vocabulário determinístico de comandos operacionais para mitigar ações não autorizadas (como commits arbitrários, quebra do fluxo de tickets ou merges indevidos):
 
 | Comando | Significado Canônico | Escopo de Autorização Concedida ao Agente |
@@ -144,7 +179,7 @@ Em repositórios GOST desenvolvidos ou mantidos em colaboração com agentes de 
 | **`DCPD`** | **Do, Commit, Push, Deploy** | Autorização total de ponta a ponta: implementa código e testes, valida linters/gates locais, cria commit convencional com `(closes #<id>)`, faz push da branch, executa merge na `main` e dispara o pipeline de deploy. |
 | **`DCP`** | **Do, Commit, Push** | Implementa, testa, commita e envia o push **exclusivamente para a branch de trabalho**, deixando o Pull Request aberto no Codeberg/Forgejo para revisão e validação humana prévia. |
 | **`PLAN`** | **Plan & Propose** | Modo estritamente consultivo e investigativo: pesquisa o código, elabora diagnóstico e formula proposta detalhada de plano/ticket, **sem editar arquivos e sem commitar**. |
-| **`TDD`** | **Ticket, Doc, Test, Do** | Execução rigorosa das 5 etapas sequenciais do ciclo DD-TDD: criação formal de ticket, commit de contrato preliminar (*Doc in develop*), commit de teste quebrado (*Failing test*) e código funcional. |
+| **`TDD`** | **Ticket, Branch, Doc, Red, Green, Refactor, Mutate, Gate, Close** | Execução rigorosa e sequencial das **9 fases canônicas** do ciclo DD-TDD: criação/validação de ticket, criação da branch dedicada, contrato preliminar em docs (**sem tocar em código**), teste falho, código funcional, refatoração limpa, eliminação de mutantes, validação dos gates e commit final de fechamento. |
 | **`AUDIT`** | **Audit & Check** | Inspeção passiva do repositório: executa linters em severidade máxima (`-D warnings`), verifica cobertura (≥90%), testa mutantes, audita vulnerabilidades em dependências e checa integridade de links sem alterar o código. |
 | **`FIX`** | **Fix & Clean** | Saneamento e polimento técnico: correção exclusiva de avisos de linters, eliminação de mutantes sobreviventes e aplicação de formatadores determinísticos, preservando o comportamento funcional. |
 | **`RELEASE`** | **Release & Tag** | Consolidação de marcos semânticos: consolidação do `CHANGELOG.md`, bump semântico no `VERSION` (`patch`, `minor` ou `major`) via `cccp release`, geração da tag Git correspondente e push de tags. |

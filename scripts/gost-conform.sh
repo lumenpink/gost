@@ -173,7 +173,7 @@ gost_conform_main() {
   # 1. GOSTVER
   _fix_gostver="cat > \"${GC_ROOT}/GOSTVER\" << 'EOF'
 # GOSTVER — Declaração de Conformidade com o Padrão GOST
-GOST_VERSION=\"1.1.0\"
+GOST_VERSION=\"1.2.0\"
 GOST_PROFILE_URL=\"\"
 GOST_LANGUAGES=\"$_detected_lang\"
 EOF"
@@ -266,13 +266,70 @@ EOF"
 EOF"
   _check_file "site/index.html" "GOST-08-SITE" "Página estática de documentação pública" "$_fix_site"
 
-  # 9. Verificação de hooks Git se for repositório git
+  # 9. .antigravity/rules.md (Governança DD-TDD de Agentes de IA)
+  _fix_rules="mkdir -p \"${GC_ROOT}/.antigravity\" && cat > \"${GC_ROOT}/.antigravity/rules.md\" << 'EOF'
+# Regras de Repositório GOST para Agentes de IA
+
+1. **Inviolabilidade das 9 Fases do Ciclo DD-TDD:**
+   Todo trabalho neste repositório DEVE seguir estritamente o ciclo de 9 fases:
+   \`Ticket (1) ➔ New Branch (2) ➔ Doc/Spec Contract (3) ➔ Red Failing Test (4) ➔ Green Implement (5) ➔ Refactor (6) ➔ Mutation Test (7) ➔ Quality Gate (8) ➔ Finish & Close (9)\`.
+
+2. **Zero Código sem Ticket e Spec:**
+   - É TERMINANTEMENTE PROIBIDO alterar qualquer linha de código de produção sem antes existir um ticket aberto e a especificação preliminar de documentação/contrato.
+   - Na Fase 3 (Doc/Spec), é estritamente proibido alterar código de produção. Apenas arquivos de documentação, esquemas e contratos são permitidos.
+
+3. **Isolamento de Branches:**
+   - Nunca comitar ou realizar alterações diretamente na branch \`main\` ou \`develop\`.
+   - Sempre criar branch dedicada no padrão \`<tipo>/<id>-<slug>\` (ex: \`feat/42-new-feature\`, \`fix/10-bug-fix\`).
+
+4. **Blindagem de Testes & Mutation Testing:**
+   - O teste deve ser comprovado falhando (Fase 4) antes de qualquer código ser escrito.
+   - Na Fase 7, é obrigatório executar testes de mutação e aniquilar mutantes sobreviventes antes de fechar o ticket.
+
+5. **Padrão Estrito de Commits:**
+   - Todo commit intermediário DEVE conter \`(ref #<id>)\`.
+   - O commit final de encerramento da Fase 9 DEVE conter \`(closes #<id>)\`.
+   - Nunca criar commits automaticamente sem autorização inequívoca do usuário humano.
+EOF"
+  _check_file ".antigravity/rules.md" "GOST-09-AGENT-RULES" "Regras de governança DD-TDD para agentes de IA" "$_fix_rules"
+
+  # 10. .forgejo/issue_template/ticket.md (Template de Issue DD-TDD)
+  _fix_template="mkdir -p \"${GC_ROOT}/.forgejo/issue_template\" && cat > \"${GC_ROOT}/.forgejo/issue_template/ticket.md\" << 'EOF'
+---
+name: Ticket GOST (DD-TDD)
+about: Abertura formal de ticket para o ciclo DD-TDD de 9 fases
+title: \"tipo(escopo): descrição concisa\"
+labels:
+  - gost
+---
+
+## Description
+<!-- Descreva o problema, a nova funcionalidade ou a necessidade de refatoração -->
+
+## Expected Behavior & Acceptance Criteria
+- [ ] Critério 1
+- [ ] Critério 2
+
+## Tasks / DD-TDD Checklist (9 Fases GOST)
+- [ ] **Fase 1 - Ticket:** Issue formalizada e escopo delimitado
+- [ ] **Fase 2 - Branch:** Branch \`<tipo>/<id>-<slug>\` criada a partir de develop/main
+- [ ] **Fase 3 - Doc/Spec:** Contrato preliminar e especificação (Zero código de produção)
+- [ ] **Fase 4 - Red:** Teste automatizado falho comprovando o requisito
+- [ ] **Fase 5 - Green:** Implementação mínima funcional com teste passando
+- [ ] **Fase 6 - Refactor:** Código limpo, idiomático e com Zero Warnings
+- [ ] **Fase 7 - Mutation:** Mutantes críticos eliminados com asserções robustas
+- [ ] **Fase 8 - Quality Gate:** Cobertura >= 90%, linter -D warnings e formatação validados
+- [ ] **Fase 9 - Close:** Changelog e documentação atualizados; commit com \`(closes #<id>)\`
+EOF"
+  _check_file ".forgejo/issue_template/ticket.md" "GOST-10-TICKET-TPL" "Template de tickets DD-TDD no Forgejo" "$_fix_template"
+
+  # 11. Verificação de hooks Git se for repositório git
   if [ -d "${GC_ROOT}/.git" ]; then
     _total_items=$((_total_items + 1))
     if [ -f "${GC_ROOT}/.git/hooks/commit-msg" ]; then
       _passed_items=$((_passed_items + 1))
       if [ "$GC_QUIET" -eq 0 ]; then
-        printf "  %b[PASS]%b  %-22s : %s\n" "$GC_C_GREEN" "$GC_C_RESET" "GOST-09-GIT-HOOKS" "Git hooks semânticos configurados"
+        printf "  %b[PASS]%b  %-22s : %s\n" "$GC_C_GREEN" "$GC_C_RESET" "GOST-11-GIT-HOOKS" "Git hooks semânticos configurados"
       fi
     else
       if [ "$GC_MODE" = "fix" ] && command -v cccp >/dev/null 2>&1; then

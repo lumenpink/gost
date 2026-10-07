@@ -317,49 +317,84 @@
 
     <section id="ciclo">
       <h2>3. Ciclo de Desenvolvimento (DD-TDD)</h2>
-      <p>Nenhuma alteração é iniciada ou finalizada sem rastreabilidade. O fluxo formal divide-se em 5 etapas sequenciais:</p>
+      <p>Nenhuma alteração de código ocorre sem ticket e documentação prévia. O fluxo formal divide-se em 9 etapas sequenciais e indivisíveis:</p>
 
       <div class="flow-steps">
         <div class="step-box">
           <div class="step-num">1</div>
           <div class="step-content">
-            <strong>Ticket / Issue</strong>
-            <p>Abertura do ticket formalizando o problema, a nova funcionalidade ou refatoração no issue tracker.</p>
+            <strong>Ticket / Issue (Planejamento & Escopo)</strong>
+            <p>Abertura do ticket formalizando o problema, a nova funcionalidade ou refatoração no issue tracker. Proibido alterar arquivos.</p>
           </div>
         </div>
 
         <div class="step-box">
           <div class="step-num">2</div>
           <div class="step-content">
-            <strong>Doc in Develop (Commit de Documentação)</strong>
-            <p>Formalização prévia do comportamento e interfaces esperadas antes de codificar.</p>
-            <code>docs: specify auth endpoint contracts (ref #42)</code>
+            <strong>New Branch (Isolamento Estrito)</strong>
+            <p>Criação da branch dedicada a partir de <code>develop</code> ou <code>main</code> no padrão padronizado.</p>
+            <code>git checkout -b feat/42-auth-jwt</code>
           </div>
         </div>
 
         <div class="step-box">
           <div class="step-num">3</div>
           <div class="step-content">
-            <strong>Failing Test (Commit do Teste Quebrado)</strong>
-            <p>Criação do teste automatizado reproduzindo o bug ou atestando a falta da feature. O teste <strong>deve falhar</strong>.</p>
-            <code>test: add failing integration test for token expiration (ref #42)</code>
+            <strong>Doc / Spec Contract (Design Pré-Código)</strong>
+            <p>Formalização antecipada do contrato, interfaces e diagramas. <em>Zero código de produção nesta etapa.</em></p>
+            <code>docs: specify auth endpoint contracts (ref #42)</code>
           </div>
         </div>
 
         <div class="step-box">
           <div class="step-num">4</div>
           <div class="step-content">
-            <strong>Fix / Implementação (Commit do Código)</strong>
-            <p>Desenvolvimento da solução estritamente necessária para fazer o teste passar.</p>
-            <code>feat: implement token expiration validation (ref #42)</code>
+            <strong>Red: Failing Test (Commit do Teste Quebrado)</strong>
+            <p>Criação do teste automatizado reproduzindo o bug ou comprovando a falta da feature. O teste <strong>deve falhar</strong>.</p>
+            <code>test: add failing integration test for token expiration (ref #42)</code>
           </div>
         </div>
 
         <div class="step-box">
           <div class="step-num">5</div>
           <div class="step-content">
+            <strong>Green: Implement (Commit do Código Funcional)</strong>
+            <p>Desenvolvimento da solução estritamente necessária e suficiente para fazer a suíte passar no verde.</p>
+            <code>feat: implement token expiration validation (ref #42)</code>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <strong>Refactor to Excellence (Polimento e Qualidade)</strong>
+            <p>Refatoração do código de produção visando Clean Code, nomes expressivos e zero warnings no linter. Testes continuam 100% verdes.</p>
+            <code>refactor: optimize token expiration validation (ref #42)</code>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">7</div>
+          <div class="step-content">
+            <strong>Mutation Test & Fortify (Eliminação de Mutantes)</strong>
+            <p>Execução de testes de mutação para blindar asserções e introduzir testes até exterminar 100% dos mutantes críticos.</p>
+            <code>test: eliminate surviving mutants in token validation (ref #42)</code>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">8</div>
+          <div class="step-content">
+            <strong>Quality Gate & Local Audit (Auditoria Local)</strong>
+            <p>Auditoria local rigorosa: linters com <code>-D warnings</code>, formatação determinística e cobertura mantida comprovadamente &ge; 90%.</p>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">9</div>
+          <div class="step-content">
             <strong>Finish Docs & Close (Commit de Fechamento)</strong>
-            <p>Revisão final dos guias, atualização do changelog e encerramento do ticket.</p>
+            <p>Revisão final dos guias e vitrine, consolidação do changelog e encerramento formal do ticket.</p>
             <code>docs: update authentication documentation (closes #42)</code>
           </div>
         </div>
@@ -375,8 +410,8 @@
           <p>Proibido commitar na <code>main</code>. Desenvolvimento sempre em branches dedicados: <code>feat/&lt;id&gt;-slug</code> ou <code>fix/&lt;id&gt;-slug</code>.</p>
         </div>
         <div class="card">
-          <h4>✅ Definition of Done (DoD)</h4>
-          <p>Critérios objetivos: teste falho histórico comprovado, código verde, cobertura &gt; 90%, zero mutantes críticos, docs atualizadas e CI verde.</p>
+          <h4>📜 Zero Código sem Spec Prévia</h4>
+          <p>A fase de documentação/contrato precede qualquer código. Na etapa de doc, é expressamente proibido alterar código de produção.</p>
         </div>
       </div>
 
@@ -387,7 +422,7 @@
           <li><code>DCPD</code> <strong>(Do, Commit, Push, Deploy)</strong>: Execução completa de ponta a ponta com testes, commit com <code>(closes #N)</code>, push, merge na <code>main</code> e deploy contínuo.</li>
           <li><code>DCP</code> <strong>(Do, Commit, Push)</strong>: Implementação e push restrito à branch da feature, mantendo o PR aberto no Codeberg para revisão humana prévia.</li>
           <li><code>PLAN</code> <strong>(Plan &amp; Propose)</strong>: Diagnóstico e formulação de proposta sem modificar arquivos de código e sem commitar.</li>
-          <li><code>TDD</code> <strong>(Ticket, Doc, Test, Do)</strong>: Execução estrita das 5 etapas DD-TDD com commits separados de documentação preliminar e teste falho.</li>
+          <li><code>TDD</code> <strong>(Ticket, Branch, Doc, Red, Green, Refactor, Mutate, Gate, Close)</strong>: Execução sequencial estrita das 9 fases DD-TDD com isolamento em branch, contratos prévios, testes de mutação e auditoria local.</li>
           <li><code>AUDIT</code> <strong>(Audit &amp; Check)</strong>: Auditoria passiva de linters (<code>-D warnings</code>), testes, cobertura (&ge;90%), mutantes e segurança.</li>
           <li><code>FIX</code> <strong>(Fix &amp; Clean)</strong>: Saneamento técnico de avisos de análise estática e formatação sem alteração de regra de negócio.</li>
           <li><code>RELEASE</code> <strong>(Release &amp; Tag)</strong>: Bump semântico no <code>VERSION</code>, consolidação do changelog e publicação de tags Git via <code>cccp</code>.</li>
