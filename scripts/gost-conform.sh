@@ -173,19 +173,19 @@ gost_conform_main() {
   # 1. GOSTVER
   _total_items=$((_total_items + 1))
   _gostver_path="${GC_ROOT}/GOSTVER"
-  if [ -f "$_gostver_path" ] && grep -q 'GOST_VERSION="1.2.0"' "$_gostver_path" 2>/dev/null; then
+  if [ -f "$_gostver_path" ] && grep -q 'GOST_VERSION="1.3.0"' "$_gostver_path" 2>/dev/null; then
     _passed_items=$((_passed_items + 1))
     if [ "$GC_QUIET" -eq 0 ]; then
-      printf "  %b[PASS]%b  %-22s : %s (GOSTVER v1.2.0)\n" "$GC_C_GREEN" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
+      printf "  %b[PASS]%b  %-22s : %s (GOSTVER v1.3.0)\n" "$GC_C_GREEN" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
     fi
   else
     if [ "$GC_MODE" = "fix" ]; then
       if [ -f "$_gostver_path" ]; then
-        sed -i 's/GOST_VERSION=.*/GOST_VERSION="1.2.0"/' "$_gostver_path"
+        sed -i 's/GOST_VERSION=.*/GOST_VERSION="1.3.0"/' "$_gostver_path"
       else
         cat > "$_gostver_path" << EOF
 # GOSTVER — Declaração de Conformidade com o Padrão GOST
-GOST_VERSION="1.2.0"
+GOST_VERSION="1.3.0"
 GOST_PROFILE_URL=""
 GOST_LANGUAGES="$_detected_lang"
 EOF
@@ -193,7 +193,7 @@ EOF
       _fixed_items=$((_fixed_items + 1))
       _passed_items=$((_passed_items + 1))
       if [ "$GC_QUIET" -eq 0 ]; then
-        printf "  %b[FIXED]%b %-22s : %s (atualizado para v1.2.0 em GOSTVER)\n" "$GC_C_CYAN" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
+        printf "  %b[FIXED]%b %-22s : %s (atualizado para v1.3.0 em GOSTVER)\n" "$GC_C_CYAN" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
       fi
     else
       _failed_items=$((_failed_items + 1))
@@ -285,6 +285,10 @@ EOF"
 <body>
   <h1>$_proj_name</h1>
   <p>Documentação pública estática em conformidade com o padrão GOST.</p>
+  <footer class=\"site-footer\" style=\"margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid #333; text-align:center; font-size:0.85rem; line-height:1.6;\">
+    <div>Orgulhosamente produzido por uma <a href=\"https://travesti.2lp.in/pt/\" target=\"_blank\" rel=\"noopener\">travesti latina</a> 🏳️‍⚧️ :)</div>
+    <div style=\"margin-top:0.4rem; color:#888;\">$_proj_name • por <a href=\"https://lumen.pink\" target=\"_blank\" rel=\"noopener\">Lumen Pink</a> • Brasil 🇧🇷</div>
+  </footer>
 </body>
 </html>
 EOF"

@@ -272,6 +272,15 @@ Sistemas que exponham interfaces web para uso em smartphones ou sob redes suscet
 2. **Desacoplamento de Requisição:** O backend deve persistir o job na fila e devolver resposta imediata (`HTTP 200/202`) em milissegundos, liberando a conexão de rede móvel.
 3. **Short Polling Indestrutível:** Preferência por sondagem curta periódica sobre conexões persistentes contínuas (WebSockets/SSE), as quais tendem a quebrar silenciosamente durante trocas de torres de celular ou transições de rede.
 
+### 8.3 Rodapé Canônico em Duas Linhas (Autoria, Identidade & Soberania)
+Todo aplicativo com interface gráfica, vitrine pública ou documentação estática (`./site`) **DEVE** exibir o rodapé canônico formatado em **duas linhas rigorosamente estruturadas**:
+* **Linha 1 — Afirmação Identitária & Transfeminista:**  
+  `Orgulhosamente produzido por uma [travesti latina](https://travesti.2lp.in/<lang>/) 🏳️‍⚧️ :)`  
+  - O termo *travesti* permanece rigorosamente sem tradução em todos os idiomas; o adjetivo adapta-se gramaticalmente à língua nativa com link direcionado à definição canônica.
+* **Linha 2 — Metadados de Soberania, Autoria e Licença:**  
+  `{Nome do App} v{Versão} • por [Lumen Pink](https://lumen.pink) • {País / Brasil} 🇧🇷 • [{Licença}](LICENSE)`  
+  - Identifica o nome da aplicação, versão extraída de `VERSION`, autoria soberana, bandeira e link direto para o arquivo de licença.
+
 ---
 
 ## 9. Integração e Validação Contínua (CI/CD)
@@ -310,6 +319,21 @@ Se o ambiente de execução local não estiver disponível (ex: Docker não inic
 - Emitir aviso claro indicando que o gate foi ignorado
 - **Nunca** bloquear o push por ausência do executor local
 - Registrar o bypass involuntário para rastreabilidade
+
+### 9.4 Armazenamento Canônico de Artefatos em Object Storage (Cloudflare R2) e Higiene de Deploy
+
+Para preservar a integridade, performance e quotas de armazenamento das forjas Git (Codeberg/Forgejo) e garantir distribuição estável e escalável:
+
+1. **Proibição de Bloat na Forja Git:**
+   - Binários compilados (executáveis `musl`, bibliotecas compartilhadas, instaladores `.apk`, executáveis `.exe`), pacotes pesados e tarballs de release **NÃO DEVEM** ser hospedados nas releases da forja Git nem comitados no histórico do repositório.
+2. **Armazenamento Canônico em Object Storage (Cloudflare R2):**
+   - Todos os artefatos de release e instaladores compilados **DEVEM** ser publicados diretamente em Object Storage compatível com S3 (prioritariamente **Cloudflare R2**).
+   - Acesso e distribuição devem ocorrer via CDN global sem cobrança de taxa de saída (*egress-free*) sob o domínio unificado do projeto (`*.2lp.in`).
+   - Artefatos no R2 devem suportar *HTTP Range Requests* (RFC 7233) para streaming e download parcial, acompanhados de hashes criptográficos (`checksums.sha256`).
+3. **Higiene de Branches de Publicação / Pages (Stateless Single-Commit & Force Push):**
+   - Quando a publicação de documentação estática envolver espelhamento em branch Git dedicado (ex: branch `pages` no Codeberg Pages ou GitHub Pages), o pipeline **NÃO DEVE** acumular commits históricos de builds sucessivos.
+   - O pipeline **DEVE** verificar e purgar commits antigos de build criando uma árvore órfã isolada (`--orphan`), contendo rigorosamente um único commit limpo do snapshot atual (`docs(site): deploy [skip ci]`).
+   - A publicação remota no branch de deploy **DEVE** ser efetuada via **`git push --force origin <temp>:pages`**, mantendo o repositório leve e livre de inchaço (*bloat*) histórico.
 
 ---
 

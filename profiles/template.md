@@ -59,9 +59,11 @@ Define as ferramentas e mecanismos que asseguram commits semânticos e rastreabi
 Define onde e como a documentação estática e sites públicos dos projetos são hospedados.
 
 * **Plataforma de Hospedagem:** {{Cloudflare Workers / GitHub Pages / Codeberg Pages / Netlify / Vercel / Nginx}}
+* **Armazenamento Canônico de Artefatos & Binários:** {{Cloudflare R2 / S3-compatible Object Storage}}
 * **Estrutura Local de Arquivos Web:** Diretório `./site` na raiz do repositório.
 * **Padrão de Domínio / Subdomínio:** `https://<projeto>.{{seu-dominio.tld}}`
 * **Cabeçalhos de Segurança (CSP / HSTS):** Declarados em `./site/_headers` ou na configuração do servidor web.
+* **Higiene de Branches de Deploy (Stateless Force Push):** {{Worktree órfã de commit único com git push --force para evitar acúmulo de histórico}}
 * **Estratégia de Redundância / Fallback:** {{Ex: deploy secundário em Pages da forja caso o CDN primário fique indisponível}}
 
 ---

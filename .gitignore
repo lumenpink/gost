@@ -11,6 +11,7 @@
 .wrangler/
 
 # Temporary files, caches, logs
+compliance_report.txt
 *.tmp
 *.log
 *.swp

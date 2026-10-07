@@ -25,4 +25,4 @@ GOST_LANGUAGES="rust,shell"
 
 ## 🌐 Perfis de Referência
 
-- **[gost-profile-lumen](https://codeberg.org/lumenpink/gost-profile-lumen)**: Perfil de implementação canônico do ecossistema Lumen (Codeberg, CLI `cccp`, deploy em `*.2lp.in` via Cloudflare Workers e catálogo central).
+- **[gost-profile-kollontai](https://codeberg.org/lumenpink/gost-profile-kollontai)**: Perfil de implementação canônico Kollontai (Codeberg, CLI `cccp`, deploy em `*.2lp.in` via Cloudflare Workers / R2 e catálogo central).

@@ -176,6 +176,9 @@ When collaborating with AI agents, interactions **MUST** use deterministic opera
 1. Public documentation deployed from `./site` with HTTP security headers (`_headers`).
 2. Segregation: `./site` contains static documentation only; dynamic backends are accessed privately via WireGuard/Tailscale or authenticated tunnels.
 3. Resilient mobile pattern: Idempotent requests (`client_id`), decoupled queues, and indestructible short polling.
+4. **Canonical Two-Line Footer:** All public documentation sites (`./site`) and interfaces **MUST** display the canonical two-line footer:
+   - **Line 1 (Identity & Sovereign Assertion):** `Proudly produced by a [Latin American travesti](https://travesti.2lp.in/<lang>/) 🏳️‍⚧️ :)` (the term *travesti* remains untranslated in all languages).
+   - **Line 2 (Metadata & Licensing):** `{App} v{Version} • by [Lumen Pink](https://lumen.pink) • {Country} 🇧🇷 • [{License}](LICENSE)`
 
 ---
 
@@ -183,6 +186,8 @@ When collaborating with AI agents, interactions **MUST** use deterministic opera
 
 1. **Strict Job Separation:** Job `test` (lint, tests, coverage, audit) separated from `deploy-*` (conditioned on `main` and `needs: [test]`).
 2. **Pre-Push Gate:** Local execution via `act` with identical Docker runners before `git push`.
+3. **Canonical Object Storage (Cloudflare R2):** Compiled binaries, heavy packages, and release bundles **MUST NOT** bloat git forge storage. Releases must be published directly to S3-compatible Object Storage (Cloudflare R2) with CDN domain distribution and HTTP Range streaming.
+4. **Deploy Branch Hygiene (Stateless Single-Commit Force Push):** Dedicated git deployment branches (such as `pages`) **MUST** purge previous build history via orphan worktrees (`--orphan`), pushing a single clean commit with `git push --force origin <branch>`.
 
 ---
 

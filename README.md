@@ -32,7 +32,7 @@ Repositórios desenvolvidos sob o padrão GOST **não copiam a norma inteira**. 
 ```bash
 # GOSTVER — Declaração de Conformidade com o Padrão GOST
 GOST_VERSION="1.0.0"
-GOST_PROFILE_URL="https://codeberg.org/lumenpink/gost-profile-lumen/raw/branch/main/profile.md"
+GOST_PROFILE_URL="https://codeberg.org/lumenpink/gost-profile-kollontai/raw/branch/main/profile.md"
 GOST_LANGUAGES="php,javascript"   # Baixa apenas php.md e javascript.md em .gost/languages/
 ```
 

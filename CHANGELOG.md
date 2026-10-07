@@ -1,5 +1,14 @@
 # Changelog
 
+## [v1.3.0] - 2026-10-06
+
+### Features
+  - (spec) canonizar o rodapé canônico em duas linhas (afirmação identitária transfeminista e metadados de soberania/licença)
+  - (spec) formalizar política canônica de armazenamento de artefatos em Object Storage (Cloudflare R2) e proibição de bloat na forja Git
+  - (spec) estabelecer higiene de branches de deploy (Codeberg/GitHub Pages) com árvores órfãs de commit único e force push
+  - (scripts) atualizar gost-conform.sh para validar e injetar o rodapé canônico em site/index.html
+  - (ci) atualizar pipeline de CI para deploy em Codeberg Pages via worktree órfã e force push sem acúmulo de histórico
+
 ## [v1.2.0] - 2026-10-06
 
 ### Features

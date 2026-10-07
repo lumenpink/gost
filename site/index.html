@@ -230,20 +230,39 @@
       font-size: 1.05rem;
     }
 
-    footer {
+    footer.site-footer {
       border-top: 1px solid var(--border);
-      padding-top: 1.5rem;
+      padding-top: 2rem;
+      padding-bottom: 2rem;
       margin-top: 4rem;
-      color: var(--text-muted);
-      font-size: 0.9rem;
       text-align: center;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .footer-canonical {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer-line-identity {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .footer-line-metadata {
+      color: var(--text-muted);
+      font-size: 0.85rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <span class="badge">Norma Técnica • GOST-1.0</span>
+      <span class="badge">Norma Técnica • GOST v1.2.0</span>
       <h1>ГОСТ — Especificação de Repositórios</h1>
       <p class="subtitle">Padrão universal para arquitetura de repositórios, ciclo de desenvolvimento e documentação pública.</p>
     </header>
@@ -619,15 +638,22 @@
         <li><strong>Governança de Commits:</strong> Ferramentas de validação semântica (ex: <code>cccp</code>, <code>husky</code>) com bloqueio estrito de commits sem ticket.</li>
         <li><strong>Qualidade &amp; Testes por Stack:</strong> Runners de teste, metas de cobertura (&ge;90%), testes de mutação e linters com Zero Warnings padronizados por linguagem.</li>
         <li><strong>Pipeline de CI/CD:</strong> Definição dos workflows remotos e gates de validação local pré-push bit-for-bit idênticos (via containers/<code>act</code>).</li>
-        <li><strong>Publicação Web &amp; Docs:</strong> Infraestrutura estática de hospedagem, zonas de DNS e cabeçalhos de segurança (CSP/HSTS).</li>
+        <li><strong>Publicação Web, Docs &amp; Artefatos:</strong> Armazenamento canônico de binários em Object Storage (Cloudflare R2), higiene de branches de deploy (force push em árvore órfã) e zonas CDN sob <code>*.2lp.in</code>.</li>
         <li><strong>Padrões de Sistema &amp; Containers:</strong> Diretórios canônicos XDG, arquivos de configuração planos e Dockerfiles multi-stage mínimos.</li>
       </ul>
       <p>Consulte o modelo canônico de perfil em <code>profiles/template.md</code> e o guia de criação em <code>profiles/README.md</code>.</p>
       <p>Para automação do ecossistema, o repositório disponibiliza os utilitários de linha de comando <code>scripts/gost-init.sh</code> (inicialização de projetos) e <code>scripts/gost-conform.sh</code> (auditoria e adequação idempotente), projetados também para incorporação direta no CLI <code>cccp</code>.</p>
     </section>
 
-    <footer>
-      <p>GOST 1.0 • Liberado sob a <a href="https://creativecommons.org/publicdomain/zero/1.0/" style="color:var(--accent)">CC0 1.0 Universal</a>.</p>
+    <footer class="site-footer">
+      <div class="footer-canonical">
+        <div class="footer-line footer-line-identity">
+          Orgulhosamente produzido por uma <a href="https://travesti.2lp.in/pt/" target="_blank" rel="noopener" style="color:var(--accent)">travesti latina</a> 🏳️‍⚧️ :)
+        </div>
+        <div class="footer-line footer-line-metadata">
+          GOST v1.2.0 • por <a href="https://lumen.pink" target="_blank" rel="noopener" style="color:var(--accent)">Lumen Pink</a> • Brasil 🇧🇷 • <a href="LICENSE" target="_blank" rel="noopener" style="color:var(--accent)">CC-BY-SA-4.0</a>
+        </div>
+      </div>
     </footer>
   </div>
 </body>
