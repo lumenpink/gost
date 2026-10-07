@@ -92,8 +92,8 @@ The workflow in GOST repositories **MUST** follow a strict **Documentation-Drive
 4. **Strict Commit Traceability per Ticket:**
    - Every task **MUST** originate from a formal issue in the tracker before any code changes.
    - Intermediate commits **MUST** include ticket reference as `(ref #<id>)`.
-   - The final closing commit in Phase 9 **MUST** include ticket resolution as `(closes #<id>)`.
-   - Commit hooks (`commit-msg`) and CI/CD **MUST** reject commits lacking explicit ticket references.
+    - The final closing commit in Phase 9 **MUST** include ticket resolution as `(closes #<id>)`, `(resolves #<id>)`, or `(fixes #<id>)`.
+    - Commit hooks (`commit-msg`) and CI/CD **MUST** reject commits lacking explicit ticket references.
 5. **No Direct Commits to Base Branch:** Direct commits to `main` or `develop` are strictly **FORBIDDEN**. All work resides on dedicated ticket branches until approved.
 
 ### 5.2 Branch Strategy per Ticket
@@ -121,15 +121,15 @@ The workflow in GOST repositories **MUST** follow a strict **Documentation-Drive
 6. **Phase 6: Refactor to Excellence (Code Hygiene):** Polish production code and tests for readability, idiomatic style, and zero warnings. Tests remain 100% green. Commit: `refactor: polish and optimize <scope> (ref #<id>)`.
 7. **Phase 7: Mutation Test & Fortify (Test Suite Hardening):** Run mutation testing. Eliminate all surviving mutants by adding precise assertions and edge-case tests. Commit: `test: eliminate surviving mutants in <scope> (ref #<id>)`.
 8. **Phase 8: Quality Gate & Local Audit (Local Verification):** Execute linters at `-D warnings` (Zero Warnings), deterministic formatting (`fmt`), type-checking, and verify coverage floor ≥ 90% (target 100%).
-9. **Phase 9: Finish Docs & Close Ticket (Consolidation):** Update user docs (`./site`, `README.md`), finalize `CHANGELOG.md`, and create final closing commit: `docs: finalize changelog and docs (closes #<id>)`.
+9. **Phase 9: Finish Docs & Close Ticket (Consolidation):** Update user docs (`./site`, `README.md`), finalize `CHANGELOG.md`, and create final closing commit: `docs: finalize changelog and docs (closes #<id>)` (or `resolves`/`fixes`).
 
 ### 5.4 Handling Specific Task Types
 * **Bugfixes (`fix`):** Phase 3 specifies broken contract vs expected behavior; Phase 4 is the regression test reproducing bug.
 * **Refactoring (`refactor`):** Phase 3 specifies invariants; Phase 4 adds tests covering previously untested edge cases to safeguard invariants.
-* **Pure Documentation (`docs`):** Code phases (4–7) are marked `N/A`, but branch isolation, intermediate `(ref #<id>)`, and final `(closes #<id>)` remain mandatory.
+* **Pure Documentation (`docs`):** Code phases (4–7) are marked `N/A`, but branch isolation, intermediate `(ref #<id>)`, and final `(closes #<id>)` (or `resolves`/`fixes`) remain mandatory.
 
 ### 5.5 Definition of Done (DoD)
-A ticket is closed via `(closes #<id>)` only when:
+A ticket is closed via `(closes #<id>)` (or `resolves`/`fixes`) only when:
 - [ ] Ticket opened prior to coding (Phase 1).
 - [ ] Dedicated branch created (Phase 2).
 - [ ] Contract/spec documented before code (Phase 3).

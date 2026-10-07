@@ -95,7 +95,7 @@ O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **
 4. **Rastreabilidade Estrita de Commits por Ticket:**
    - Todo trabalho **DEVE** nascer de uma issue formal registrada no issue tracker antes de qualquer modificação.
    - Todo commit intermediário **DEVE** incluir a referência ao ticket no formato `(ref #<id>)`.
-   - O commit final de encerramento da Fase 9 **DEVE** conter `(closes #<id>)` para liquidar formalmente o ticket.
+   - O commit final de encerramento da Fase 9 **DEVE** conter `(closes #<id>)`, `(resolves #<id>)` ou `(fixes #<id>)` para liquidar formalmente o ticket.
    - Hooks de commit (`commit-msg`) e o pipeline de CI/CD **DEVEM** rejeitar imediatamente qualquer commit sem referência a ticket.
 5. **Proibição Absoluta de Commit na Linha Base:** É estritamente **PROIBIDO** commitar diretamente no branch principal (`main` ou `develop`). Todo o trabalho reside exclusivamente no branch dedicado do ticket até sua aprovação e merge.
 
@@ -151,15 +151,15 @@ O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **
    - *(Validação local estrita; commit de ajuste se necessário: `fix: lint and formatting hygiene (ref #<id>)`)*
 9. **Fase 9: Finish Docs & Close Ticket (Consolidação e Encerramento)**
    - Atualização da documentação para usuário (`./site`, `README.md`), consolidação do `CHANGELOG.md` e commit final de encerramento formal contendo obrigatoriamente a diretiva de fechamento.
-   - Commit: `docs: finalize documentation and changelog (closes #<id>)`
+   - Commit: `docs: finalize documentation and changelog (closes #<id>)` (ou `resolves`/`fixes`)
 
 ### 5.4 Tratamento para Casos Específicos
 * **Em Bugfixes (`fix`):** Na Fase 3 (Spec), documenta-se a violação do contrato anterior e o comportamento correto esperado; na Fase 4 (Red), o teste falho é o teste de regressão exato que reproduz o defeito.
 * **Em Refatorações (`refactor`):** Na Fase 3 (Spec), definem-se as invariantes de negócio que não podem ser quebradas; na Fase 4 (Red), adicionam-se testes cobrindo lacunas ou casos de borda antes não testados garantindo as invariantes.
-* **Em Documentação Pura (`docs`):** Quando a tarefa for exclusivamente documental, as etapas de código funcional (4 a 7) registram `N/A` explícito no checklist do ticket, mantendo-se obrigatórias a branch dedicada (Fase 2), a referência intermediária `(ref #<id>)` e o fechamento `(closes #<id>)` na Fase 9.
+* **Em Documentação Pura (`docs`):** Quando a tarefa for exclusivamente documental, as etapas de código funcional (4 a 7) registram `N/A` explícito no checklist do ticket, mantendo-se obrigatórias a branch dedicada (Fase 2), a referência intermediária `(ref #<id>)` e o fechamento `(closes #<id>)` (ou `resolves`/`fixes`) na Fase 9.
 
 ### 5.5 Critérios de Conclusão / Definition of Done (DoD)
-Um ticket só pode ser considerado concluído e encerrado via `(closes #<id>)` se satisfizer integralmente o seguinte checklist:
+Um ticket só pode ser considerado concluído e encerrado via `(closes #<id>)` (ou `resolves`/`fixes`) se satisfizer integralmente o seguinte checklist:
 - [ ] Ticket aberto previamente detalhando o problema e critérios (Fase 1).
 - [ ] Branch dedicado criado no formato `<tipo>/<id>-<slug>` (Fase 2).
 - [ ] Documentação preliminar de contrato registrada antes do código (Fase 3).

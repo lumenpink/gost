@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Features
+  - (spec) aceitar verbos resolves e fixes na regra GOST-04-TICKETS-COMMITS (closes #16)
+
 ## [v1.3.0] - 2026-10-06
 
 ### Features
