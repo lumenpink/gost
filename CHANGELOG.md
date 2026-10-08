@@ -1,9 +1,11 @@
 # Changelog
 
-## [Unreleased]
+## [v1.4.0] - 2026-10-07
 
 ### Features
   - (spec) aceitar verbos resolves e fixes na regra GOST-04-TICKETS-COMMITS (closes #16)
+  - (spec) atualizar especificações de linguagens php, shell e javascript para estado da arte
+  - (docs) atualizar link canônico para o perfil kollontai em kollontai.2lp.in
 
 ## [v1.3.0] - 2026-10-06
 
