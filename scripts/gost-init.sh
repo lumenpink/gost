@@ -163,7 +163,7 @@ gost_init_main() {
   GI_NAME=""
   GI_DESC=""
   GI_LANG="shell"
-  GI_PROFILE=""
+  GI_PROFILE="https://kollontai.2lp.in/profile.md"
   GI_LICENSE="CC0-1.0"
   GI_DO_GIT=0
   GI_DO_HOOKS=0

@@ -173,32 +173,42 @@ gost_conform_main() {
   # 1. GOSTVER
   _total_items=$((_total_items + 1))
   _gostver_path="${GC_ROOT}/GOSTVER"
+  _gostver_ok=0
   if [ -f "$_gostver_path" ] && grep -q 'GOST_VERSION="1.4.0"' "$_gostver_path" 2>/dev/null; then
+    if [ "$(basename "$GC_ROOT")" = "gost" ] || grep -q 'GOST_PROFILE_URL="https://kollontai.2lp.in/profile.md"' "$_gostver_path" 2>/dev/null; then
+      _gostver_ok=1
+    fi
+  fi
+
+  if [ "$_gostver_ok" -eq 1 ]; then
     _passed_items=$((_passed_items + 1))
     if [ "$GC_QUIET" -eq 0 ]; then
-      printf "  %b[PASS]%b  %-22s : %s (GOSTVER v1.4.0)\n" "$GC_C_GREEN" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
+      printf "  %b[PASS]%b  %-22s : %s (GOSTVER v1.4.0 & Perfil Kollontai)\n" "$GC_C_GREEN" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
     fi
   else
     if [ "$GC_MODE" = "fix" ]; then
       if [ -f "$_gostver_path" ]; then
         sed -i 's/GOST_VERSION=.*/GOST_VERSION="1.4.0"/' "$_gostver_path"
+        if [ "$(basename "$GC_ROOT")" != "gost" ]; then
+          sed -i 's|GOST_PROFILE_URL=.*|GOST_PROFILE_URL="https://kollontai.2lp.in/profile.md"|' "$_gostver_path"
+        fi
       else
         cat > "$_gostver_path" << EOF
 # GOSTVER — Declaração de Conformidade com o Padrão GOST
 GOST_VERSION="1.4.0"
-GOST_PROFILE_URL=""
+GOST_PROFILE_URL="https://kollontai.2lp.in/profile.md"
 GOST_LANGUAGES="$_detected_lang"
 EOF
       fi
       _fixed_items=$((_fixed_items + 1))
       _passed_items=$((_passed_items + 1))
       if [ "$GC_QUIET" -eq 0 ]; then
-        printf "  %b[FIXED]%b %-22s : %s (atualizado para v1.4.0 em GOSTVER)\n" "$GC_C_CYAN" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
+        printf "  %b[FIXED]%b %-22s : %s (atualizado para v1.4.0 e perfil Kollontai em GOSTVER)\n" "$GC_C_CYAN" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
       fi
     else
       _failed_items=$((_failed_items + 1))
       if [ "$GC_QUIET" -eq 0 ]; then
-        printf "  %b[FAIL]%b  %-22s : %s (GOSTVER ausente ou versão anterior)\n" "$GC_C_RED" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
+        printf "  %b[FAIL]%b  %-22s : %s (GOSTVER ausente, versão anterior ou sem perfil Kollontai)\n" "$GC_C_RED" "$GC_C_RESET" "GOST-01-GOSTVER" "Declaração de versão e escopo GOST"
       fi
     fi
   fi
