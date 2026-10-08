@@ -25,4 +25,4 @@ GOST_LANGUAGES="rust,shell"
 
 ## 🌐 Perfis de Referência
 
-- **[gost-profile-kollontai](https://codeberg.org/lumenpink/gost-profile-kollontai)**: Perfil de implementação canônico Kollontai (Codeberg, CLI `cccp`, deploy em `*.2lp.in` via Cloudflare Workers / R2 e catálogo central).
+- **[Perfil Kollontai](https://kollontai.2lp.in)** ([Raw Markdown](https://kollontai.2lp.in/profile.md) / [Codeberg](https://codeberg.org/lumenpink/gost-profile-kollontai)): Perfil de implementação canônico Kollontai (publicado na borda em `kollontai.2lp.in`, CLI `cccp`, deploy em `*.2lp.in` via Cloudflare Workers / R2 e catálogo central).
