@@ -47,7 +47,23 @@
       "title": "Rastreabilidade Estrita de Tickets nos Commits",
       "severity": "MUST",
       "check": "commit_msg_pattern",
-      "pattern": ".*\\((ref|closes|resolves|fixes) #[0-9]+\\)$"
+      "pattern": ".*\\((ref|closes) #[0-9]+\\)$"
+    },
+    {
+      "id": "GOST-04-A-CLOSE-TAG-CANONICAL",
+      "section": 5,
+      "title": "Tag Canônica de Fechamento na Fase 9 (closes #id) e Trava de Merge",
+      "severity": "MUST",
+      "check": "close_commit_pattern",
+      "pattern": ".*\\(closes #[0-9]+\\)$"
+    },
+    {
+      "id": "GOST-04-B-TICKET-SOVEREIGNTY",
+      "section": 5,
+      "title": "Soberania do CCCP na Criação e Fechamento de Tickets",
+      "severity": "MUST",
+      "check": "tooling_policy",
+      "tool": "cccp"
     },
     {
       "id": "GOST-05-BRANCH-PER-TICKET",
@@ -136,6 +152,22 @@
       "severity": "MUST",
       "check": "dockerfile_lint",
       "conditions": ["multi_stage", "user_non_root", "no_latest_tag"]
+    },
+    {
+      "id": "GOST-15-A-MANDATORY-CONTAINERIZATION",
+      "section": 13,
+      "title": "Containerização Mandatória Universal e Proibição de Bare Metal",
+      "severity": "MUST",
+      "check": "container_runtime_policy",
+      "policy": "no_bare_metal_services"
+    },
+    {
+      "id": "GOST-18-CI-EXCLUSIVE-DEPLOY",
+      "section": 9,
+      "title": "Deploy Exclusivo via Esteira Automatizada de CI/CD",
+      "severity": "MUST",
+      "check": "deployment_policy",
+      "policy": "cicd_pipeline_only"
     },
     {
       "id": "GOST-16-GOSTVER-COMPLIANCE",

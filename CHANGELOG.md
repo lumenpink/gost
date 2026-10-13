@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Features
+  - (spec) padronizar tag canônica (closes #id), trava de merge e soberania do cccp (closes #20)
+  - (spec) determinar containerização mandatória OCI e deploy exclusivo via CI/CD (closes #20)
+
 ## [v1.4.0] - 2026-10-07
 
 ### Features

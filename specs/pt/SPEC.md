@@ -92,12 +92,14 @@ O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **
 1. **Inviolabilidade das 9 Fases:** Todas as 9 etapas **DEVEM** ser seguidas em ordem sequencial estrita para toda e qualquer alteração no repositório (funcionalidade, bugfix, refatoração ou manutenção). É expressamente proibido pular etapas, invertê-las ou executá-las em lote.
 2. **Zero Código sem Ticket e Documentação Prévia:** **NENHUMA ALTERAÇÃO EM CÓDIGO DE PRODUÇÃO É PERMITIDA SEM TICKET ABERTO E ESPECIFICAÇÃO PRELIMINAR DE DOCUMENTAÇÃO/CONTRATO**. Nenhuma linha funcional nasce sem rastreabilidade documental prévia.
 3. **Isolamento Estrito da Fase de Documentação:** Na etapa de documentação/especificação (Fase 3), é **TERMINANTEMENTE PROIBIDO alterar qualquer linha de código de produção**. Apenas contratos de interface, tipos, assinaturas, diagramas e especificações funcionais são permitidos.
-4. **Rastreabilidade Estrita de Commits por Ticket:**
+4. **Rastreabilidade Estrita de Commits e Tag Canônica de Fechamento:**
    - Todo trabalho **DEVE** nascer de uma issue formal registrada no issue tracker antes de qualquer modificação.
    - Todo commit intermediário **DEVE** incluir a referência ao ticket no formato `(ref #<id>)`.
-   - O commit final de encerramento da Fase 9 **DEVE** conter `(closes #<id>)`, `(resolves #<id>)` ou `(fixes #<id>)` para liquidar formalmente o ticket.
+   - O commit final de encerramento da Fase 9 **DEVE** conter rigorosamente a tag canônica `(closes #<id>)` (em minúsculas, envolta em parênteses com cerquilha e ID numérico) para liquidar formalmente o ticket. Variações sem parênteses ou sinônimos informais são rejeitadas.
+   - **Trava de Merge Mandatória no CCCP:** O maestro `cccp` ou mecanismo de integração **NÃO DEVE** permitir o merge da branch para a linha principal (`main`/`develop`) se a branch não contiver o commit de fechamento com a tag canônica `(closes #<id>)` associada ao ID do ticket da branch.
    - Hooks de commit (`commit-msg`) e o pipeline de CI/CD **DEVEM** rejeitar imediatamente qualquer commit sem referência a ticket.
 5. **Proibição Absoluta de Commit na Linha Base:** É estritamente **PROIBIDO** commitar diretamente no branch principal (`main` ou `develop`). Todo o trabalho reside exclusivamente no branch dedicado do ticket até sua aprovação e merge.
+6. **Soberania do CCCP na Gestão de Tickets:** Toda e qualquer operação de ciclo de vida de tickets (criação, consulta, triagem com o Divan e encerramento) **DEVE** ser realizada exclusivamente através do binário soberano `cccp` (`cccp ticket`, `cccp divan`). É **TERMINANTEMENTE PROIBIDO** criar ou fechar tickets diretamente através de ferramentas ad-hoc de terceiros (como `tea`, `gh`, `glab`) ou por meio de manipulação manual avulsa na interface web do forge.
 
 ### 5.2 Estratégia de Branches por Ticket
 * Todo ticket **DEVE** ser desenvolvido em um branch dedicado derivado de `develop` (ou `main`), com nomenclatura padronizada contendo o ID do ticket:
@@ -151,15 +153,15 @@ O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **
    - *(Validação local estrita; commit de ajuste se necessário: `fix: lint and formatting hygiene (ref #<id>)`)*
 9. **Fase 9: Finish Docs & Close Ticket (Consolidação e Encerramento)**
    - Atualização da documentação para usuário (`./site`, `README.md`), consolidação do `CHANGELOG.md` e commit final de encerramento formal contendo obrigatoriamente a diretiva de fechamento.
-   - Commit: `docs: finalize documentation and changelog (closes #<id>)` (ou `resolves`/`fixes`)
+   - Commit: `docs: finalize documentation and changelog (closes #<id>)`
 
 ### 5.4 Tratamento para Casos Específicos
 * **Em Bugfixes (`fix`):** Na Fase 3 (Spec), documenta-se a violação do contrato anterior e o comportamento correto esperado; na Fase 4 (Red), o teste falho é o teste de regressão exato que reproduz o defeito.
 * **Em Refatorações (`refactor`):** Na Fase 3 (Spec), definem-se as invariantes de negócio que não podem ser quebradas; na Fase 4 (Red), adicionam-se testes cobrindo lacunas ou casos de borda antes não testados garantindo as invariantes.
-* **Em Documentação Pura (`docs`):** Quando a tarefa for exclusivamente documental, as etapas de código funcional (4 a 7) registram `N/A` explícito no checklist do ticket, mantendo-se obrigatórias a branch dedicada (Fase 2), a referência intermediária `(ref #<id>)` e o fechamento `(closes #<id>)` (ou `resolves`/`fixes`) na Fase 9.
+* **Em Documentação Pura (`docs`):** Quando a tarefa for exclusivamente documental, as etapas de código funcional (4 a 7) registram `N/A` explícito no checklist do ticket, mantendo-se obrigatórias a branch dedicada (Fase 2), a referência intermediária `(ref #<id>)` e o fechamento `(closes #<id>)` na Fase 9.
 
 ### 5.5 Critérios de Conclusão / Definition of Done (DoD)
-Um ticket só pode ser considerado concluído e encerrado via `(closes #<id>)` (ou `resolves`/`fixes`) se satisfizer integralmente o seguinte checklist:
+Um ticket só pode ser considerado concluído e encerrado via `(closes #<id>)` se satisfizer integralmente o seguinte checklist:
 - [ ] Ticket aberto previamente detalhando o problema e critérios (Fase 1).
 - [ ] Branch dedicado criado no formato `<tipo>/<id>-<slug>` (Fase 2).
 - [ ] Documentação preliminar de contrato registrada antes do código (Fase 3).
@@ -299,6 +301,8 @@ Todo pipeline de CI **DEVE** declarar seus estágios em jobs estritamente separa
   - Publica artefatos, documentação estática ou binários de release
 
 A separação explícita garante que o gate de pre-push local (Seção 9.2) possa executar exclusivamente o job `test` sem acidentalmente disparar deploys, e que cada estágio seja inspecionável de forma independente nos logs de CI.
+
+* **Deploy Exclusivo via Esteira Automatizada de CI/CD:** Todo e qualquer deploy de aplicações, serviços, daemons e documentação **DEVE** ocorrer exclusivamente através da esteira remota de CI/CD da forja (Forgejo Actions / GitHub Actions) a partir da branch principal devidamente integrada. É **TERMINANTEMENTE PROIBIDO** realizar deploys manuais ou ad-hoc a partir da máquina local do desenvolvedor ou de agentes de inteligência artificial (sendo expressamente vedada a execução local de comandos de deploy contra servidores ou ambientes de produção).
 
 ### 9.2 Gate de Pre-Push: CI Local com Infraestrutura Idêntica
 O problema do "passa localmente, quebra no CI" origina-se da divergência entre o ambiente local do desenvolvedor e o ambiente de execução do pipeline. Para eliminar essa divergência:
@@ -499,6 +503,8 @@ O manifesto [Twelve-Factor App](https://12factor.net/) **DEVE** orientar o desig
 3. **Unix Domain Sockets para IPC Local:** Serviços e daemons comunicando-se na mesma máquina **DEVEM** priorizar **UNIX Domain Sockets** em vez de binds em loopback TCP `127.0.0.1`, reduzindo latência de rede e aplicando controle de acesso nativo baseado no UID/GID do processo chamador.
 
 ### 13.6 Padrões Normativos para Docker e OCI Containers
+* **Containerização Mandatória Universal e Proibição de Bare Metal:** Todo aplicativo, daemon, microsserviço ou API em ambientes de desenvolvimento, homologação e produção **DEVE** rodar estritamente containerizado em conformidade com as normas OCI (Docker / Podman / compose.yaml). É expressamente **PROIBIDO** executar aplicações de serviço diretamente em *bare metal* (no sistema operacional hospedeiro sem isolamento de container), prevenindo conflitos de dependências, mutabilidade de estado e vazamento de portas/sockets no host.
+
 Projetos que distribuem imagens ou executam via containers OCI **DEVEM** satisfazer:
 1. **Multi-Stage Builds:** Todo `Dockerfile` **DEVE** separar explicitamente a etapa de compilação/build da imagem final de distribuição.
 2. **Imagens Finais Mínimas:** Imagens de runtime **NÃO DEVEM** conter compiladores, headers ou utilitários dispensáveis. Binários compilados (Rust/Go) devem utilizar bases `scratch` ou `distroless`; stacks interpretadas (PHP) devem utilizar `alpine` ou `debian-slim`.

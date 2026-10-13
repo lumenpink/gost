@@ -89,12 +89,14 @@ The workflow in GOST repositories **MUST** follow a strict **Documentation-Drive
 1. **Inviolability of the 9 Phases:** All 9 stages **MUST** be executed in strict sequence for any modification (features, bugfixes, refactorings, or chore/maintenance). Skipping, reordering, or batching stages is strictly forbidden.
 2. **Zero Code Without Ticket and Prior Spec/Contract:** **NO PRODUCTION CODE MAY BE MODIFIED WITHOUT AN OPEN TICKET AND PRIOR WRITTEN SPECIFICATION/CONTRACT DOCUMENTATION**.
 3. **Strict Isolation of the Documentation Phase:** During the documentation/spec phase (Phase 3), touching production code is **STRICTLY PROHIBITED**. Only contracts, interface signatures, type definitions, schemas, and architectural docs are permitted.
-4. **Strict Commit Traceability per Ticket:**
+4. **Strict Commit Traceability and Canonical Closing Tag:**
    - Every task **MUST** originate from a formal issue in the tracker before any code changes.
    - Intermediate commits **MUST** include ticket reference as `(ref #<id>)`.
-    - The final closing commit in Phase 9 **MUST** include ticket resolution as `(closes #<id>)`, `(resolves #<id>)`, or `(fixes #<id>)`.
-    - Commit hooks (`commit-msg`) and CI/CD **MUST** reject commits lacking explicit ticket references.
+   - The final closing commit in Phase 9 **MUST** strictly contain the canonical tag `(closes #<id>)` (lowercase, parenthesized with hash and issue number) to formally settle the ticket. Synonyms and unparenthesized tags are strictly rejected.
+   - **Mandatory Merge Gatekeeper in CCCP:** The `cccp` orchestrator or merge mechanism **MUST NOT** permit merging a branch into the base branch (`main`/`develop`) if the branch lacks the closing commit bearing the canonical `(closes #<id>)` tag matching the branch ticket ID.
+   - Commit hooks (`commit-msg`) and CI/CD **MUST** reject commits lacking explicit ticket references.
 5. **No Direct Commits to Base Branch:** Direct commits to `main` or `develop` are strictly **FORBIDDEN**. All work resides on dedicated ticket branches until approved.
+6. **CCCP Ticket Management Sovereignty:** All issue lifecycle operations (creation, consultation, Divan triage, and closure) **MUST** be performed exclusively via the sovereign `cccp` CLI (`cccp ticket`, `cccp divan`). Manipulating issues directly via ad-hoc third-party tooling (`tea`, `gh`, `glab`) or manual web UI actions is strictly **PROHIBITED**.
 
 ### 5.2 Branch Strategy per Ticket
 * Work branches: `feat/<id>-<slug>`, `fix/<id>-<slug>`, `docs/<id>-<slug>`, `refactor/<id>-<slug>`, `test/<id>-<slug>`, `chore/<id>-<slug>`.
@@ -121,15 +123,15 @@ The workflow in GOST repositories **MUST** follow a strict **Documentation-Drive
 6. **Phase 6: Refactor to Excellence (Code Hygiene):** Polish production code and tests for readability, idiomatic style, and zero warnings. Tests remain 100% green. Commit: `refactor: polish and optimize <scope> (ref #<id>)`.
 7. **Phase 7: Mutation Test & Fortify (Test Suite Hardening):** Run mutation testing. Eliminate all surviving mutants by adding precise assertions and edge-case tests. Commit: `test: eliminate surviving mutants in <scope> (ref #<id>)`.
 8. **Phase 8: Quality Gate & Local Audit (Local Verification):** Execute linters at `-D warnings` (Zero Warnings), deterministic formatting (`fmt`), type-checking, and verify coverage floor ≥ 90% (target 100%).
-9. **Phase 9: Finish Docs & Close Ticket (Consolidation):** Update user docs (`./site`, `README.md`), finalize `CHANGELOG.md`, and create final closing commit: `docs: finalize changelog and docs (closes #<id>)` (or `resolves`/`fixes`).
+9. **Phase 9: Finish Docs & Close Ticket (Consolidation):** Update user docs (`./site`, `README.md`), finalize `CHANGELOG.md`, and create final closing commit: `docs: finalize changelog and docs (closes #<id>)`.
 
 ### 5.4 Handling Specific Task Types
 * **Bugfixes (`fix`):** Phase 3 specifies broken contract vs expected behavior; Phase 4 is the regression test reproducing bug.
 * **Refactoring (`refactor`):** Phase 3 specifies invariants; Phase 4 adds tests covering previously untested edge cases to safeguard invariants.
-* **Pure Documentation (`docs`):** Code phases (4–7) are marked `N/A`, but branch isolation, intermediate `(ref #<id>)`, and final `(closes #<id>)` (or `resolves`/`fixes`) remain mandatory.
+* **Pure Documentation (`docs`):** Code phases (4–7) are marked `N/A`, but branch isolation, intermediate `(ref #<id>)`, and final `(closes #<id>)` remain mandatory.
 
 ### 5.5 Definition of Done (DoD)
-A ticket is closed via `(closes #<id>)` (or `resolves`/`fixes`) only when:
+A ticket is closed via `(closes #<id>)` only when:
 - [ ] Ticket opened prior to coding (Phase 1).
 - [ ] Dedicated branch created (Phase 2).
 - [ ] Contract/spec documented before code (Phase 3).
