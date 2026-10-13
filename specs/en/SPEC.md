@@ -254,3 +254,9 @@ When collaborating with AI agents, interactions **MUST** use deterministic opera
 ## 14. Implementation Profiles
 
 Infrastructure and provider choices are decoupled into external profile documents (referenced via `GOST_PROFILE_URL` in `GOSTVER`).
+
+### 14.1 Cascading Profile Inheritance (`extends`)
+Derived profiles support cascading inheritance to reuse organizational defaults while specifying author- or project-level specializations:
+1. **Parent Declaration:** Declared via `extends: <URL>` in profile metadata frontmatter (e.g., `extends: "https://kollontai.2lp.in/profile.md"`).
+2. **Deep Override Precedence:** All directives from the parent are inherited; any section or field defined in the child has sovereign precedence (*deep override*).
+3. **Leaf Resolution:** Projects declare only the leaf profile URL in `GOSTVER`; tooling recursively resolves parent profiles.

@@ -554,7 +554,21 @@ Um perfil de implementação define:
 - Como são gerados e validados os banners com Safe Zone 4:3 e os pacotes de internacionalização.
 - Onde se localiza o catálogo central de descoberta de projetos.
 
+### 14.1 Herança em Cascata de Perfis e Diretiva `extends`
+Para conciliar padrões organizacionais com necessidades personalizadas de projetos ou autores individuais sem duplicar definições, os perfis de implementação suportam **herança em cascata (*profile inheritance*)**:
 
-
-
-
+1. **Declaração do Pai (`extends`):** Um perfil derivado **PODE** declarar uma URL pai através do campo `extends:` em seus metadados (no cabeçalho YAML/Markdown ou tabela de identificação):
+   ```yaml
+   ---
+   id: lumen
+   name: "Perfil de Implementação Lumen"
+   extends: "https://kollontai.2lp.in/profile.md"
+   target_gost: "1.4.0"
+   maintainer: "Lumen Pink <hi@lumen.pink>"
+   ---
+   ```
+2. **Resolução e Precedência em Cascata:**
+   - O perfil filho herda integralmente todas as seções, diretivas e convenções do perfil pai.
+   - Qualquer seção, chave ou diretiva declarada no perfil filho possui **precedência estrita e soberana (*deep override*)**, sobrescrevendo a definição correspondente herdada do perfil pai.
+   - Caso uma diretiva não seja declarada no filho, a regra do pai é aplicada automaticamente.
+3. **Resolução na Ponta:** Projetos declaram em seu arquivo `GOSTVER` exclusivamente a URL do perfil folha (`GOST_PROFILE_URL`). As ferramentas de auditoria e conformidade (`cccp gost sync`, `gost-conform.sh`) resolvem a cadeia recursiva de herança garantindo conformidade uniforme.

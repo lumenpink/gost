@@ -200,6 +200,14 @@
       "severity": "SHOULD",
       "check": "language_spec_adherence",
       "supported_languages": ["php", "rust", "shell", "javascript", "r"]
+    },
+    {
+      "id": "GOST-19-PROFILE-INHERITANCE-EXTENDS",
+      "section": 14,
+      "title": "Herança em Cascata de Perfis via Diretiva extends",
+      "severity": "SHOULD",
+      "check": "profile_inheritance_support",
+      "attribute": "extends"
     }
   ]
 }
