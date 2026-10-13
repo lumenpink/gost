@@ -101,7 +101,7 @@ O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **
 5. **Proibição Absoluta de Commit na Linha Base:** É estritamente **PROIBIDO** commitar diretamente no branch principal (`main` ou `develop`). Todo o trabalho reside exclusivamente no branch dedicado do ticket até sua aprovação e merge.
 6. **Soberania do CCCP na Gestão de Tickets:** Toda e qualquer operação de ciclo de vida de tickets (criação, consulta, triagem com o Divan e encerramento) **DEVE** ser realizada exclusivamente através do binário soberano `cccp` (`cccp ticket`, `cccp divan`). É **TERMINANTEMENTE PROIBIDO** criar ou fechar tickets diretamente através de ferramentas ad-hoc de terceiros (como `tea`, `gh`, `glab`) ou por meio de manipulação manual avulsa na interface web do forge.
 
-### 5.2 Estratégia de Branches por Ticket
+### 5.2 Estratégia de Branches por Ticket e Governança Local-First
 * Todo ticket **DEVE** ser desenvolvido em um branch dedicado derivado de `develop` (ou `main`), com nomenclatura padronizada contendo o ID do ticket:
   - `feat/<id>-<slug-curto>` (ex: `feat/42-rate-limiting`)
   - `fix/<id>-<slug-curto>` (ex: `fix/55-jwt-timestamp-overflow`)
@@ -109,9 +109,11 @@ O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **
   - `refactor/<id>-<slug-curto>` (ex: `refactor/18-extract-auth-module`)
   - `test/<id>-<slug-curto>`
   - `chore/<id>-<slug-curto>`
-* O merge do branch para a linha principal só é permitido após aprovação completa de testes, cobertura e linter no CI.
+* **Governança Local-First de Branches:** As branches dedicadas de tickets residem e são desenvolvidas estritamente no ambiente **local**. É expressamente **PROIBIDO** enviar (*push*) branches de trabalho (`feat/*`, `fix/*`, etc.) para a forja remota.
+* **Exceção Taxativa para Desenvolvimento Multidev:** O envio de uma branch de trabalho para a forja remota é admitido **única e exclusivamente sob solicitação expressa e taxativa**, justificada pela necessidade imperativa de colaboração simultânea de múltiplos desenvolvedores na mesma frente de trabalho. Fora desse pedido inequívoco, qualquer push de branch de trabalho é considerado anti-padrão.
+* Todo o ciclo das 9 fases e a integração via `cccp merge <branch>` ocorrem localmente. Para a forja remota é enviada **exclusivamente a branch principal (`main`) já integrada e validada** (além das tags semânticas e do branch efêmero de deploy `pages`).
 
-### 5.3 As 9 Fases Canônicas do Ciclo DD-TDD
+### 5.3 As 9 Fases Canônicas do Ciclo DD-TDD e Matriz de Commits
 
 ```text
 [1. Ticket] 
@@ -124,6 +126,20 @@ O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **
                                                     └──> [8. Quality Gate & Local Audit] 
                                                             └──> [9. Finish Docs & Close]
 ```
+
+#### Matriz Canônica de Commits por Fase
+
+| Fase | Nome da Fase | Geração de Commits | Formato Canônico e Convenção |
+|:---:|---|:---:|---|
+| **1** | **Ticket / Issue** | ❌ **PROIBIDO** | *Zero commits no repositório (operação no issue tracker).* |
+| **2** | **New Branch** | ❌ **NÃO** | *Zero commits (apenas checkout local da branch).* |
+| **3** | **Doc / Spec Contract** | ✅ **OBRIGATÓRIO** | `docs: specify <comportamento> (ref #<id>)` *(zero código de produção).* |
+| **4** | **Red: Failing Test** | ✅ **OBRIGATÓRIO** | `test: add failing test for <requisito> (ref #<id>)` *(teste falho comprovado).* |
+| **5** | **Green: Implement** | ✅ **OBRIGATÓRIO** | `feat: implement <funcionalidade> (ref #<id>)` ou `fix: resolve <bug> (ref #<id>)`. |
+| **6** | **Refactor to Excellence** | 🟡 **CONDICIONAL / OBRIGATÓRIO** | `refactor: optimize and polish <escopo> (ref #<id>)` *(se houver refatoração).* |
+| **7** | **Mutation Test & Fortify** | 🟡 **CONDICIONAL / ATÔMICO DUPLO** | `test: eliminate surviving mutants in <escopo> (ref #<id>)` *(testes primeiro)*;<br>`refactor: eliminate dead code and redundant logic in <escopo> (ref #<id>)` *(código depois)*. |
+| **8** | **Quality Gate & Local Audit** | ⚠️ **CONDICIONAL / RARO** | `fix: lint and formatting hygiene (ref #<id>)` *(apenas se ajustes forem necessários).* |
+| **9** | **Finish Docs & Close** | ✅ **OBRIGATÓRIO** | `docs: finalize docs and changelog (closes #<id>)` *(ou commit final do ticket com closes).* |
 
 1. **Fase 1: Ticket / Issue (Planejamento & Escopo)**
    - Abertura formal da issue no tracker com: Contexto, Comportamento Esperado e Critérios de Aceite detalhados.
@@ -145,14 +161,18 @@ O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **
 6. **Fase 6: Refactor to Excellence (Polimento e Qualidade)**
    - Refatoração do código de produção e testes: eliminação de duplicações, nomes idiomáticos, separação de responsabilidades e Zero Warnings. Testes continuam 100% verdes.
    - Commit: `refactor: optimize and polish <escopo> (ref #<id>)`
-7. **Fase 7: Mutation Test & Fortify (Blindagem contra Mutantes)**
-   - Execução da ferramenta de testes de mutação. Cada mutante sobrevivente exige **novos testes ou asserções adicionais** até exterminar 100% dos mutantes críticos nas áreas modificadas.
-   - Commit: `test: eliminate surviving mutants in <escopo> (ref #<id>)`
+7. **Fase 7: Mutation Test & Fortify (Blindagem contra Mutantes e Ordem Estrita de Commits)**
+   - Execução da ferramenta de testes de mutação. Cada mutante sobrevivente exige investigação minuciosa:
+     - **Caso A (Asserções Fracas / Casos de Borda Faltantes - mais comum):** Altera-se **exclusivamente os testes**, adicionando asserções rigorosas e valores limite para matar o mutante.
+       - *Commit inicial de testes:* `test: eliminate surviving mutants in <escopo> (ref #<id>)`
+     - **Caso B (Código Morto / Lógica Redundante Revelada):** Se o mutante revelar código inalcançável ou overengineering, simplifica-se o **código de produção**.
+       - *Commit subsequente de refatoração:* `refactor: eliminate dead code and redundant logic in <escopo> (ref #<id>)`
+     - **Ordem Obrigatória:** Se houver alterações em ambos, **os testes devem ser fortalecidos e commitados primeiro**; a refatoração do código de produção ocorre e é commitada logo em seguida, mantendo a blindagem verde.
 8. **Fase 8: Quality Gate & Local Audit (Auditoria Local)**
    - Execução e validação dos gates locais: linter rigoroso com `-D warnings` (Zero Warnings), formatação determinística (`fmt`), compilação/tipos limpos e piso de cobertura ≥ 90% (mirando 100%).
    - *(Validação local estrita; commit de ajuste se necessário: `fix: lint and formatting hygiene (ref #<id>)`)*
 9. **Fase 9: Finish Docs & Close Ticket (Consolidação e Encerramento)**
-   - Atualização da documentação para usuário (`./site`, `README.md`), consolidação do `CHANGELOG.md` e commit final de encerramento formal contendo obrigatoriamente a diretiva de fechamento.
+   - Atualização da documentação para usuário (`./site`, `README.md`), consolidação do `CHANGELOG.md` e commit final de encerramento formal contendo obrigatoriamente a diretiva de fechamento canônica `(closes #<id>)`.
    - Commit: `docs: finalize documentation and changelog (closes #<id>)`
 
 ### 5.4 Tratamento para Casos Específicos
@@ -178,8 +198,8 @@ Em repositórios GOST desenvolvidos ou mantidos em colaboração com agentes de 
 
 | Comando | Significado Canônico | Escopo de Autorização Concedida ao Agente |
 |:---:|---|---|
-| **`DCPD`** | **Do, Commit, Push, Deploy** | Autorização total de ponta a ponta: implementa código e testes, valida linters/gates locais, cria commit convencional com `(closes #<id>)`, faz push da branch, executa merge na `main` e dispara o pipeline de deploy. |
-| **`DCP`** | **Do, Commit, Push** | Implementa, testa, commita e envia o push **exclusivamente para a branch de trabalho**, deixando o Pull Request aberto no Codeberg/Forgejo para revisão e validação humana prévia. |
+| **`DCPD`** | **Do, Commit, Push, Deploy** | Autorização total de ponta a ponta: implementa código e testes, valida linters/gates locais, cria commit convencional com `(closes #<id>)`, executa merge local na `main` via `cccp merge`, fecha o ticket e envia o push da `main` para acionar o pipeline de deploy. |
+| **`DCP`** | **Do, Commit, Push** | Implementa, testa, commita e envia o push **exclusivamente sob demanda taxativa para colaboração multidev**, deixando a branch e o Pull Request abertos na forja para trabalho conjunto prévio. |
 | **`PLAN`** | **Plan & Propose** | Modo estritamente consultivo e investigativo: pesquisa o código, elabora diagnóstico e formula proposta detalhada de plano/ticket, **sem editar arquivos e sem commitar**. |
 | **`TDD`** | **Ticket, Branch, Doc, Red, Green, Refactor, Mutate, Gate, Close** | Execução rigorosa e sequencial das **9 fases canônicas** do ciclo DD-TDD: criação/validação de ticket, criação da branch dedicada, contrato preliminar em docs (**sem tocar em código**), teste falho, código funcional, refatoração limpa, eliminação de mutantes, validação dos gates e commit final de fechamento. |
 | **`AUDIT`** | **Audit & Check** | Inspeção passiva do repositório: executa linters em severidade máxima (`-D warnings`), verifica cobertura (≥90%), testa mutantes, audita vulnerabilidades em dependências e checa integridade de links sem alterar o código. |

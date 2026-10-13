@@ -98,11 +98,13 @@ The workflow in GOST repositories **MUST** follow a strict **Documentation-Drive
 5. **No Direct Commits to Base Branch:** Direct commits to `main` or `develop` are strictly **FORBIDDEN**. All work resides on dedicated ticket branches until approved.
 6. **CCCP Ticket Management Sovereignty:** All issue lifecycle operations (creation, consultation, Divan triage, and closure) **MUST** be performed exclusively via the sovereign `cccp` CLI (`cccp ticket`, `cccp divan`). Manipulating issues directly via ad-hoc third-party tooling (`tea`, `gh`, `glab`) or manual web UI actions is strictly **PROHIBITED**.
 
-### 5.2 Branch Strategy per Ticket
+#### 5.2 Branch Strategy and Local-First Governance
 * Work branches: `feat/<id>-<slug>`, `fix/<id>-<slug>`, `docs/<id>-<slug>`, `refactor/<id>-<slug>`, `test/<id>-<slug>`, `chore/<id>-<slug>`.
-* Merge to base branch requires full green status across tests, coverage threshold, and linters in CI.
+* **Local-First Branch Governance:** Dedicated ticket branches reside and are developed strictly in the **local** environment. Pushing work branches (`feat/*`, `fix/*`, etc.) to the remote forge is strictly **PROHIBITED**.
+* **Taxative Exception for Multidev Collaboration:** Pushing a work branch to the remote forge is permitted **only and exclusively upon express, taxative instruction**, justified by the necessity of concurrent multi-developer collaboration on the same branch. Outside of this explicit request, pushing work branches is considered an anti-pattern.
+* The entire 9-phase DD-TDD cycle and branch integration (`cccp merge <branch>`) occur locally. Only the integrated and verified main branch (`main`) is pushed to the remote forge (along with semantic tags and ephemeral deploy branch `pages`).
 
-### 5.3 The 9 Canonical Stages of DD-TDD
+### 5.3 The 9 Canonical Stages of DD-TDD and Commit Matrix
 ```text
 [1. Ticket] 
     └──> [2. New Branch] 
@@ -115,15 +117,32 @@ The workflow in GOST repositories **MUST** follow a strict **Documentation-Drive
                                                             └──> [9. Finish Docs & Close]
 ```
 
+#### Canonical Commit Matrix per Phase
+
+| Phase | Phase Name | Commit Generation | Canonical Format & Convention |
+|:---:|---|:---:|---|
+| **1** | **Ticket / Issue** | ❌ **PROHIBITED** | *Zero repository commits (tracker operation).* |
+| **2** | **New Branch** | ❌ **NO** | *Zero commits (local branch creation only).* |
+| **3** | **Doc / Spec Contract** | ✅ **MANDATORY** | `docs: specify <behavior> (ref #<id>)` *(zero production code).* |
+| **4** | **Red: Failing Test** | ✅ **MANDATORY** | `test: add failing test for <requirement> (ref #<id>)` *(verified failure).* |
+| **5** | **Green: Implement** | ✅ **MANDATORY** | `feat: implement <feature> (ref #<id>)` or `fix: resolve <bug> (ref #<id>)`. |
+| **6** | **Refactor to Excellence** | 🟡 **CONDITIONAL / MANDATORY** | `refactor: polish and optimize <scope> (ref #<id>)` *(if refactored).* |
+| **7** | **Mutation Test & Fortify** | 🟡 **CONDITIONAL / ATOMIC DUAL** | `test: eliminate surviving mutants in <scope> (ref #<id>)` *(tests first)*;<br>`refactor: eliminate dead code and redundant logic in <scope> (ref #<id>)` *(code second)*. |
+| **8** | **Quality Gate & Local Audit** | ⚠️ **CONDITIONAL / RARE** | `fix: lint and formatting hygiene (ref #<id>)` *(if adjustments required).* |
+| **9** | **Finish Docs & Close** | ✅ **MANDATORY** | `docs: finalize changelog and docs (closes #<id>)` *(or final commit with closes).* |
+
 1. **Phase 1: Ticket / Issue (Planning & Scope):** Open formal issue specifying context, expected behavior, and acceptance criteria. No code changes.
 2. **Phase 2: New Branch (Strict Isolation):** Create dedicated branch `<type>/<id>-<slug>` from base branch.
 3. **Phase 3: Doc / Spec Contract (Design Prior to Code):** Write specs, API contracts, schemas, and markdown docs on branch. **Zero production code edits allowed.** Commit: `docs: specify <behavior> (ref #<id>)`.
 4. **Phase 4: Red - Failing Test (Proof of Defect/Requirement):** Write automated unit/functional test exercising contract. Test **MUST fail**. Commit: `test: add failing test for <requirement> (ref #<id>)`.
 5. **Phase 5: Green - Implement / Fix (Minimal Solution):** Implement minimal production code required to make tests pass. Commit: `feat: implement <feature> (ref #<id>)` or `fix: resolve <bug> (ref #<id>)`.
 6. **Phase 6: Refactor to Excellence (Code Hygiene):** Polish production code and tests for readability, idiomatic style, and zero warnings. Tests remain 100% green. Commit: `refactor: polish and optimize <scope> (ref #<id>)`.
-7. **Phase 7: Mutation Test & Fortify (Test Suite Hardening):** Run mutation testing. Eliminate all surviving mutants by adding precise assertions and edge-case tests. Commit: `test: eliminate surviving mutants in <scope> (ref #<id>)`.
+7. **Phase 7: Mutation Test & Fortify (Dual Atomic Commits and Order):** Run mutation testing.
+   - **Case A (Weak Assertions / Missing Edge Cases):** Update **tests only** with stricter assertions: `test: eliminate surviving mutants in <scope> (ref #<id>)`.
+   - **Case B (Dead Code / Redundant Logic Revealed):** Simplify **production code**: `refactor: eliminate dead code and redundant logic in <scope> (ref #<id>)`.
+   - **Mandatory Order:** When both apply, **tests must be strengthened and committed first**, followed immediately by production code refactoring.
 8. **Phase 8: Quality Gate & Local Audit (Local Verification):** Execute linters at `-D warnings` (Zero Warnings), deterministic formatting (`fmt`), type-checking, and verify coverage floor ≥ 90% (target 100%).
-9. **Phase 9: Finish Docs & Close Ticket (Consolidation):** Update user docs (`./site`, `README.md`), finalize `CHANGELOG.md`, and create final closing commit: `docs: finalize changelog and docs (closes #<id>)`.
+9. **Phase 9: Finish Docs & Close Ticket (Consolidation):** Update user docs (`./site`, `README.md`), finalize `CHANGELOG.md`, and create final closing commit with canonical tag: `docs: finalize changelog and docs (closes #<id>)`.
 
 ### 5.4 Handling Specific Task Types
 * **Bugfixes (`fix`):** Phase 3 specifies broken contract vs expected behavior; Phase 4 is the regression test reproducing bug.
@@ -145,8 +164,8 @@ A ticket is closed via `(closes #<id>)` only when:
 
 ### 5.6 AI Agent Operational Dispatch Protocol
 When collaborating with AI agents, interactions **MUST** use deterministic operational commands:
-* **`DCPD` (Do, Commit, Push, Deploy):** Full end-to-end authorization: implements, tests, commits with `(closes #N)`, pushes, merges into `main`, and triggers deploy.
-* **`DCP` (Do, Commit, Push):** Implements and pushes strictly to feature branch, keeping PR open for human review.
+* **`DCPD` (Do, Commit, Push, Deploy):** Full end-to-end authorization: implements, tests, commits with `(closes #N)`, merges locally via `cccp merge`, closes ticket, and pushes `main` to trigger deploy.
+* **`DCP` (Do, Commit, Push):** Implements, tests, commits, and pushes **strictly upon taxative instruction for multidev collaboration**, keeping branch and PR open on forge.
 * **`PLAN` (Plan & Propose):** Diagnostic research and formal proposal without modifying files or committing.
 * **`TDD` (Ticket, Branch, Doc, Red, Green, Refactor, Mutate, Gate, Close):** Strict sequential execution of the **9 canonical DD-TDD stages**: branch creation, pre-code spec (**zero code changes in doc phase**), failing test, implementation, refactoring, mutation tests, quality gate audit, and closing commit.
 * **`AUDIT` (Audit & Check):** Passive repository audit (linters, coverage, mutation, dependency security, dead links) without code changes.

@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 ### Features
+  - (spec) governança local-first de branches e proibição de push sem exceção multidev (closes #21)
+  - (spec) matriz canônica de commits por fase no ciclo GOST DD-TDD (closes #21)
+  - (spec) regras estritas e ordem de commits atômicos duplos na fase 7 de mutação (closes #21)
   - (spec) padronizar tag canônica (closes #id), trava de merge e soberania do cccp (closes #20)
   - (spec) determinar containerização mandatória OCI e deploy exclusivo via CI/CD (closes #20)
 

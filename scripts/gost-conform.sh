@@ -174,8 +174,9 @@ gost_conform_main() {
   _total_items=$((_total_items + 1))
   _gostver_path="${GC_ROOT}/GOSTVER"
   _gostver_ok=0
+  _root_base="$(basename "$(cd "$GC_ROOT" 2>/dev/null && pwd -P || echo "$GC_ROOT")")"
   if [ -f "$_gostver_path" ] && grep -q 'GOST_VERSION="1.4.0"' "$_gostver_path" 2>/dev/null; then
-    if [ "$(basename "$GC_ROOT")" = "gost" ] || grep -q 'GOST_PROFILE_URL="https://kollontai.2lp.in/profile.md"' "$_gostver_path" 2>/dev/null; then
+    if [ "$_root_base" = "gost" ] || grep -q 'GOST_PROFILE_URL="https://kollontai.2lp.in/profile.md"' "$_gostver_path" 2>/dev/null; then
       _gostver_ok=1
     fi
   fi

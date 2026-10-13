@@ -74,6 +74,22 @@
       "pattern": "^(feat|fix|docs|refactor|test|chore)/[0-9]+-[a-z0-9-]+$"
     },
     {
+      "id": "GOST-05-A-LOCAL-FIRST-BRANCHES",
+      "section": 5,
+      "title": "Governança Local-First de Branches e Proibição de Push",
+      "severity": "MUST",
+      "check": "push_policy",
+      "rule": "no_work_branch_push_unless_multidev_requested"
+    },
+    {
+      "id": "GOST-05-B-COMMITS-MATRIX-PHASE7",
+      "section": 5,
+      "title": "Matriz de Commits por Fase e Commits Atômicos Duplos na Fase 7",
+      "severity": "MUST",
+      "check": "dd_tdd_commits_matrix",
+      "rule": "phase7_tests_first_then_refactor"
+    },
+    {
       "id": "GOST-06-TEST-COVERAGE",
       "section": 6,
       "title": "Piso Mínimo de Cobertura de Testes (≥90%)",
