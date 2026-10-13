@@ -208,6 +208,28 @@
       "severity": "SHOULD",
       "check": "profile_inheritance_support",
       "attribute": "extends"
+    },
+    {
+      "id": "GOST-20-SITE-TYPE-SEPARATION",
+      "section": 8,
+      "title": "Tipologia de Vitrine Web (site_type: doc vs app com help em site/doc/)",
+      "severity": "MUST",
+      "check": "site_type_convention",
+      "allowed_types": ["doc", "app"]
+    },
+    {
+      "id": "GOST-21-SINGLE-SOURCE-OF-TRUTH-DOCS",
+      "section": 8,
+      "title": "Documentação Redigida Exclusivamente em Markdown (Sem Duplicação Manual em HTML)",
+      "severity": "MUST",
+      "check": "docs_single_source_of_truth"
+    },
+    {
+      "id": "GOST-22-CASCADING-RULES-MERGE",
+      "section": 14,
+      "title": "Deep Merge de Regras (rules.json e languages/ via CUSTOM.md e custom_rules.json)",
+      "severity": "SHOULD",
+      "check": "cascading_rules_merge"
     }
   ]
 }
