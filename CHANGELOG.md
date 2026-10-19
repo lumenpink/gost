@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 ### Features
+  - (spec) formalizar compilação soberana exclusiva na esteira e proibir builds de release locais (closes #25)
+  - (spec) desacoplar act do pre-push ordinário e posicioná-lo exclusivamente como gate de pré-tag (closes #25)
+  - (spec) instituir a Banca como distribuidora oficial soberana com teto de 5 stables e 10 nightlies (closes #25)
   - (spec) formalizar herança em cascata de perfis com diretiva extends e precedência (closes #22)
   - (spec) governança local-first de branches e proibição de push sem exceção multidev (closes #21)
   - (spec) matriz canônica de commits por fase no ciclo GOST DD-TDD (closes #21)
