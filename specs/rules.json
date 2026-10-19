@@ -230,6 +230,26 @@
       "title": "Deep Merge de Regras (rules.json e languages/ via CUSTOM.md e custom_rules.json)",
       "severity": "SHOULD",
       "check": "cascading_rules_merge"
+    },
+    {
+      "id": "GOST-23-CI-EXCLUSIVE-BUILD",
+      "section": 9,
+      "title": "Compilação Soberana Exclusiva de Release na Esteira e Proibição de Builds Locais",
+      "severity": "MUST",
+      "check": "build_policy",
+      "policy": "pipeline_only_release_builds"
+    },
+    {
+      "id": "GOST-24-BANCA-DISTRIBUTION",
+      "section": 9,
+      "title": "Distribuição Canônica Soberana na Banca com Retenção Estrita (5 Stables / 10 Nightlies)",
+      "severity": "MUST",
+      "check": "distribution_policy",
+      "authority": "banca.2lp.in",
+      "retention": {
+        "stable": 5,
+        "nightly": 10
+      }
     }
   ]
 }

@@ -7,15 +7,15 @@ SPEC_FILE="${ROOT_DIR}/SPEC.md"
 
 echo "★ Verificando regras normativas de esteira e Banca no GOST ★"
 
-echo "[1/4] Verificando regra GOST-19-CI-EXCLUSIVE-BUILD em rules.json..."
-if ! grep -q '"GOST-19-CI-EXCLUSIVE-BUILD"' "$RULES_FILE"; then
-  echo "ERRO: Regra GOST-19-CI-EXCLUSIVE-BUILD ausente em specs/rules.json"
+echo "[1/4] Verificando regra GOST-23-CI-EXCLUSIVE-BUILD em rules.json..."
+if ! grep -q '"GOST-23-CI-EXCLUSIVE-BUILD"' "$RULES_FILE"; then
+  echo "ERRO: Regra GOST-23-CI-EXCLUSIVE-BUILD ausente em specs/rules.json"
   exit 1
 fi
 
-echo "[2/4] Verificando regra GOST-20-BANCA-DISTRIBUTION em rules.json..."
-if ! grep -q '"GOST-20-BANCA-DISTRIBUTION"' "$RULES_FILE"; then
-  echo "ERRO: Regra GOST-20-BANCA-DISTRIBUTION ausente em specs/rules.json"
+echo "[2/4] Verificando regra GOST-24-BANCA-DISTRIBUTION em rules.json..."
+if ! grep -q '"GOST-24-BANCA-DISTRIBUTION"' "$RULES_FILE"; then
+  echo "ERRO: Regra GOST-24-BANCA-DISTRIBUTION ausente em specs/rules.json"
   exit 1
 fi
 
