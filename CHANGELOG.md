@@ -1,5 +1,57 @@
 # Changelog
 
+## [1.5.0] - 2026-10-19
+
+### Features
+- implement esteira build and banca distribution rules (ref #25)
+- **site:** publish raw SPEC.md to site root for cccp assemble
+- **spec:** formalizar heranca de perfis com extends (closes #22)
+- **spec:** governanca local de branches e commits fase 7 (closes #21)
+- **spec:** padronizar closes, trava merge e containers (closes #20)
+
+### Refactoring
+- align english spec with pipeline build norm (ref #25)
+
+### Documentation
+- finalize docs and changelog (closes #25)
+- specify esteira compilation and banca distribution (ref #25)
+- **norma:** specify site_type and cascading rules merge (closes #23)
+
+### Testing
+- eliminate surviving mutants in spec validation (ref #25)
+- add failing check for esteira build and banca rules (ref #25)
+
+### Maintenance
+- **gostver:** bump GOST_VERSION to 1.5.0 (ref #25)
+- **version:** sincronizar VERSION para 1.5.0-dev.13+20261019.1d8cf3f
+- **scripts:** enforce Kollontai profile in conform and init
+
+## [1.5.0] - 2026-10-19
+
+### Features
+- implement esteira build and banca distribution rules (ref #25)
+- **site:** publish raw SPEC.md to site root for cccp assemble
+- **spec:** formalizar heranca de perfis com extends (closes #22)
+- **spec:** governanca local de branches e commits fase 7 (closes #21)
+- **spec:** padronizar closes, trava merge e containers (closes #20)
+
+### Refactoring
+- align english spec with pipeline build norm (ref #25)
+
+### Documentation
+- finalize docs and changelog (closes #25)
+- specify esteira compilation and banca distribution (ref #25)
+- **norma:** specify site_type and cascading rules merge (closes #23)
+
+### Testing
+- eliminate surviving mutants in spec validation (ref #25)
+- add failing check for esteira build and banca rules (ref #25)
+
+### Maintenance
+- **gostver:** bump GOST_VERSION to 1.5.0 (ref #25)
+- **version:** sincronizar VERSION para 1.5.0-dev.13+20261019.1d8cf3f
+- **scripts:** enforce Kollontai profile in conform and init
+
 ## [Unreleased]
 
 ### Features
