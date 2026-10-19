@@ -205,9 +205,9 @@ When collaborating with AI agents, interactions **MUST** use deterministic opera
 
 ## 9. CI/CD Pipeline
 
-1. **Strict Job Separation:** Job `test` (lint, tests, coverage, audit) separated from `deploy-*` (conditioned on `main` and `needs: [test]`).
-2. **Pre-Push Gate:** Local execution via `act` with identical Docker runners before `git push`.
-3. **Canonical Object Storage (Cloudflare R2):** Compiled binaries, heavy packages, and release bundles **MUST NOT** bloat git forge storage. Releases must be published directly to S3-compatible Object Storage (Cloudflare R2) with CDN domain distribution and HTTP Range streaming.
+1. **Strict Job Separation & Pipeline-Only Builds:** Jobs for `test` (lint, unit tests, coverage, static analysis) are separated from `deploy-*` jobs. All final distribution binaries, release packages, and production artifacts **MUST** be compiled exclusively within hermetic CI/CD pipeline runners. Heavy local release builds (`cargo build --release`, cross-compilation) are **STRICTLY PROHIBITED** on the developer workstation.
+2. **Lightweight Pre-Push Gate & Pre-Tag Act Gate:** The git `pre-push` hook **MUST NOT** run heavy containerized runners (`act`). Pre-push operates as an instantaneous semantic verification gate (validating `VERSION` file synchronization, tag consistency, and commit ticket references). Containerized validation via `act` is executed exclusively as a **Pre-Tag Gate** during release tagging (`cccp tag`).
+3. **Banca Canonical Sovereign Distribution & R2 Storage:** The **Banca** (`https://banca.2lp.in/downloads/`) is the canonical sovereign distribution authority. Compiled binaries, packages, and installer bundles **MUST NOT** bloat git forge storage or releases. Artifacts are published to Cloudflare R2 with a strict retention cap of **5 stable releases** (`stable-latest`) and **10 nightly builds** (`nightly-latest`), coordinated via an atomic `index.json` manifest.
 4. **Deploy Branch Hygiene (Stateless Single-Commit Force Push):** Dedicated git deployment branches (such as `pages`) **MUST** purge previous build history via orphan worktrees (`--orphan`), pushing a single clean commit with `git push --force origin <branch>`.
 
 ---
