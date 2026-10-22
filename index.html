@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GOST — Especificação Padrão de Repositórios</title>
+  <meta name="description" content="GOST: Norma técnica aberta e perfil de infraestrutura para criação de repositórios confiáveis, livres e sustentáveis.">
+
+  <!-- OpenGraph & Twitter Cards (Norma GOST Cap. 11) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="GOST — Especificação Padrão de Repositórios">
+  <meta property="og:description" content="Norma técnica aberta e perfil de infraestrutura para criação de repositórios confiáveis, livres e sustentáveis.">
+  <meta property="og:image" content="https://gost.2lp.in/assets/og_preview.png">
+  <meta property="og:url" content="https://gost.2lp.in">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="GOST — Especificação Padrão de Repositórios">
+  <meta name="twitter:description" content="Norma técnica aberta e perfil de infraestrutura para criação de repositórios confiáveis, livres e sustentáveis.">
+  <meta name="twitter:image" content="https://gost.2lp.in/assets/og_preview.png">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79c0ff;
+      --red: #f85149;
+      --green: #3fb950;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f6f8fa;
+        --card-bg: #ffffff;
+        --border: #d0d7de;
+        --text: #24292f;
+        --text-muted: #57606a;
+        --accent: #0969da;
+        --accent-hover: #218bff;
+        --red: #cf222e;
+        --green: #1a7f37;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    nav.toc {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    nav.toc h2 {
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    nav.toc ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.5rem;
+    }
+
+    nav.toc a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    nav.toc a:hover { text-decoration: underline; }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p { margin-bottom: 1rem; }
+
+    ul, ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    li { margin-bottom: 0.4rem; }
+
+    pre, code {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+
+    code {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    pre {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1.25rem;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    .card h4 {
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+    }
+
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .step-box {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+    }
+
+    .step-num {
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .step-content strong {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 1.05rem;
+    }
+
+    footer.site-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+      margin-top: 4rem;
+      text-align: center;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .footer-canonical {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer-line-identity {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .footer-line-metadata {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">Norma Técnica • GOST v1.4.0</span>
+      <h1>ГОСТ — Especificação de Repositórios</h1>
+      <p class="subtitle">Padrão universal para arquitetura de repositórios, ciclo de desenvolvimento e documentação pública.</p>
+    </header>
+
+    <nav class="toc">
+      <h2>Índice da Norma</h2>
+      <ul>
+        <li><a href="#filosofia">1. Filosofia & Licenciamento</a></li>
+        <li><a href="#anatomia">2. Anatomia da Raiz</a></li>
+        <li><a href="#ciclo">3. Ciclo DD-TDD & Tickets</a></li>
+        <li><a href="#testes">4. Estratégia de Testes</a></li>
+        <li><a href="#qualidade">5. Análise Estática & Zero Warnings</a></li>
+        <li><a href="#vitrine">6. Vitrine Pública</a></li>
+        <li><a href="#intl">7. Internacionalização (10 Línguas)</a></li>
+        <li><a href="#cards">8. Cards Sociais & Safe Zone 4:3</a></li>
+        <li><a href="#arquitetura">9. Arquitetura & SOLID Pragmático</a></li>
+        <li><a href="#padroes-sistema">10. Padrões de Sistema & 12-Factor</a></li>
+        <li><a href="#perfis">11. Perfis de Implementação</a></li>
+      </ul>
+    </nav>
+
+    <section id="filosofia">
+      <h2>1. Filosofia e Licenciamento</h2>
+      <p>O GOST orienta a criação de software livre com clareza jurídica e técnica desde o primeiro commit.</p>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Presunção Padrão: CC0-1.0</h4>
+          <p>Todo repositório deve presumir dedicação direta ao domínio público (CC0-1.0 Universal), eliminando atrito para cópia, reuso e evolução coletiva com salvaguarda jurídica internacional.</p>
+        </div>
+        <div class="card">
+          <h4>Exceção Copyleft: GPLv3</h4>
+          <p>Projetos com salvaguarda explícita contra mercantilização predatória ou fechamento de código adotam a GNU GPLv3.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="anatomia">
+      <h2>2. Anatomia Mínima da Raiz & Declaração GOSTVER</h2>
+      <p>Todo repositório aderente à especificação mantém uma base uniforme previsível:</p>
+      <pre><code>.
+├── GOSTVER                     # Declaração da norma e perfil (ex: GOST_VERSION="1.0.0")
+├── LICENSE                     # Licença declarada (CC0-1.0 como padrão)
+├── VERSION                     # Versão SemVer pura em texto simples (ex: 0.1.0-dev.1)
+├── CHANGELOG.md                # Histórico no padrão Keep a Changelog
+├── README.md                   # Resumo executivo e instrução de partida
+├── .gitignore                  # Regras de higiene de arquivos
+├── .editorconfig               # Configuração canônica de formatação
+├── site/                       # Portal estático de documentação pública
+│   ├── index.html              # Interface de visualização da documentação
+│   └── _headers                # Cabeçalhos HTTP de segurança obrigatórios
+└── .forgejo/ / .github/        # Workflows declarativos de CI/CD
+    └── workflows/ci.yml</code></pre>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h4>🏷️ Separação: Meta-Norma (GOSTVER) vs. Especificação de Domínio (SPEC.md)</h4>
+        <p>Aplicações que adotam o GOST não copiam a norma técnica. Elas utilizam seu próprio <code>SPEC.md</code> para descrever as regras de negócio e interfaces do projeto (criado na Etapa 2 do DD-TDD), enquanto declaram conformidade com o GOST através do arquivo <code>GOSTVER</code> na raiz.</p>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h4>📦 Módulos Especializados por Linguagem (Anti-Bloat)</h4>
+        <p>Para não poluir o repositório nem sobrecarregar o contexto de agentes de IA com regras de stacks não utilizadas, o GOST provê especificações técnicas modulares isoladas em <code>specs/languages/</code>:</p>
+        <ul style="margin-left: 1.25rem; margin-top: 0.5rem; font-size: 0.95rem;">
+          <li><strong>PHP (<code>php.md</code>):</strong> PHP 8.5+ com suporte reverso a 8.2, Pest (&gt;90%), PHPStan max, Pint, Infection (MSI&gt;80%), Composer lock e Docker alpine non-root.</li>
+          <li><strong>Rust (<code>rust.md</code>):</strong> Rust 1.99 (Edição 2024), Cargo test, Clippy (<code>-D warnings</code>), rustfmt, cargo-mutants, llvm-cov e Docker scratch estático.</li>
+          <li><strong>POSIX Shell (<code>shell.md</code>):</strong> POSIX /bin/sh e Bash 5.2+, ShellSpec com kcov (&gt;90%), ShellCheck zero warnings, shfmt determinístico e XDG.</li>
+          <li><strong>JavaScript/TypeScript (<code>javascript.md</code>):</strong> Node.js 24 LTS, ESM nativo, TypeScript 5.8+, Biome canônico, Vitest/Playwright e c8.</li>
+          <li><strong>R (<code>r.md</code>):</strong> testthat, covr, lintr, styler e gestão hermética de dependências com <code>renv</code> (Twelve-Factor R).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="ciclo">
+      <h2>3. Ciclo de Desenvolvimento (DD-TDD)</h2>
+      <p>Nenhuma alteração de código ocorre sem ticket e documentação prévia. O fluxo formal divide-se em 9 etapas sequenciais e indivisíveis:</p>
+
+      <div class="flow-steps">
+        <div class="step-box">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Ticket / Issue (Planejamento & Escopo)</strong>
+            <p>Abertura do ticket formalizando o problema, a nova funcionalidade ou refatoração no issue tracker. Proibido alterar arquivos.</p>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>New Branch (Isolamento Estrito)</strong>
+            <p>Criação da branch dedicada a partir de <code>develop</code> ou <code>main</code> no padrão padronizado.</p>
+            <code>git checkout -b feat/42-auth-jwt</code>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Doc / Spec Contract (Design Pré-Código)</strong>
+            <p>Formalização antecipada do contrato, interfaces e diagramas. <em>Zero código de produção nesta etapa.</em></p>
+            <code>docs: specify auth endpoint contracts (ref #42)</code>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong>Red: Failing Test (Commit do Teste Quebrado)</strong>
+            <p>Criação do teste automatizado reproduzindo o bug ou comprovando a falta da feature. O teste <strong>deve falhar</strong>.</p>
+            <code>test: add failing integration test for token expiration (ref #42)</code>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <strong>Green: Implement (Commit do Código Funcional)</strong>
+            <p>Desenvolvimento da solução estritamente necessária e suficiente para fazer a suíte passar no verde.</p>
+            <code>feat: implement token expiration validation (ref #42)</code>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <strong>Refactor to Excellence (Polimento e Qualidade)</strong>
+            <p>Refatoração do código de produção visando Clean Code, nomes expressivos e zero warnings no linter. Testes continuam 100% verdes.</p>
+            <code>refactor: optimize token expiration validation (ref #42)</code>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">7</div>
+          <div class="step-content">
+            <strong>Mutation Test & Fortify (Eliminação de Mutantes)</strong>
+            <p>Execução de testes de mutação para blindar asserções e introduzir testes até exterminar 100% dos mutantes críticos.</p>
+            <code>test: eliminate surviving mutants in token validation (ref #42)</code>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">8</div>
+          <div class="step-content">
+            <strong>Quality Gate & Local Audit (Auditoria Local)</strong>
+            <p>Auditoria local rigorosa: linters com <code>-D warnings</code>, formatação determinística e cobertura mantida comprovadamente &ge; 90%.</p>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">9</div>
+          <div class="step-content">
+            <strong>Finish Docs & Close (Commit de Fechamento)</strong>
+            <p>Revisão final dos guias e vitrine, consolidação do changelog e encerramento formal do ticket.</p>
+            <code>docs: update authentication documentation (closes #42)</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-grid" style="margin-top: 1.5rem;">
+        <div class="card">
+          <h4>🎟️ Zero Commits sem Ticket</h4>
+          <p>Cláusula pétrea: nenhum commit existe sem issue aberta. Commits intermediários exigem <code>(ref #N)</code> e o final exige <code>(closes #N)</code>. Hooks locais bloqueiam commits soltos.</p>
+        </div>
+        <div class="card">
+          <h4>🌿 Branches por Ticket</h4>
+          <p>Proibido commitar na <code>main</code>. Desenvolvimento sempre em branches dedicados: <code>feat/&lt;id&gt;-slug</code> ou <code>fix/&lt;id&gt;-slug</code>.</p>
+        </div>
+        <div class="card">
+          <h4>📜 Zero Código sem Spec Prévia</h4>
+          <p>A fase de documentação/contrato precede qualquer código. Na etapa de doc, é expressamente proibido alterar código de produção.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1.5rem;">
+        <h4>🤖 Protocolo de Comandos para Agentes de IA (Agent Dispatch)</h4>
+        <p>Para mitigar ações não autorizadas e acelerar o fluxo entre humanos e agentes autônomos, o GOST padroniza comandos operacionais diretos:</p>
+        <ul style="margin-left: 1.25rem; margin-top: 0.5rem; font-size: 0.95rem;">
+          <li><code>DCPD</code> <strong>(Do, Commit, Push, Deploy)</strong>: Execução completa de ponta a ponta com testes, commit com <code>(closes #N)</code>, push, merge na <code>main</code> e deploy contínuo.</li>
+          <li><code>DCP</code> <strong>(Do, Commit, Push)</strong>: Implementação e push restrito à branch da feature, mantendo o PR aberto no Codeberg para revisão humana prévia.</li>
+          <li><code>PLAN</code> <strong>(Plan &amp; Propose)</strong>: Diagnóstico e formulação de proposta sem modificar arquivos de código e sem commitar.</li>
+          <li><code>TDD</code> <strong>(Ticket, Branch, Doc, Red, Green, Refactor, Mutate, Gate, Close)</strong>: Execução sequencial estrita das 9 fases DD-TDD com isolamento em branch, contratos prévios, testes de mutação e auditoria local.</li>
+          <li><code>AUDIT</code> <strong>(Audit &amp; Check)</strong>: Auditoria passiva de linters (<code>-D warnings</code>), testes, cobertura (&ge;90%), mutantes e segurança.</li>
+          <li><code>FIX</code> <strong>(Fix &amp; Clean)</strong>: Saneamento técnico de avisos de análise estática e formatação sem alteração de regra de negócio.</li>
+          <li><code>RELEASE</code> <strong>(Release &amp; Tag)</strong>: Bump semântico no <code>VERSION</code>, consolidação do changelog e publicação de tags Git via <code>cccp</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="testes">
+      <h2>4. Estratégia e Qualidade de Testes</h2>
+      <p>A norma exige validação automatizada em camadas com asserções rigorosas e cobertura permanentemente mantida:</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4>🧪 Unitários & Funcionais</h4>
+          <p>Isolamento total de dependências externas para execução instantânea. Validação de regras e contratos de domínio.</p>
+        </div>
+        <div class="card">
+          <h4>🔗 Integração</h4>
+          <p>Validação de persistência, banco de dados (SQLite), IPC e daemons com fixtures isoladas e auto-destrutivas.</p>
+        </div>
+        <div class="card">
+          <h4>🎭 Ponta a Ponta (E2E)</h4>
+          <p>Jornadas completas do usuário em navegadores headless (Chromium, Firefox, WebKit) via <strong>Playwright</strong>.</p>
+        </div>
+        <div class="card">
+          <h4>🎯 Cobertura &gt; 90% (Foco 100%)</h4>
+          <p>Piso obrigatório de 90% com bloqueio imediato no CI para qualquer regressão. Meta ativa de 100% no core.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h4>🧬 Testes de Mutação & Hermeticidade</h4>
+        <p>Validação da eficácia real dos asserts (evitando testes cosméticos) através de injeção sintética de falhas. Execução estritamente hermética no CI, sem dependência de rede pública externa.</p>
+      </div>
+    </section>
+
+    <section id="qualidade">
+      <h2>5. Análise Estática, Formatação & Zero Warnings</h2>
+      <p>A integridade do código exige severidade máxima de linters e formatação determinística antes mesmo dos testes:</p>
+      <div class="card-grid">
+        <div class="card">
+          <h4>🚫 Tolerância Zero a Avisos</h4>
+          <p>Linters e compiladores rodam com tratamento de warnings como erros fatais (<code>-D warnings</code>). Avisos quebram o build imediatamente.</p>
+        </div>
+        <div class="card">
+          <h4>📐 Formatação Determinística</h4>
+          <p>Zero discussões de estilo em code review. Formatadores oficiais estritos no CI (<code>rustfmt</code>, <code>pint</code>, <code>shfmt</code>, <code>prettier/biome</code> com <code>--check</code>).</p>
+        </div>
+        <div class="card">
+          <h4>⚙️ Higiene com .editorconfig</h4>
+          <p>Arquivo <code>.editorconfig</code> canônico na raiz de todo projeto para impor UTF-8, LF e indentação homogênea entre editores.</p>
+        </div>
+        <div class="card">
+          <h4>🛡️ Anti-Bloat & Auditoria</h4>
+          <p>Dependências mínimas e justificadas. Auditoria contínua de vulnerabilidades e verificação de hiperlinks quebrados (<code>lychee</code>).</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="vitrine">
+      <h2>6. Vitrine Pública & Topologia de Serviços</h2>
+      <p>Todo projeto mantém seu portal estático publicado na borda via pipeline de CI. O arquivo <code>site/_headers</code> deve assegurar:</p>
+      <pre><code>/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin</code></pre>
+
+      <div class="card-grid" style="margin-top: 1rem;">
+        <div class="card">
+          <h4>🌐 Vitrine Estática vs. Backend Vivo</h4>
+          <p>A pasta <code>./site</code> publicada em <code>*.2lp.in</code> destina-se exclusivamente a documentação e vitrine pública. Segredos e portas dinâmicas nunca são expostos na vitrine.</p>
+        </div>
+        <div class="card">
+          <h4>🔒 Topologia de Acesso Seguro</h4>
+          <p>Serviços locais/daemons utilizam <strong>Tailscale</strong> (rede privada criptografada ponto a ponto) ou <strong>Cloudflare Tunnel</strong> autenticado sob subdomínio dedicado.</p>
+        </div>
+        <div class="card">
+          <h4>📱 Resiliência em Redes Móveis</h4>
+          <p>Aplicações sob sinal oscilante adotam fila assíncrona com idempotência (<code>client_id</code>) e short polling leve contra quebras de conexão.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="intl">
+      <h2>7. Internacionalização (Matriz das 10 Línguas)</h2>
+      <p>A norma GOST exige cobertura e paridade de 100% nas 10 línguas oficiais tanto no <strong>aplicativo completo</strong> (UI, CLI, logs e erros de runtime) quanto na <strong>documentação pública</strong> (<code>./site</code>). A língua primária é definida no <code>.cccprc</code> e atua como fallback em tempo de execução:</p>
+      
+      <div class="card-grid">
+        <div class="card">
+          <h4>🌍 As 10 Línguas Oficiais</h4>
+          <p><code>en</code> (English), <code>pt</code> (Português), <code>es</code> (Español), <code>fr</code> (Français), <code>de</code> (Deutsch), <code>it</code> (Italiano), <code>ru</code> (Русский), <code>zh</code> (中文), <code>ja</code> (日本語), <code>ar</code> (العربية).</p>
+        </div>
+        <div class="card">
+          <h4>🏛️ Língua Primária (Padrão CCCP)</h4>
+          <p>Declarada via <code>agent_var_lang</code> no <code>.cccprc</code>. Fonte canônica para triagem de tickets e fallback mandatório de strings.</p>
+        </div>
+        <div class="card">
+          <h4>🔄 Roteador Inteligente</h4>
+          <p>Redirecionamento estático na raiz da documentação via <code>localStorage</code> e <code>navigator.language</code>.</p>
+        </div>
+        <div class="card">
+          <h4>📖 Suporte a RTL (Árabe)</h4>
+          <p>Suporte bidirecional mandatório (<code>dir="rtl"</code>) no aplicativo e na documentação para o árabe.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="cards">
+      <h2>8. Cards Sociais e Safe Zone 4:3 (Padrão KokoroSim)</h2>
+      <p>Banners de compartilhamento (Open Graph / Twitter Card) são gerados em 1200x630 com proteção central contra cortes móveis:</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4>📐 Safe Zone 4:3 (720px - 840px)</h4>
+          <p>Todo conteúdo crítico (título, logo, badge, rodapé) fica confinado no miolo central. Sangrias laterais de 180px a 240px blindam contra o recorte 1:1 (quadrado) do WhatsApp.</p>
+        </div>
+        <div class="card">
+          <h4>✂️ Limites Rígidos de Caracteres</h4>
+          <p><code>og:title</code>: 50 a 65 chars (máx 70).<br><code>og:description</code>: 120 a 155 chars (máx 160).<br>Badge na imagem: máx 35 chars.<br>Título na imagem: máx 40 chars.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="arquitetura">
+      <h2>9. Arquitetura de Domínio e SOLID Pragmático</h2>
+      <p>O GOST orienta a construção de software com foco no isolamento rigoroso do Core em relação a subsistemas de I/O, hermeticidade em testes e rejeição ao overengineering cerimonial:</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4>🔌 Portas & Adaptadores (DIP)</h4>
+          <p>O Core (regras e use cases) nunca depende de banco, rede ou frameworks. Interfaces/traits definem as portas de entrada e saída. Dependências apontam sempre para dentro.</p>
+        </div>
+        <div class="card">
+          <h4>⚡ Hermeticidade & In-Memory Fakes</h4>
+          <p>Testes de domínio executam em microssegundos em memória pura. Preferência absoluta por Fakes leves em vez de frameworks pesados de mocks dinâmicos frágeis.</p>
+        </div>
+        <div class="card">
+          <h4>🛡️ Parse, Don't Validate (Anti-Bloat)</h4>
+          <p>Validação estrita na borda externa (adaptadores/controllers). O Core opera com primitivos confiáveis, eliminando Value Objects vazios e anêmicos sem comportamento real.</p>
+        </div>
+        <div class="card">
+          <h4>🏷️ Enums Nativos para Estado</h4>
+          <p>Proibição de tipos fracos (strings mágicas) para máquinas de estado e transições de ciclo de vida. Uso de <code>enum</code> nativo da linguagem com exaustividade no linter.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h4>⚖️ Princípio de Gradação Arquitetural</h4>
+        <p>A complexidade estrutural deve ser proporcional ao escopo. Micro-ferramentas CLI e scripts simples mantêm estrutura direta sem camadas artificiais; serviços e aplicações complexas segregam Core e Adaptadores.</p>
+      </div>
+    </section>
+
+    <section id="padroes-sistema">
+      <h2>10. Aderência a Padrões de Sistema, 12-Factor & Containers</h2>
+      <p>O GOST impõe conformidade com convenções maduras do ecossistema Unix/Linux e da computação em nuvem para máxima previsibilidade e portabilidade:</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4>📂 XDG Base Directory</h4>
+          <p>Proibição de arquivos soltos na <code>$HOME</code>. Fallbacks canônicos obrigatórios: config em <code>~/.config</code>, data em <code>~/.local/share</code>, state/logs em <code>~/.local/state</code> e runtime sockets em <code>/run/user/$UID</code>.</p>
+        </div>
+        <div class="card">
+          <h4>⚙️ Precedência de Configuração</h4>
+          <p>Hierarquia estrita: Flags CLI &gt; Variáveis de Ambiente &gt; <code>.env</code> local &gt; Config do repositório &gt; XDG Config &gt; <code>/etc</code> &gt; Defaults. Formato plano <code>KEY=VALOR</code> amigável a shell.</p>
+        </div>
+        <div class="card">
+          <h4>☁️ Twelve-Factor Universal</h4>
+          <p>Aplicação dos princípios do 12-Factor em qualquer software: dependências explícitas, config no ambiente, processos stateless, port/socket binding, logs como fluxos contínuos e descartabilidade com graceful shutdown.</p>
+        </div>
+        <div class="card">
+          <h4>🖥️ Disciplina Unix & NO_COLOR</h4>
+          <p><code>stdout</code> exclusivo para saída de dados útil encadeável em pipes. <code>stderr</code> para logs, avisos e progresso. Aderência ao padrão <code>NO_COLOR</code> e detecção automática de TTY.</p>
+        </div>
+        <div class="card">
+          <h4>🔒 Modern TLS & Unix Sockets</h4>
+          <p>Banimento expresso de SSL/TLS &lt; 1.2 (RFC 8996). Negociação QUIC/HTTP3 &gt; HTTP/2 TLS 1.3. Preferência mandatória por UNIX Domain Sockets para IPC local entre daemons.</p>
+        </div>
+        <div class="card">
+          <h4>🐳 Containers OCI / Docker</h4>
+          <p>Multi-stage builds obrigatórios com bases mínimas (<code>scratch</code>/<code>alpine</code>). Execução estritamente não-root (<code>USER 1000:1000</code>), banimento de <code>:latest</code>, <code>.dockerignore</code> e <code>compose.yaml</code>.</p>
+        </div>
+        <div class="card">
+          <h4>🔑 Autenticação Single-User</h4>
+          <p>Cabeçalho <code>Authorization: Bearer &lt;key&gt;</code>, suporte à injeção via env ou sufixo <code>_FILE</code> para Docker Secrets e validação timing-safe obrigatória contra ataques de temporização.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="perfis">
+      <h2>11. Perfis de Implementação (Profiles)</h2>
+      <p>A norma GOST estabelece princípios e metas de engenharia rigorosos de forma agnóstica a provedores de nuvem, forjas de código e ecossistemas proprietários. Para operacionalizar essas regras, cada organização ou mantenedor declara suas escolhas concretas de infraestrutura em um <strong>Perfil de Implementação</strong>:</p>
+      <ul>
+        <li><strong>Forja de Código:</strong> Definição do provedor Git (Codeberg, GitHub, GitLab, Forgejo auto-hospedado), namespaces e convenções de branches.</li>
+        <li><strong>Governança de Commits:</strong> Ferramentas de validação semântica (ex: <code>cccp</code>, <code>husky</code>) com bloqueio estrito de commits sem ticket.</li>
+        <li><strong>Qualidade &amp; Testes por Stack:</strong> Runners de teste, metas de cobertura (&ge;90%), testes de mutação e linters com Zero Warnings padronizados por linguagem.</li>
+        <li><strong>Pipeline de CI/CD:</strong> Definição dos workflows remotos e gates de validação local pré-push bit-for-bit idênticos (via containers/<code>act</code>).</li>
+        <li><strong>Publicação Web, Docs &amp; Artefatos:</strong> Armazenamento canônico de binários em Object Storage (Cloudflare R2), higiene de branches de deploy (force push em árvore órfã) e zonas CDN sob <code>*.2lp.in</code>.</li>
+        <li><strong>Padrões de Sistema &amp; Containers:</strong> Diretórios canônicos XDG, arquivos de configuração planos e Dockerfiles multi-stage mínimos.</li>
+      </ul>
+      <p>Consulte o modelo canônico de perfil em <code>profiles/template.md</code> e o guia de criação em <code>profiles/README.md</code>.</p>
+      <p>Para automação do ecossistema, o repositório disponibiliza os utilitários de linha de comando <code>scripts/gost-init.sh</code> (inicialização de projetos) e <code>scripts/gost-conform.sh</code> (auditoria e adequação idempotente), projetados também para incorporação direta no CLI <code>cccp</code>.</p>
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-canonical">
+        <div class="footer-line footer-line-identity">
+          Orgulhosamente produzido por uma <a href="https://travesti.2lp.in/pt/" target="_blank" rel="noopener" style="color:var(--accent)">travesti latina</a> 🏳️‍⚧️ :)
+        </div>
+        <div class="footer-line footer-line-metadata">
+          GOST v1.4.0 • por <a href="https://lumen.pink" target="_blank" rel="noopener" style="color:var(--accent)">Lumen Pink</a> • Brasil 🇧🇷 • <a href="LICENSE" target="_blank" rel="noopener" style="color:var(--accent)">CC-BY-SA-4.0</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
