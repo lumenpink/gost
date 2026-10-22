@@ -25,3 +25,4 @@ compliance_report.txt
 node_modules/
 dist/
 .cache/
+.antigravity/
