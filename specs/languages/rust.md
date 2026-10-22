@@ -94,3 +94,32 @@ Esta especificação define os requisitos de engenharia, ferramentas e padrões 
    ENTRYPOINT ["/usr/local/bin/app"]
    ```
 3. **Streams:** Saída pura de dados via `println!()`, logs e mensagens diagnósticas via `eprintln!()` ou crate `tracing`/`env_logger` configurada para `stderr`.
+
+---
+
+## 6. Otimização de Binário de Release & Linking Estático
+
+### 1. Perfil de Release Canônico (`[profile.release]`)
+Para assegurar a máxima redução de tamanho binário, eliminação de símbolos mortos e prevenção de overhead de desbobinamento de pilha (*stack unwinding*), projetos Rust no ecossistema GOST devem declarar o perfil canônico em seus manifests `Cargo.toml`:
+
+```toml
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+```
+
+### 2. Linking Estático musl (`crt-static`)
+Para garantir independência total do carregador dinâmico (`ld-linux`) e máxima portabilidade em ambientes Linux glibc e musl, a compilação contra alvos `x86_64-unknown-linux-musl` e `aarch64-unknown-linux-musl` deve habilitar o flag `crt-static`:
+
+```toml
+# .cargo/config.toml
+[target.x86_64-unknown-linux-musl]
+rustflags = ["-C", "target-feature=+crt-static"]
+
+[target.aarch64-unknown-linux-musl]
+rustflags = ["-C", "target-feature=+crt-static"]
+```
+
