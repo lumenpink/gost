@@ -250,6 +250,23 @@
         "stable": 5,
         "nightly": 10
       }
+    },
+    {
+      "id": "GOST-25-BORDER-INBOX-QUARANTINE",
+      "section": 15,
+      "title": "Quarentena Estrita de Branches Externas no Namespace inbox/* e Isolamento de Segredos de CI",
+      "severity": "MUST",
+      "check": "inbox_quarantine_policy",
+      "namespace": "refs/heads/inbox/*",
+      "ci_isolation": true
+    },
+    {
+      "id": "GOST-26-PROJECT-METADATA-TAXONOMY",
+      "section": 3,
+      "title": "Padronização Canônica de Taxonomia e Metadados do Projeto (slug, title, tagline, description)",
+      "severity": "MUST",
+      "check": "project_taxonomy",
+      "required_fields": ["name", "title", "tagline", "description"]
     }
   ]
 }
