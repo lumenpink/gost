@@ -3,6 +3,21 @@
 ## [1.6.0] - 2026-10-22
 
 ### Features
+- **spec:** padronizar metadados e taxonomia de projetos (closes #24)
+- **spec:** implementar profile border e regra GOST-25 (closes #26, #27)
+- **rust:** padronizar profile.release e crt-static musl (closes #28)
+
+### Testing
+- **spec:** testes de conformidade para emenda v1.6.0 (ref #27)
+
+### Maintenance
+- **version:** sincronizar VERSION para 1.6.0-dev.7+20261022.19ddec1
+- **release:** consolidar release e cache da norma (closes #27)
+- **release:** bump de versao para GOST v1.6.0 (closes #25)
+
+## [1.6.0] - 2026-10-22
+
+### Features
 - **spec:** implementar emenda GOST v1.6.0 com profile de fronteira gost-profile-border e regra GOST-25 (closes #26, closes #27)
 - **spec:** padronizar taxonomia e metadados de projetos com regra GOST-26 (closes #24)
 - **rust:** padronizar perfil profile.release e linking estatico crt-static musl (closes #28)
