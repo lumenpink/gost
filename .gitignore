@@ -7,6 +7,9 @@
 .antigravity/*
 !.antigravity/rules.md
 
+# Compiled GOST cache
+.gost/
+
 # Cloudflare Wrangler
 .wrangler/
 

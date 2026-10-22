@@ -46,5 +46,52 @@ assert r24.get('retention', {}).get('nightly') == 10, 'Invalid nightly retention
 print('  Esquema JSON e tetos de retenção (5/10) validados com rigor!')
 "
 
+echo "[6/8] Verificando regras GOST-25 (Fronteira) e GOST-26 (Taxonomia) em rules.json..."
+if ! grep -q '"GOST-25-BORDER-INBOX-QUARANTINE"' "$RULES_FILE"; then
+  echo "ERRO: Regra GOST-25-BORDER-INBOX-QUARANTINE ausente em specs/rules.json"
+  exit 1
+fi
+if ! grep -q '"GOST-26-PROJECT-METADATA-TAXONOMY"' "$RULES_FILE"; then
+  echo "ERRO: Regra GOST-26-PROJECT-METADATA-TAXONOMY ausente em specs/rules.json"
+  exit 1
+fi
+
+echo "[7/8] Verificando profile de fronteira profiles/border.md e specs de Rust..."
+if [ ! -f "${ROOT_DIR}/profiles/border.md" ]; then
+  echo "ERRO: profiles/border.md ausente"
+  exit 1
+fi
+if ! grep -q "profile.release" "${ROOT_DIR}/specs/languages/rust.md"; then
+  echo "ERRO: Diretiva [profile.release] ausente em specs/languages/rust.md"
+  exit 1
+fi
+if ! grep -q "crt-static" "${ROOT_DIR}/specs/languages/rust.md"; then
+  echo "ERRO: Diretiva crt-static musl ausente em specs/languages/rust.md"
+  exit 1
+fi
+
+echo "[8/8] Validando sanitização do catálogo de apps (/home/lumen/src/catalog.json)..."
+python3 -c "
+import json
+catalog_path = '/home/lumen/src/catalog.json'
+with open(catalog_path, 'r', encoding='utf-8') as f:
+    items = json.load(f)
+
+for item in items:
+    name = item.get('name', '')
+    desc = item.get('description', '')
+    desc_lower = desc.lower()
+    if 'soberan' in desc_lower:
+        raise AssertionError(f'Item {name} contém termo soberano proibido: {desc}')
+    if 'wasm' in desc_lower:
+        raise AssertionError(f'Item {name} contém jargão técnico wasm proibido: {desc}')
+    if 'rust' in desc_lower:
+        raise AssertionError(f'Item {name} contém menção técnica desnecessária a Rust: {desc}')
+    if name == 'navalha' and 'anti-design' not in desc_lower:
+        raise AssertionError(f'Navalha DEVE conter termo canônico anti-design: {desc}')
+
+print(f'  Catálogo com {len(items)} itens validado sem jargões técnicos!')
+"
+
 echo "✔ Todas as verificações normativas e testes de mutação passaram com sucesso!"
 exit 0
