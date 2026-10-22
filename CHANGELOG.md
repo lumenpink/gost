@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.6.0] - 2026-10-22
+
+### Features
+- **spec:** implementar emenda GOST v1.6.0 com profile de fronteira gost-profile-border e regra GOST-25 (closes #26, closes #27)
+- **spec:** padronizar taxonomia e metadados de projetos com regra GOST-26 (closes #24)
+- **rust:** padronizar perfil profile.release e linking estatico crt-static musl (closes #28)
+
+### Documentation
+- **copy:** reescrever descricoes do catalog.json eliminando jargoes tecnicos e preservando anti-design (closes #25)
+- **profiles:** adicionar documentacao canônica de profiles/border.md
+
+### Testing
+- **conformance:** expandir suite deterministica cobrindo regras GOST-25, GOST-26, Rust e sanitizacao
+
+---
+
 ## [1.5.0] - 2026-10-19
 
 ### Features
