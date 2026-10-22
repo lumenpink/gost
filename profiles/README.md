@@ -26,3 +26,4 @@ GOST_LANGUAGES="rust,shell"
 ## 🌐 Perfis de Referência
 
 - **[Perfil Kollontai](https://kollontai.2lp.in)** ([Raw Markdown](https://kollontai.2lp.in/profile.md) / [Codeberg](https://codeberg.org/lumenpink/gost-profile-kollontai)): Perfil de implementação canônico Kollontai (publicado na borda em `kollontai.2lp.in`, CLI `cccp`, deploy em `*.2lp.in` via Cloudflare Workers / R2 e catálogo central).
+- **[Perfil de Governança de Fronteira e Espelhos (`border`)](./border.md)**: Perfil canônico da Emenda GOST v1.6.0 para topologia de espelhamento com forjas subordinadas (GitHub/Codeberg), quarentena estrita de branches em `refs/heads/inbox/*` e isolamento total de segredos de CI.
