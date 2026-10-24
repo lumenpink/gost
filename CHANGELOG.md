@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixes
+- **ci:** remover deploy para codeberg pages mantendo cloudflare (ref #37)
+
 ## [1.6.0] - 2026-10-22
 
 ### Features
