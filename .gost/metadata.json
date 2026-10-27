@@ -1,0 +1,20 @@
+{
+  "slug": "gost",
+  "title": "GOST",
+  "site_type": "doc",
+  "tagline": "Padrão para Repositórios Abertos",
+  "summary": "Especificação técnica aberta para estruturação, governança, ciclo DD-TDD e esteiras de qualidade em repositórios de software.",
+  "abstract": "O GOST (General Open Source Standard) é uma norma técnica aberta que define requisitos estruturais, metodológicos e de governança para criação, manutenção e ciclo de vida de repositórios de código aberto. Seu objetivo é eliminar atritos no desenvolvimento, garantir rastreabilidade histórica completa por tickets e impor rigor de engenharia com desenvolvimento orientado a documentação e testes em nove fases sequenciais determinísticas.",
+  "tags": [
+    "open-source",
+    "governance",
+    "dd-tdd",
+    "quality-gate",
+    "specification"
+  ],
+  "icon": "📜",
+  "theme": {
+    "bg_color": "#1a1b26",
+    "accent_color": "#e0af68"
+  }
+}

@@ -1,6 +1,6 @@
 # GOST Language Specification: R
 **Identificador da Stack:** `r`  
-**Padrão Base:** GOST `1.0.0`
+**Padrão Base:** GOST `2.0.0`
 
 ---
 
@@ -34,24 +34,25 @@ A premissa central em R sob o padrão GOST é a **Reprodutibilidade Absoluta**: 
 
 ---
 
-## 4. Estrutura de Diretórios Recomendada
-Para pacotes e projetos de análise orientados a domínio:
-
-```text
-.
-├── renv.lock                   # Lockfile imutável de pacotes R (Twelve-Factor)
-├── renv/                       # Ativador do ambiente isolado (renv/activate.R)
-├── DESCRIPTION                 # Metadados do pacote/projeto e dependências
-├── NAMESPACE                   # Exportações e importações geradas por roxygen2
-├── R/                          # Funções puras, modelos e lógica de domínio
-│   ├── model.R
-│   └── transformations.R
-├── tests/                      # Validação automatizada
-│   ├── testthat.R              # Ponto de entrada do test runner
-│   └── testthat/               # Especificações (test_*.R)
-├── data/ / inst/extdata/       # Fixtures e dados de validação imutáveis
-└── scripts/                    # Scripts executáveis de pipeline (CLI)
-```
+## 4. Arquitetura de Domínio & Funções Puras (Regra GOST-27)
+1. **Pureza de Domínio (Zero I/O no Core):** A lógica de modelagem e transformação reside em arquivos prefixados `R/domain_*`. Em conformidade com a Regra `GOST-27`, é terminantemente proibido o uso de `read.csv`, `write.csv`, `readRDS`, `saveRDS`, `httr`, `curl` ou `DBI` dentro de funções de domínio.
+2. **Estrutura Canônica:**
+   ```text
+   .
+   ├── renv.lock                   # Lockfile imutável de pacotes R (Twelve-Factor)
+   ├── renv/                       # Ativador do ambiente isolado (renv/activate.R)
+   ├── DESCRIPTION                 # Metadados do pacote/projeto e dependências
+   ├── NAMESPACE                   # Exportações e importações geradas por roxygen2
+   ├── R/                          # Código fonte
+   │   ├── domain_models.R         # Funções puras e invariantes de cálculo (sem I/O)
+   │   ├── domain_transform.R      # Transformações e regras determinísticas
+   │   └── adapter_io.R            # Carga, persistência e adaptadores de borda
+   ├── tests/                      # Validação automatizada
+   │   ├── testthat.R              # Ponto de entrada do test runner
+   │   └── testthat/               # Especificações (test_*.R)
+   ├── data/ / inst/extdata/       # Fixtures e dados de validação imutáveis
+   └── scripts/                    # Scripts executáveis de pipeline (CLI)
+   ```
 
 ---
 
@@ -73,12 +74,14 @@ Para pacotes e projetos de análise orientados a domínio:
 ---
 
 ## 6. Containers OCI para R
-1. **Imagem Base Imutável:** Utilização de imagens mantidas pelo projeto Rocker com tags específicas de versão:
+1. **Repositório Binário RSPM e Multi-stage:**
+   Utilização de repositório RSPM para instalação instantânea de binários sem compilação:
    ```dockerfile
    FROM rocker/r-ver:4.4.1 AS builder
+   ENV CRAN="https://packagemanager.posit.co/cran/__linux__/noble/latest"
    WORKDIR /app
    COPY renv.lock renv/activate.R ./
-   RUN Rscript -e 'install.packages("renv"); renv::restore()'
+   RUN Rscript -e 'options(repos = c(CRAN = Sys.getenv("CRAN"))); install.packages("renv"); renv::restore()'
 
    FROM rocker/r-ver:4.4.1
    USER 1000:1000

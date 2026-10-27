@@ -1,13 +1,13 @@
 # GOST Language Specification: JavaScript & TypeScript
 **Identificador da Stack:** `javascript`  
-**Padrão Base:** GOST `1.0.0`
+**Padrão Base:** GOST `2.0.0`
 
 ---
 
 ## 1. Visão Geral e Filosofia
 Esta especificação define os requisitos de engenharia, ferramentas e padrões para desenvolvimento em **JavaScript** e **TypeScript** no ecossistema GOST.
 
-O ecossistema adota **Node.js 24 LTS** (`>= 24.16.0`) como runtime canônico de servidor e build do estado da arte, impondo **ESM nativo obrigatório** (`"type": "module"` no `package.json`), **TypeScript 5.8+** em modo estrito (`"strict": true`) e Web Standards nativos para Cloudflare Workers e navegadores.
+O ecossistema adota **Node.js 24 LTS** (`>= 24.16.0`) como runtime canônico de servidor e build, mantendo **neutralidade WinterCG / Web Standards** para permitir execução transparente em Cloudflare Workers, Deno, Bun e navegadores. Impõe-se **ESM nativo obrigatório** (`"type": "module"` no `package.json`), **TypeScript 5.8+** em modo estrito (`"strict": true`) e Web Standards nativos.
 
 ---
 
@@ -32,21 +32,29 @@ O ecossistema adota **Node.js 24 LTS** (`>= 24.16.0`) como runtime canônico de 
    # ou
    pnpm install --frozen-lockfile
    ```
-3. **Anti-Bloat:** Proibição de bibliotecas de terceiros para operações triviais (ex: `is-even`, `left-pad`). Preferência absoluta por APIs nativas modernas do JavaScript (ES2022+ / Web Standards: `fetch`, `FormData`, `URL`, `crypto.subtle`).
+3. **Anti-Bloat:** Proibição de bibliotecas de terceiros para operações triviais. Preferência absoluta por APIs nativas modernas do JavaScript e padrões WinterCG (`fetch`, `FormData`, `URL`, `crypto.subtle`, `Headers`, `Request`, `Response`).
 
 ---
 
-## 4. Arquitetura de Domínio & SOLID Pragmático
-1. **Estrutura de Pastas Canônica:**
+## 4. Arquitetura de Domínio & SOLID Pragmático (Regra GOST-27)
+1. **Pureza de Domínio (Zero I/O no Core):** O diretório `src/domain/` é estritamente puro. Em conformidade com a Regra `GOST-27`, é terminantemente proibido importar ou invocar `node:fs`, `node:net`, `node:child_process`, `node:http`, `fetch(`, `process.env` ou `localStorage` dentro dos modelos e contratos do Core.
+2. **Estrutura de Pastas Canônica:**
    ```text
    src/
-   ├── domain/             # Regras de negócio, contratos de tipos e enums
-   ├── application/        # Casos de uso e fluxos
+   ├── domain/             # Regras de negócio puras, contratos de tipos e discriminated unions
+   ├── application/        # Casos de uso e orquestração
    └── infrastructure/     # Adaptadores de I/O (HTTP clients, DB, fakes in-memory)
    ```
-2. **In-Memory Fakes:** Testes unitários substituem I/O real por implementações em memória baseadas em `Map` ou arrays simples, sem frameworks pesados de mocking dinâmico.
-3. **Parse, Don't Validate:** Validação de payloads na borda (usando tipos primitivos ou esquemas leves como `zod` na entrada). O Core opera com objetos e primitivos confiáveis.
-4. **Estados Finitos:** Modelados com uniões de tipos literais estritos em TypeScript (`type Status = 'pending' | 'active' | 'completed'`) ou objetos imutáveis congelados (`Object.freeze()`) em JS puro.
+3. **In-Memory Fakes:** Testes unitários substituem I/O real por implementações em memória baseadas em `Map` ou arrays simples, sem frameworks pesados de mocking dinâmico. Fakes e adaptadores reais compartilham os mesmos testes de contrato (LSP).
+4. **Parse, Don't Validate:** Validação de payloads na borda (parsers leves ou esquemas seguros). O Core opera com primitivos confiáveis.
+5. **Modelagem com Discriminated Unions:**
+   ```typescript
+   export type ProcessState =
+     | { status: 'idle' }
+     | { status: 'running'; startedAt: number }
+     | { status: 'succeeded'; result: string }
+     | { status: 'failed'; error: Error };
+   ```
 
 ---
 
@@ -61,7 +69,7 @@ O ecossistema adota **Node.js 24 LTS** (`>= 24.16.0`) como runtime canônico de 
        return path.join(base, appName);
    }
    ```
-2. **Dockerfile Canônico (Multi-stage + Alpine Non-Root):**
+2. **Dockerfile Canônico (Multi-stage + Alpine Non-Root com Prune):**
    ```dockerfile
    FROM node:24-alpine AS builder
    WORKDIR /app
@@ -69,6 +77,7 @@ O ecossistema adota **Node.js 24 LTS** (`>= 24.16.0`) como runtime canônico de 
    RUN npm ci
    COPY . .
    RUN npm run build --if-present
+   RUN npm prune --omit=dev
 
    FROM node:24-alpine
    USER 1000:1000

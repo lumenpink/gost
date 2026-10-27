@@ -1,6 +1,6 @@
 # GOST Language Specification: PHP
 **Identificador da Stack:** `php`  
-**Padrão Base:** GOST `1.0.0`
+**Padrão Base:** GOST `2.0.0`
 
 ---
 
@@ -18,7 +18,7 @@ O ecossistema adota **PHP 8.5+** como estado da arte canônico de runtime e comp
 | **Test Runner** | **Pest** | `vendor/bin/pest` |
 | **Cobertura (≥ 90%)** | **Pest Coverage** | `vendor/bin/pest --coverage --min=90` |
 | **Testes de Mutação** | **Infection** | `vendor/bin/infection --min-msi=80 --min-covered-msi=85` |
-| **Análise Estática** | **PHPStan** (Nível Máximo) | `vendor/bin/phpstan analyse --level=max` |
+| **Análise Estática** | **PHPStan** (Nível Máximo + Baseline 8.2) | `vendor/bin/phpstan analyse --level=max` |
 | **Formatação Determinística** | **Laravel Pint** | `vendor/bin/pint --test` |
 | **Auditoria de Segurança** | **Composer Audit** | `composer audit` |
 
@@ -34,11 +34,13 @@ O ecossistema adota **PHP 8.5+** como estado da arte canônico de runtime e comp
 
 ---
 
-## 4. Arquitetura de Domínio & SOLID Pragmático
-1. **Estrutura de Pastas Canônica:**
+## 4. Arquitetura de Domínio & SOLID Pragmático (Regra GOST-27)
+1. **Pureza de Domínio (Zero I/O no Core):** O diretório `src/Domain/` é estritamente puro. É terminantemente proibido o uso de `PDO`, `curl_init`, `file_get_contents`, `file_put_contents`, `fopen`, `$_GET`, `$_POST`, `$_SERVER`, `$_ENV` ou `getenv` dentro de qualquer classe de domínio.
+2. **Imutabilidade Canônica (`final readonly`):** Entidades, DTOs e Value Objects no domínio devem ser declarados obrigatoriamente como `final readonly class`.
+3. **Estrutura de Pastas Canônica:**
    ```text
    src/
-   ├── Domain/             # Modelos puros, Backed Enums, Interfaces de Portas
+   ├── Domain/             # Modelos puros, final readonly, Backed Enums, Portas
    │   ├── Models/
    │   ├── Enums/          # Status, Roles (backed enums)
    │   └── Ports/          # Contratos e Interfaces de I/O
@@ -52,9 +54,9 @@ O ecossistema adota **PHP 8.5+** como estado da arte canônico de runtime e comp
    ├── Unit/               # Testes herméticos instantâneos com Fakes em memória
    └── Integration/        # Testes com fixtures de banco em SQLite temporário
    ```
-2. **In-Memory Fakes:** Repositórios e portas de I/O em testes unitários utilizam fakes simples baseadas em arrays PHP (`private array $items = [];`) sem mocks dinâmicos.
-3. **Parse, Don't Validate:** Validação de strings, inteiros e decodificação JSON ocorre na borda (Controllers/Request DTOs). O Core opera com primitivos confiáveis.
-4. **Estados com Enums Nativos:**
+4. **In-Memory Fakes:** Repositórios e portas de I/O em testes unitários utilizam fakes simples baseadas em arrays PHP (`private array $items = [];`) sem mocks dinâmicos. Fakes e adaptadores reais compartilham os mesmos testes de contrato (LSP).
+5. **Parse, Don't Validate:** Validação de strings, inteiros e decodificação JSON ocorre na borda (Controllers/Request DTOs). O Core opera com primitivos confiáveis.
+6. **Estados com Enums Nativos:**
    ```php
    enum ProcessStatus: string {
        case Pending = 'pending';
@@ -72,7 +74,7 @@ O ecossistema adota **PHP 8.5+** como estado da arte canônico de runtime e comp
    ```php
    $configHome = getenv('XDG_CONFIG_HOME') ?: (getenv('HOME') . '/.config');
    ```
-2. **Dockerfile Canônico (Multi-stage com Alpine Non-Root):**
+2. **Dockerfile Canônico (Multi-stage com Alpine Non-Root e pcntl):**
    ```dockerfile
    FROM composer:2 AS vendor
    WORKDIR /app
@@ -80,7 +82,7 @@ O ecossistema adota **PHP 8.5+** como estado da arte canônico de runtime e comp
    RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
    FROM php:8.5-cli-alpine
-   RUN adduser -D -u 1000 appuser
+   RUN docker-php-ext-install pcntl && adduser -D -u 1000 appuser
    WORKDIR /app
    COPY --chown=appuser:appuser . /app
    COPY --chown=appuser:appuser --from=vendor /app/vendor /app/vendor

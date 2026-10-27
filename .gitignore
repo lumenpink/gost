@@ -8,7 +8,8 @@
 !.antigravity/rules.md
 
 # Compiled GOST cache
-.gost/
+.gost/*
+!.gost/metadata.json
 
 # Cloudflare Wrangler
 .wrangler/
