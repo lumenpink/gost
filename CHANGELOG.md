@@ -1,9 +1,16 @@
 # Changelog
 
-## [Unreleased]
+## [2.0.0] - 2026-10-26
 
-### Fixes
-- **ci:** remover deploy para codeberg pages mantendo cloudflare (ref #37)
+### Features
+- **spec:** elevar norma base para v2.0.0 com desacoplamento de infraestrutura pessoal (closes #29)
+- **spec:** formalizar o Maestro de Governança como Ponto Único de Entrada e vocabulário de agentes de IA (ref #29)
+- **spec:** instituir Laudo Textual de Resolução na Fase 9, inferência de fase e fast-tracks para docs e chore (ref #29)
+- **spec:** delegar conferência de cobertura de testes exclusivamente para esteira remota e limitar mutação ao diff (ref #29)
+- **spec:** estabelecer manifesto SSOT .gost/metadata.json, banners minimalistas Open Graph e regra GOST-26 (ref #29)
+- **spec:** estabelecer pureza de domínio com regra GOST-27 (zero I/O no core) e in-memory fakes obrigatórios (ref #29)
+- **spec:** atualizar matriz determinística rules.json v2.0.0 e protocolo formal de waivers auditados (ref #29)
+- **spec:** adicionar especificações canônicas para Go 1.22+ e Python 3.12+ e atualizar especificações de linguagem (ref #29)
 
 ## [1.6.0] - 2026-10-22
 
