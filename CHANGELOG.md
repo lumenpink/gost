@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Documentation
+- **spec:** normatizar arquitetura produtor-curador e principio de retencao de artefatos (closes #31)
+
 ## [2.0.0] - 2026-10-26
 
 ### Features
