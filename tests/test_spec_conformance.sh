@@ -111,9 +111,27 @@ if [ "$readme_lines" -gt 50 ]; then
 fi
 echo "  README.md tem $readme_lines linhas (<= 50 linhas)."
 
-echo "[6/6] Validando ausência de referências nominais e pessoais na norma base..."
+echo "[6/7] Validando ausência de referências nominais e pessoais na norma base..."
 if grep -rnE "banca\.2lp\.in|gambi\.2lp\.in|lumen\.pink" "${ROOT_DIR}/SPEC.md" "${ROOT_DIR}/README.md"; then
   echo "ERRO: Detectadas referências nominais a domínios pessoais na norma base."
+  exit 1
+fi
+
+echo "[7/7] Validando arquitetura produtor-curador, retenção e ausência de termos imperialistas..."
+if ! grep -qi "produtor.*curador" "$SPEC_FILE"; then
+  echo "ERRO: Arquitetura Produtor-Curador não referenciada em SPEC.md"
+  exit 1
+fi
+if ! grep -qi "tolerância zero a links quebrados" "$SPEC_FILE"; then
+  echo "ERRO: Princípio de tolerância zero a links quebrados ausente em SPEC.md"
+  exit 1
+fi
+if grep -rnEi "soberan[ao]|sovereign" "${ROOT_DIR}/SPEC.md" "${ROOT_DIR}/specs/pt/SPEC.md" "${ROOT_DIR}/specs/en/SPEC.md"; then
+  echo "ERRO: Termos imperialistas detectados nas especificações."
+  exit 1
+fi
+if grep -rnE "(5|10) (versões|releases|nightly|compilações)" "${ROOT_DIR}/specs/pt/SPEC.md" "${ROOT_DIR}/specs/en/SPEC.md"; then
+  echo "ERRO: Cotas numéricas operacionais vazadas na norma geral."
   exit 1
 fi
 
