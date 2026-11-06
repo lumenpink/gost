@@ -99,7 +99,7 @@ O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **
    - **Trava de Merge Mandatória no CCCP:** O maestro `cccp` ou mecanismo de integração **NÃO DEVE** permitir o merge da branch para a linha principal (`main`/`develop`) se a branch não contiver o commit de fechamento com a tag canônica `(closes #<id>)` associada ao ID do ticket da branch.
    - Hooks de commit (`commit-msg`) e o pipeline de CI/CD **DEVEM** rejeitar imediatamente qualquer commit sem referência a ticket.
 5. **Proibição Absoluta de Commit na Linha Base:** É estritamente **PROIBIDO** commitar diretamente no branch principal (`main` ou `develop`). Todo o trabalho reside exclusivamente no branch dedicado do ticket até sua aprovação e merge.
-6. **Soberania do CCCP na Gestão de Tickets:** Toda e qualquer operação de ciclo de vida de tickets (criação, consulta, triagem com o Divan e encerramento) **DEVE** ser realizada exclusivamente através do binário soberano `cccp` (`cccp ticket`, `cccp divan`). É **TERMINANTEMENTE PROIBIDO** criar ou fechar tickets diretamente através de ferramentas ad-hoc de terceiros (como `tea`, `gh`, `glab`) ou por meio de manipulação manual avulsa na interface web do forge.
+6. **Autoridade do CCCP na Gestão de Tickets:** Toda e qualquer operação de ciclo de vida de tickets (criação, consulta, triagem com o Divan e encerramento) **DEVE** ser realizada exclusivamente através do binário oficial `cccp` (`cccp ticket`, `cccp divan`). É **TERMINANTEMENTE PROIBIDO** criar ou fechar tickets diretamente através de ferramentas ad-hoc de terceiros (como `tea`, `gh`, `glab`) ou por meio de manipulação manual avulsa na interface web do forge.
 
 ### 5.2 Estratégia de Branches por Ticket e Governança Local-First
 * Todo ticket **DEVE** ser desenvolvido em um branch dedicado derivado de `develop` (ou `main`), com nomenclatura padronizada contendo o ID do ticket:
@@ -311,14 +311,14 @@ Sistemas que exponham interfaces web para uso em smartphones ou sob redes suscet
 2. **Desacoplamento de Requisição:** O backend deve persistir o job na fila e devolver resposta imediata (`HTTP 200/202`) em milissegundos, liberando a conexão de rede móvel.
 3. **Short Polling Indestrutível:** Preferência por sondagem curta periódica sobre conexões persistentes contínuas (WebSockets/SSE), as quais tendem a quebrar silenciosamente durante trocas de torres de celular ou transições de rede.
 
-### 8.3 Rodapé Canônico em Duas Linhas (Autoria, Identidade & Soberania)
+### 8.3 Rodapé Canônico em Duas Linhas (Autoria, Identidade & Licença)
 Todo aplicativo com interface gráfica, vitrine pública ou documentação estática (`./site`) **DEVE** exibir o rodapé canônico formatado em **duas linhas rigorosamente estruturadas**:
 * **Linha 1 — Afirmação Identitária & Transfeminista:**  
   `Orgulhosamente produzido por uma [travesti latina](https://travesti.2lp.in/<lang>/) 🏳️‍⚧️ :)`  
   - O termo *travesti* permanece rigorosamente sem tradução em todos os idiomas; o adjetivo adapta-se gramaticalmente à língua nativa com link direcionado à definição canônica.
-* **Linha 2 — Metadados de Soberania, Autoria e Licença:**  
+* **Linha 2 — Metadados Canônicos, Autoria e Licença:**  
   `{Nome do App} v{Versão} • por [Lumen Pink](https://lumen.pink) • {País / Brasil} 🇧🇷 • [{Licença}](LICENSE)`  
-  - Identifica o nome da aplicação, versão extraída de `VERSION`, autoria soberana, bandeira e link direto para o arquivo de licença.
+  - Identifica o nome da aplicação, versão extraída de `VERSION`, autoria declarada, bandeira e link direto para o arquivo de licença.
 
 ---
 
@@ -339,7 +339,7 @@ Todo pipeline de CI **DEVE** declarar seus estágios em jobs estritamente separa
 
 A separação explícita garante que os estágios de validação ocorram de forma isolada, e que cada etapa seja inspecionável nos logs de CI.
 
-* **Compilação Soberana Exclusiva na Esteira e Proibição de Builds de Release Locais:** Todo e qualquer binário final de distribuição, pacote executável ou artefato de release **DEVE** ser compilado exclusivamente através da esteira automatizada de CI/CD (Forgejo Actions / GitHub Actions) em containers herméticos a partir da branch principal integrada. É **TERMINANTEMENTE PROIBIDO** compilar releases pesadas (`cargo build --release`, cross-compilação ou empacotamento para distribuição) no ambiente local de desenvolvimento. A estação local de trabalho destina-se estritamente às fases ágeis de especificação, testes unitários rápidos, formatação (`fmt`), linter (`clippy`) e inspeção de tipos, operando obrigatoriamente com limite conservador de concorrência (`jobs = 1` no compilador).
+* **Compilação Exclusiva na Esteira e Proibição de Builds de Release Locais:** Todo e qualquer binário final de distribuição, pacote executável ou artefato de release **DEVE** ser compilado exclusivamente através da esteira automatizada de CI/CD (Forgejo Actions / GitHub Actions) em containers herméticos a partir da branch principal integrada. É **TERMINANTEMENTE PROIBIDO** compilar releases pesadas (`cargo build --release`, cross-compilação ou empacotamento para distribuição) no ambiente local de desenvolvimento. A estação local de trabalho destina-se estritamente às fases ágeis de especificação, testes unitários rápidos, formatação (`fmt`), linter (`clippy`) e inspeção de tipos, operando obrigatoriamente com limite conservador de concorrência (`jobs = 1` no compilador).
 * **Deploy Exclusivo via Esteira Automatizada de CI/CD:** Todo e qualquer deploy de aplicações, serviços, daemons e documentação **DEVE** ocorrer exclusivamente através da esteira remota de CI/CD da forja a partir da branch principal devidamente integrada. É **TERMINANTEMENTE PROIBIDO** realizar deploys manuais ou ad-hoc a partir da máquina local do desenvolvedor ou de agentes de inteligência artificial.
 
 ### 9.2 Gate Leve de Pre-Push e Gate Pré-Tag com `act`
@@ -353,25 +353,23 @@ Se o ambiente de execução de containers (Docker daemon ou socket) não estiver
 - Emitir aviso claro indicando a ausência do executor local.
 - Permitir bypass consciente exclusivamente mediante confirmação explícita do desenvolvedor (`--force` ou `--skip-ci`), registrando a exceção nos logs.
 
-### 9.4 Distribuição Canônica Soberana na Banca e Armazenamento em R2
+### 9.4 Distribuição Canônica Desacoplada e Gestão de Artefatos
 
-Para preservar as forjas Git (Codeberg/Forgejo) contra inchaço (*bloat*) e garantir distribuição atômica resiliente:
+Para preservar as forjas Git contra inchaço (*bloat*) e garantir distribuição atômica resiliente:
 
-1. **A Banca como Vitrine e Repositório Soberano Oficial:**
-   - A **Banca** (`https://banca.2lp.in/downloads/`) é a autoridade canônica soberana para catálogo, consulta e distribuição de binários, ferramentas CLI e instaladores do ecossistema.
-   - Todo software executável distribuído **DEVE** disponibilizar subcomando de auto-atualização atômica (`<app> update` e `<app> check-update`) que consome o catálogo oficial da Banca.
+1. **Modelo Produtor–Curador Desacoplado:**
+   - A distribuição de softwares adota separação estrita de papéis: o repositório produtor compila e envia os artefatos com seus hashes criptográficos (SHA-256) diretamente para o storage de distribuição, notificando o catálogo central via evento estruturado (`repository_dispatch`).
+   - O repositório curador audita a integridade dos artefatos novos e do histórico ativo, gerencia a retenção no storage e publica o catálogo consolidado.
+   - Todo software executável distribuído **DEVE** disponibilizar subcomando de auto-atualização atômica (`<app> update` e `<app> check-update`) que consome o catálogo oficial.
 2. **Proibição Absoluta de Bloat na Forja Git:**
    - Binários compilados, executáveis estáticos (`musl`), bibliotecas, instaladores e tarballs de release **NUNCA DEVEM** ser hospedados nas releases da forja Git nem comitados no histórico do repositório.
-3. **Armazenamento Canônico em Object Storage (Cloudflare R2):**
-   - Todos os artefatos de release compilados pela esteira **DEVEM** ser publicados diretamente em Object Storage (Cloudflare R2) sob o domínio unificado `*.2lp.in`.
-   - Acesso e distribuição ocorrem via CDN global sem cobrança de taxa de saída (*egress-free*), com suporte a *HTTP Range Requests* (RFC 7233) e hashes criptográficos (`sha256`).
-4. **Política de Retenção Estrita (5 Stables e 10 Nightlies):**
-   - As esteiras de CI/CD **DEVEM** impor rotina de limpeza automatizada mantendo estritamente no storage:
-     - **Canal Estável (`stable`)**: Até **5 versões estáveis** mais recentes, mantendo um alias simbólico fixo apontando para a última versão (`stable-latest`).
-     - **Canal Nightly (`nightly`)**: Até **10 compilações atômicas de commit** mais recentes, mantendo um alias simbólico fixo apontando para a última compilação (`nightly-latest`).
-   - Versões que ultrapassem o teto de retenção devem ser expurgadas automaticamente do bucket.
-5. **Manifesto Atômico `index.json`:**
-   - A esteira **DEVE** gerar e atualizar atomicamente um manifesto `index.json` por aplicação na raiz de seu diretório no storage (`downloads/<app>/index.json`), contendo metadados de versões, datas, arquiteturas suportadas e hashes, servindo como fonte da verdade para updaters de terminal e interfaces web.
+3. **Armazenamento Canônico em Object Storage:**
+   - Todos os artefatos de release compilados pela esteira **DEVEM** ser publicados diretamente em Object Storage.
+   - Acesso e distribuição ocorrem via CDN com suporte a *HTTP Range Requests* (RFC 7233) e hashes criptográficos (`sha256`).
+4. **Política Mandatória de Retenção e Ciclo de Vida:**
+   - Catálogos de distribuição **DEVEM** implementar políticas formais de retenção e rotação de artefatos por canal de entrega (`stable`, `dev`, etc.), expurgando versões antigas excedentes para garantir previsibilidade e sustentabilidade de armazenamento. Os limites quantitativos e parametrizações operacionais são definidos no perfil operacional.
+5. **Tolerância Zero a Links Quebrados:**
+   - Se qualquer ativo declarado no catálogo (novo ou histórico ativo) falhar na verificação de rede ou apresentar divergência de checksum, o deploy do catálogo **DEVE** ser abortado preventivamente e uma issue automática **DEVE** ser aberta no repositório de origem.
 6. **Higiene de Branches de Publicação / Pages (Stateless Single-Commit & Force Push):**
    - Quando a publicação de documentação estática envolver espelhamento em branch Git dedicado (ex: branch `pages`), o pipeline **NÃO DEVE** acumular commits históricos de builds sucessivos.
    - O pipeline **DEVE** purgar commits antigos criando uma árvore órfã isolada (`--orphan`), contendo rigorosamente um único commit limpo do snapshot atual (`docs(site): deploy [skip ci]`), publicado via `git push --force origin <temp>:pages`.
@@ -586,7 +584,7 @@ Para conciliar padrões organizacionais com necessidades personalizadas de proje
    ```
 2. **Resolução e Precedência em Cascata:**
    - O perfil filho herda integralmente todas as seções, diretivas e convenções do perfil pai.
-   - Qualquer seção, chave ou diretiva declarada no perfil filho possui **precedência estrita e soberana (*deep override*)**, sobrescrevendo a definição correspondente herdada do perfil pai.
+   - Qualquer seção, chave ou diretiva declarada no perfil filho possui **precedência estrita e determinante (*deep override*)**, sobrescrevendo a definição correspondente herdada do perfil pai.
    - Caso uma diretiva não seja declarada no filho, a regra do pai é aplicada automaticamente.
 3. **Resolução na Ponta:** Projetos declaram em seu arquivo `GOSTVER` exclusivamente a URL do perfil folha (`GOST_PROFILE_URL`). As ferramentas de auditoria e conformidade (`cccp gost sync`, `gost-conform.sh`) resolvem a cadeia recursiva de herança garantindo conformidade uniforme.
 
@@ -602,8 +600,39 @@ A herança em cascata estende-se simetricamente aos guias de linguagem e às mat
    - Se um perfil filho redefinir uma regra existente (ex: alterando `threshold` de cobertura de testes em `GOST-06-TEST-COVERAGE` de 90% para 95%), a definição do perfil filho sobrepõe o pai.
    - Regras inéditas adicionadas por perfis são integradas ao conjunto executado pela auditoria do CCCP.
 
-### 14.3 Sobreposição Soberana Local do Repositório (`CUSTOM.md` e `custom_rules.json`)
+### 14.3 Sobreposição Determinística Local do Repositório (`CUSTOM.md` e `custom_rules.json`)
 Quando um repositório necessitar de regras estritas exclusivas que não pertencem a nenhum perfil compartilhado:
-1. **Regras Documentais (`CUSTOM.md`):** Qualquer arquivo `CUSTOM.md` presente na raiz do projeto é anexado como camada final soberana na compilação do `.gost/GOST.md`.
+1. **Regras Documentais (`CUSTOM.md`):** Qualquer arquivo `CUSTOM.md` presente na raiz do projeto é anexado como camada final determinante na compilação do `.gost/GOST.md`.
 2. **Exceções e Calibragens Locais:** Orientações presentes no `CUSTOM.md` (como idioma oficial do projeto, exceções justificadas de arquitetura ou diretrizes específicas de empacotamento) possuem precedência máxima sobre todos os perfis herdados.
 3. **Regras de Validação Locais (`custom_rules.json`):** Se presente, aplica o merge final sobre o `.gost/rules.json`.
+
+---
+
+## 15. Governança de Fronteira e Quarentena de Branches (`inbox/*`) — Emenda v1.6.0
+
+Para manter o núcleo da norma GOST estritamente focado em anatomia de repositório, hermeticidade e ciclo DD-TDD, toda a mecânica de distribuição, espelhamento ativo e ingestão de contribuições externas reside no Perfil de Governança de Fronteira (`gost-profile-border`).
+
+### 15.1 Declaração de Topologia de Fronteira
+Repositórios declaram sua topologia através de tópicos na forja primária ou metadados de empacotamento:
+* `gost-mirror-gh`: Habilita o espelhamento passivo de saída e a ingestão ativa de tickets/PRs a partir do GitHub.
+* `gost-mirror-cb`: Habilita o espelhamento passivo de saída e a ingestão ativa de tickets/PRs a partir do Codeberg.
+* `gost-public-inbox`: Habilita a recepção de tickets anônimos e a materialização de Pull Requests externos sob quarentena.
+
+### 15.2 Quarentena Estrita de Branches (`inbox/*`) — Regra GOST-25
+O namespace `refs/heads/inbox/*` é de reserva exclusiva de controladores automatizados de fronteira:
+1. **Zona Não-Confiável de CI:** O Gosplan CI trata branches com prefixo `inbox/*` como zona estritamente não-confiável. A execução é restrita a validação de linting, compilação e testes determinísticos offline, com bloqueio absoluto a segredos de produção, chaves criptográficas de assinatura e deploys.
+2. **Operações Canônicas:** Toda integração de código vindo de fora ocorre via merge formal para a branch `main` no Forgejo primário. O espelhamento passivo propaga a alteração e comanda o fechamento do PR original na forja externa.
+
+---
+
+## 16. Padronização Canônica de Taxonomia e Metadados do Projeto — Regra GOST-26
+
+Para garantir consistência semântica e evitar discrepâncias entre forjas, vitrines e catálogos:
+1. **Campos Obrigatórios de Identificação:**
+   * `slug`: Identificador único minúsculo em kebab-case (ex: `kontur`, `resenha`).
+   * `title`: Nome próprio legível do aplicativo ou biblioteca (ex: `Kontur`, `Resenha`).
+   * `tagline`: Subtítulo resumido em uma frase clara, expressando a utilidade concreta da ferramenta sem jargões técnicos.
+   * `description`: Descrição textual focada no benefício e no propósito de uso, acessível a pessoas leigas.
+2. **Proibição de Jargão Técnico nas Vitrines e Catálogos:**
+   Descrições destinadas ao usuário final não devem conter menções a linguagens de implementação (ex: "em Rust puro"), tecnologias de runtime (ex: "WASM"), arquiteturas internas ("hexagonal", "borda", "SSOT") ou termos repetitivos e vazios ("soberano"), exceto termos que definem a própria proposta funcional do projeto (como `anti-design` na Navalha).
+

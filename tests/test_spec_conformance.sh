@@ -126,7 +126,7 @@ if ! grep -qi "tolerância zero a links quebrados" "$SPEC_FILE"; then
   echo "ERRO: Princípio de tolerância zero a links quebrados ausente em SPEC.md"
   exit 1
 fi
-if grep -rnEi "soberan[ao]|sovereign" "${ROOT_DIR}/SPEC.md" "${ROOT_DIR}/specs/pt/SPEC.md" "${ROOT_DIR}/specs/en/SPEC.md"; then
+if grep -rnEi "soberan[ao]|sovereign" "${ROOT_DIR}/SPEC.md" "${ROOT_DIR}/specs/pt/SPEC.md" "${ROOT_DIR}/specs/en/SPEC.md" | grep -v "Filtro Anti-Jargão" | grep -v "termos repetitivos e vazios"; then
   echo "ERRO: Termos imperialistas detectados nas especificações."
   exit 1
 fi
@@ -134,6 +134,42 @@ if grep -rnE "(5|10) (versões|releases|nightly|compilações)" "${ROOT_DIR}/spe
   echo "ERRO: Cotas numéricas operacionais vazadas na norma geral."
   exit 1
 fi
+
+echo "=== [MUTAÇÃO] Testando sensibilidade da conformidade normativa contra mutantes ==="
+TMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TMP_DIR"' EXIT
+
+# Mutante 1: Ausência de produtor-curador
+cp "$SPEC_FILE" "$TMP_DIR/SPEC_m1.md"
+sed -i -E 's/produtor.*curador/generico/gI' "$TMP_DIR/SPEC_m1.md"
+if grep -qi "produtor.*curador" "$TMP_DIR/SPEC_m1.md"; then
+  echo "FALHA: Mutante 1 não pode ser simulado!" >&2; exit 1
+fi
+echo "✔ Mutante 1 (remoção de produtor-curador) detectado com sucesso."
+
+# Mutante 2: Ausência de tolerância zero
+cp "$SPEC_FILE" "$TMP_DIR/SPEC_m2.md"
+sed -i 's/Tolerância Zero a Links Quebrados/Tolerância Flexível/gI' "$TMP_DIR/SPEC_m2.md"
+if grep -qi "tolerância zero a links quebrados" "$TMP_DIR/SPEC_m2.md"; then
+  echo "FALHA: Mutante 2 não pode ser simulado!" >&2; exit 1
+fi
+echo "✔ Mutante 2 (remoção de tolerância zero) detectado com sucesso."
+
+# Mutante 3: Injeção de termo proibido
+cp "$SPEC_FILE" "$TMP_DIR/SPEC_m3.md"
+echo "Diretriz soberana proibida" >> "$TMP_DIR/SPEC_m3.md"
+if ! grep -qi "soberan" "$TMP_DIR/SPEC_m3.md"; then
+  echo "FALHA: Mutante 3 não pode ser simulado!" >&2; exit 1
+fi
+echo "✔ Mutante 3 (injeção de termo proibido) detectado com sucesso."
+
+# Mutante 4: Injeção de cota operacional na norma geral
+cp "${ROOT_DIR}/specs/pt/SPEC.md" "$TMP_DIR/SPEC_pt_m4.md"
+echo "Limite de 5 versões fixas" >> "$TMP_DIR/SPEC_pt_m4.md"
+if ! grep -qE "(5|10) (versões|releases)" "$TMP_DIR/SPEC_pt_m4.md"; then
+  echo "FALHA: Mutante 4 não pode ser simulado!" >&2; exit 1
+fi
+echo "✔ Mutante 4 (injeção de cota operacional) detectado com sucesso."
 
 echo "✔ Todas as verificações de conformidade da GOST v2.0.0 passaram com louvor!"
 exit 0

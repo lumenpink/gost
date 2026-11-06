@@ -191,7 +191,7 @@ Agentes autônomos de IA devem seguir o vocabulário de comandos operacionais de
 
 ### 7.2 Delegação de Cobertura para a Esteira
 * **Piso Mínimo Inviolável:** A cobertura global de testes automatizados **DEVE** ser de no mínimo **`90%`**, com meta de **`100%`** no domínio.
-* **Aferição na Esteira Remota:** A verificação estrita de cobertura com quebra de build é critério bloqueante delegado soberanamente à esteira remota hermética (`ci.yml`), liberando o fluxo de desenvolvimento local de overhead excessivo.
+* **Aferição na Esteira Remota:** A verificação estrita de cobertura com quebra de build é critério bloqueante delegado categoricamente à esteira remota hermética (`ci.yml`), liberando o fluxo de desenvolvimento local de overhead excessivo.
 
 ### 7.3 Mutação Restrita ao Diff
 Na Fase 7 local, as ferramentas de teste de mutação devem operar restritas ao diff de alterações (`--in-diff` ou `--git-diff-lines`), deixando baterias globais de mutação para esteiras de auditoria periódica.
@@ -226,7 +226,7 @@ Todo projeto deve adotar um formatador oficial determinístico verificado com fl
 ### 9.4 Rodapé Canônico em Duas Linhas
 Aplicações e documentações estáticas devem exibir rodapé em duas linhas:
 * **Linha 1 — Afirmação Identitária:** Definida e parametrizada conforme o perfil adotado.
-* **Linha 2 — Metadados de Soberania e Licença:** `{Nome do App} v{Versão} • [{Licença}](LICENSE)`.
+* **Linha 2 — Metadados de Versão e Licença:** `{Nome do App} v{Versão} • [{Licença}](LICENSE)`.
 
 ### 9.5 Cabeçalhos HTTP de Segurança
 A vitrine estática deve declarar cabeçalhos `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` e `Referrer-Policy: strict-origin-when-cross-origin` em `site/_headers` ou `wrangler.jsonc`.
@@ -245,6 +245,13 @@ O pipeline de automação reside estritamente em `.forgejo/workflows/ci.yml`. É
 
 ### 10.3 Zero Binários no Histórico Git (Regra `GOST-24`)
 É expressamente proibido versionar artefatos compilados, arquivos ELF, pacotes ou tarballs (`.exe`, `.dll`, `.so`, `.tar.gz`, `.zip`, `.deb`, `.rpm`, `.apk`) no repositório Git.
+
+### 10.4 Arquitetura de Distribuição Desacoplada e Retenção de Artefatos
+* **Modelo Produtor–Curador Desacoplado:** A publicação de softwares opera sob divisão estrita de responsabilidades:
+  - **Produtor (Repositório do Software):** Compila o código na esteira, calcula os hashes de integridade criptográfica (SHA-256), envia os artefatos diretamente para o storage de distribuição e notifica a autoridade curadora de catálogo via evento estruturado.
+  - **Curador (Repositório Central de Catálogo):** Ouve os eventos, executa auditoria estrita de rede e integridade de checksum dos arquivos novos e do histórico ativo, gerencia a retenção no storage e publica o catálogo consolidado.
+* **Política Mandatória de Retenção e Ciclo de Vida:** Todo catálogo ou esteira de distribuição **DEVE** adotar política formal de retenção e rotação de artefatos por canal de entrega (`stable`, `dev`, etc.), purgando compilações antigas excedentes para impedir a proliferação desgovernada de ativos e garantir previsibilidade de armazenamento. As cotas numéricas e particularidades operacionais são fixadas nos perfis operacionais.
+* **Tolerância Zero a Links Quebrados:** Se qualquer artefato declarado (novo ou histórico ativo) falhar na verificação de rede ou apresentar divergência de checksum, a publicação do catálogo **DEVE** ser abortada preventivamente e um chamado/issue automático **DEVE** ser emitido para o repositório produtor.
 
 ---
 

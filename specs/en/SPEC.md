@@ -96,7 +96,7 @@ The workflow in GOST repositories **MUST** follow a strict **Documentation-Drive
    - **Mandatory Merge Gatekeeper in CCCP:** The `cccp` orchestrator or merge mechanism **MUST NOT** permit merging a branch into the base branch (`main`/`develop`) if the branch lacks the closing commit bearing the canonical `(closes #<id>)` tag matching the branch ticket ID.
    - Commit hooks (`commit-msg`) and CI/CD **MUST** reject commits lacking explicit ticket references.
 5. **No Direct Commits to Base Branch:** Direct commits to `main` or `develop` are strictly **FORBIDDEN**. All work resides on dedicated ticket branches until approved.
-6. **CCCP Ticket Management Sovereignty:** All issue lifecycle operations (creation, consultation, Divan triage, and closure) **MUST** be performed exclusively via the sovereign `cccp` CLI (`cccp ticket`, `cccp divan`). Manipulating issues directly via ad-hoc third-party tooling (`tea`, `gh`, `glab`) or manual web UI actions is strictly **PROHIBITED**.
+6. **CCCP Ticket Management Authority:** All issue lifecycle operations (creation, consultation, Divan triage, and closure) **MUST** be performed exclusively via the official `cccp` CLI (`cccp ticket`, `cccp divan`). Manipulating issues directly via ad-hoc third-party tooling (`tea`, `gh`, `glab`) or manual web UI actions is strictly **PROHIBITED**.
 
 #### 5.2 Branch Strategy and Local-First Governance
 * Work branches: `feat/<id>-<slug>`, `fix/<id>-<slug>`, `docs/<id>-<slug>`, `refactor/<id>-<slug>`, `test/<id>-<slug>`, `chore/<id>-<slug>`.
@@ -198,7 +198,7 @@ When collaborating with AI agents, interactions **MUST** use deterministic opera
 2. Segregation: `./site` contains static documentation only; dynamic backends are accessed privately via WireGuard/Tailscale or authenticated tunnels.
 3. Resilient mobile pattern: Idempotent requests (`client_id`), decoupled queues, and indestructible short polling.
 4. **Canonical Two-Line Footer:** All public documentation sites (`./site`) and interfaces **MUST** display the canonical two-line footer:
-   - **Line 1 (Identity & Sovereign Assertion):** `Proudly produced by a [Latin American travesti](https://travesti.2lp.in/<lang>/) 🏳️‍⚧️ :)` (the term *travesti* remains untranslated in all languages).
+   - **Line 1 (Identity Assertion):** `Proudly produced by a [Latin American travesti](https://travesti.2lp.in/<lang>/) 🏳️‍⚧️ :)` (the term *travesti* remains untranslated in all languages).
    - **Line 2 (Metadata & Licensing):** `{App} v{Version} • by [Lumen Pink](https://lumen.pink) • {Country} 🇧🇷 • [{License}](LICENSE)`
 
 ---
@@ -207,7 +207,7 @@ When collaborating with AI agents, interactions **MUST** use deterministic opera
 
 1. **Strict Job Separation & Pipeline-Only Builds:** Jobs for `test` (lint, unit tests, coverage, static analysis) are separated from `deploy-*` jobs. All final distribution binaries, release packages, and production artifacts **MUST** be compiled exclusively within hermetic CI/CD pipeline runners. Heavy local release builds (`cargo build --release`, cross-compilation) are **STRICTLY PROHIBITED** on the developer workstation.
 2. **Lightweight Pre-Push Gate & Pre-Tag Act Gate:** The git `pre-push` hook **MUST NOT** run heavy containerized runners (`act`). Pre-push operates as an instantaneous semantic verification gate (validating `VERSION` file synchronization, tag consistency, and commit ticket references). Containerized validation via `act` is executed exclusively as a **Pre-Tag Gate** during release tagging (`cccp tag`).
-3. **Banca Canonical Sovereign Distribution & R2 Storage:** The **Banca** (`https://banca.2lp.in/downloads/`) is the canonical sovereign distribution authority. Compiled binaries, packages, and installer bundles **MUST NOT** bloat git forge storage or releases. Artifacts are published to Cloudflare R2 with a strict retention cap of **5 stable releases** (`stable-latest`) and **10 nightly builds** (`nightly-latest`), coordinated via an atomic `index.json` manifest.
+3. **Decoupled Producer-Curator Distribution & Mandatory Retention:** Distribution artifacts **MUST** follow the decoupled Producer-Curator architecture. Compiled binaries, packages, and installer bundles **MUST NOT** bloat git forge storage or releases. Producers compile artifacts, generate cryptographic integrity hashes (SHA-256), upload directly to distribution storage, and dispatch notification events. Curators audit new assets and active history, manage storage retention, and publish the catalog under a strict zero-broken-link tolerance policy. Mandatory artifact lifecycle retention and rotation policies **MUST** be enforced per distribution channel, with exact quotas defined in operational profiles.
 4. **Deploy Branch Hygiene (Stateless Single-Commit Force Push):** Dedicated git deployment branches (such as `pages`) **MUST** purge previous build history via orphan worktrees (`--orphan`), pushing a single clean commit with `git push --force origin <branch>`.
 
 ---
@@ -258,5 +258,5 @@ Infrastructure and provider choices are decoupled into external profile document
 ### 14.1 Cascading Profile Inheritance (`extends`)
 Derived profiles support cascading inheritance to reuse organizational defaults while specifying author- or project-level specializations:
 1. **Parent Declaration:** Declared via `extends: <URL>` in profile metadata frontmatter (e.g., `extends: "https://kollontai.2lp.in/profile.md"`).
-2. **Deep Override Precedence:** All directives from the parent are inherited; any section or field defined in the child has sovereign precedence (*deep override*).
+2. **Deep Override Precedence:** All directives from the parent are inherited; any section or field defined in the child has deterministic precedence (*deep override*).
 3. **Leaf Resolution:** Projects declare only the leaf profile URL in `GOSTVER`; tooling recursively resolves parent profiles.

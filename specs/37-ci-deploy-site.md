@@ -1,7 +1,7 @@
 # Especificação Técnica — Descontinuação de Deploy no Codeberg Pages (#37)
 
 ## 1. Contexto e Motivação
-No modelo operacional do ecossistema GOST, o Codeberg atua estritamente como um espelho de código soberano (*code mirror*). A distribuição da documentação pública e dos manuais da norma (`gost.2lp.in`) é realizada exclusivamente via Cloudflare Workers / Pages a partir do diretório `./site`.
+No modelo operacional do ecossistema GOST, o Codeberg atua estritamente como um espelho de código (*code mirror*). A distribuição da documentação pública e dos manuais da norma (`gost.2lp.in`) é realizada exclusivamente via Cloudflare Workers / Pages a partir do diretório `./site`.
 
 Anteriormente, o workflow `.forgejo/workflows/ci.yml` mantinha uma etapa legada denominada `Deploy to Codeberg Pages (Stateless Orphan Force Push)`. Esta etapa tentava executar `git push --force origin pages` utilizando credenciais ausentes nos runners do Forgejo Actions, provocando a quebra sistemática da esteira de CI/CD do repositório `gost` (conforme registrado no ticket `baquara-infra#37`).
 

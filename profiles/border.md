@@ -39,7 +39,7 @@ O profile reserva o namespace `refs/heads/inbox/*` exclusivamente para o control
 
 ## 3. Soberania de Provisionamento (Zero-Touch)
 
-Sob este perfil, toda configuração das forjas externas é realizada de forma automatizada pelo provisionador soberano:
+Sob este perfil, toda configuração das forjas externas é realizada de forma automatizada pelo provisionador canônico:
 * Desativação de recursos parasitas (Wikis, Projects externos, GitHub Actions concorrentes);
 * Sincronização de tópicos, descrições e URLs canônicas da Banca;
 * Rotação e provisionamento determinístico de segredos HMAC para webhooks.
