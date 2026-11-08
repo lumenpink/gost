@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Documentation
+- **rules:** formalizar padrao rules.toml tridigital e runtime lua com interface gost (closes #33)
 - **spec:** normatizar camada fundamental gost v3.0.0 com hierarquia e frontmatter (closes #32)
 - **spec:** normatizar arquitetura produtor-curador e principio de retencao de artefatos (closes #31)
 
