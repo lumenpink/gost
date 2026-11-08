@@ -1,21 +1,57 @@
-# GOST — Technical Standard for Open Repositories
-**Standard Version:** `1.0.0-draft`  
-**Status:** Official / Normative Proposal  
+---
+standard: "gost"
+tier: "fundamental"
+version: "3.0.0"
+locale: "en-us"
+authority: "Standards Committee"
+published_at: "2026-11-07"
+---
+
+# GOST — Fundamental Standard for Open Repositories
+**Standard Version:** `3.0.0`  
+**Status:** Official / Fundamental Standard  
 **Reference:** ГОСТ (Государственный Стандарт / General Open Source Standard)
 
 ---
 
 ## 1. Scope and Purpose
 
-This specification defines structural, methodological, governance, and documentation requirements for the creation, maintenance, and lifecycle of open-source software repositories.
+This specification establishes the **Fundamental Standard** of the ecosystem, formalizing the general theory of standards, the four-tier normative hierarchy, requirements grammar, canonical document anatomy, and universal governance and integrity guarantees for open-source repositories.
 
-The objective of GOST is to eliminate friction when creating new projects, guarantee complete historical traceability, ensure maximal software freedom, and impose engineering rigor driven by documentation and testing.
+GOST operates under the principle of perennial technological neutrality: it defines rules of validity, delegation, and enforcement without coupling to ephemeral tooling or particular implementations.
 
 The key words **MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, and **MAY** in this document are to be interpreted as described in [RFC 2119](https://datatracker.ietf.org/doc/html/rfc2119).
 
 ---
 
-## 2. Philosophy and Licensing
+## 2. General Theory of Standards and Four-Tier Hierarchy
+
+The regulatory framework of the ecosystem is structured into four subordinate and interdependent tiers:
+
+1. **Fundamental Tier (`tier: fundamental`):**
+   - Constitutional and meta-regulatory foundation (GOST).
+   - Establishes rules on the creation, validity, format, typology, and auditability of all subordinate standards.
+2. **Strategic Tier (`tier: strategic`):**
+   - Defines multi-year planning, development philosophy, popular autonomy, and lifecycle methodologies (e.g., 9-phase DD-TDD cycle and Day Zero genesis protocol).
+3. **Tactical Tier (`tier: tactical`):**
+   - Fixes approved engineering toolchains, interoperability interfaces, and universal CLI contracts.
+4. **Operational Tier (`tier: operational`):**
+   - Determines concrete infrastructure, storage topology, retention quotas, deployment pipelines, and supply/state services.
+5. **Local Tier (`tier: local`):**
+   - Custom rules and specifications declared by individual repositories (`CUSTOM.md` and `custom-rules.toml`).
+
+### 2.1 Principle of the Closed Normative Triad
+* Every regulated project formally binds to an immutable triad: `Operational X.Y.Z -> Tactical A.B.C -> Strategic D.E.F -> Fundamental G.H.I`.
+* Binding to unstable channels (`-dev.XX`), floating tags (`latest`), or using the `v` prefix in version declarations is strictly prohibited.
+* Updating an upper tier requires issuing a new immutable version in corresponding lower tiers, guaranteeing historical determinism and perennial auditability.
+
+### 2.2 Canonical Document Anatomy and Universal Frontmatter
+All normative documents MUST be authored in UTF-8 Markdown with mandatory YAML frontmatter in English declaring:
+`standard`, `tier`, `version`, `locale`, `authority`, `published_at`, and the `inherits_from` block with canonical `base_url` pointing to the public portal (`https://<standard>.2lp.in/<version>/`).
+
+---
+
+## 3. Philosophy and Licensing
 
 Every GOST-compliant repository **MUST** explicitly declare its license in the root directory via a `LICENSE` file. The detailed modular technical specification is in [specs/legal/licenses.md](../legal/licenses.md).
 
