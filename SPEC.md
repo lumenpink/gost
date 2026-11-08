@@ -1,21 +1,57 @@
-# GOST — Padrão Técnico para Repositórios Abertos
-**Versão da Norma:** `2.0.0`  
-**Status:** Oficial / Padrão Canônico  
+---
+standard: "gost"
+tier: "fundamental"
+version: "3.0.0"
+locale: "pt-br"
+authority: "Standards Committee"
+published_at: "2026-11-07"
+---
+
+# GOST — Metanorma Fundamental para Repositórios Abertos
+**Versão da Norma:** `3.0.0`  
+**Status:** Oficial / Metanorma Fundamental  
 **Referência:** ГОСТ (Государственный Стандарт / General Open Source Standard)
 
 ---
 
 ## 1. Escopo e Propósito
 
-Esta especificação define os requisitos estruturais, metodológicos, de governança e de documentação para criação, manutenção e ciclo de vida de repositórios de software aberto.
+Esta especificação define a **Metanorma Fundamental** do ecossistema, estabelecendo a teoria geral das normas, a hierarquia de camadas, a gramática de requisitos, a anatomia documental canônica e as garantias de governança e integridade aplicáveis universalmente a repositórios de software aberto.
 
-O objetivo do GOST é eliminar atritos no surgimento de novos projetos, garantir rastreabilidade histórica completa, assegurar a máxima liberdade do código e impor rigor de engenharia orientado à documentação e testes.
+A GOST opera sob o princípio da neutralidade tecnológica perene: ela positiva as regras de validade, delegação e controle sem vincular-se a ferramentas utilitárias efêmeras ou tecnologias particulares.
 
 As palavras-chave **DEVE** (*MUST*), **NÃO DEVE** (*MUST NOT*), **DEVERIA** (*SHOULD*), **NÃO DEVERIA** (*SHOULD NOT*) e **PODE** (*MAY*) neste documento devem ser interpretadas conforme descrito na [RFC 2119](https://datatracker.ietf.org/doc/html/rfc2119).
 
 ---
 
-## 2. Filosofia e Licenciamento
+## 2. Teoria Geral das Normas e Hierarquia em Quatro Camadas
+
+O ordenamento regulatório do ecossistema estrutura-se em quatro esferas subordinadas e interdependentes:
+
+1. **Camada Fundamental (`tier: fundamental`):**
+   - Papel constitucional e meta-regulatório do ecossistema (GOST).
+   - Estabelece as regras sobre a criação, vigência, formato, tipicidade e controle de todas as normas subordinadas.
+2. **Camada Estratégica (`tier: strategic`):**
+   - Define o planejamento plurianual, filosofia de desenvolvimento, autonomia popular e metodologia de ciclo de vida (ex.: ciclo DD-TDD de 9 fases e protocolo do Dia Zero).
+3. **Camada Tática (`tier: tactical`):**
+   - Fixa as toolchains homologadas de engenharia, interfaces de interoperabilidade e contratos universais de CLI.
+4. **Camada Operacional (`tier: operational`):**
+   - Determina a infraestrutura concreta, topologia de storage, cotas de retenção, esteiras de deploy e serviços de suprimento/estado.
+5. **Autonomia Local (`tier: local`):**
+   - Regras e especificações customizadas do próprio repositório (`CUSTOM.md` e `custom-rules.toml`), respeitando os limites da hierarquia superior.
+
+### 2.1 Princípio da Tríade Normativa Fechada
+* Todo projeto regulado vincula-se formalmente a uma tríade imutável de normas: `Operacional X.Y.Z -> Tática A.B.C -> Estratégica D.E.F -> Fundamental G.H.I`.
+* É vedada a vinculação a versões instáveis (`-dev.XX`), tags flutuantes (`latest`) ou o uso do prefixo `v` nas declarações de versão.
+* A alteração de uma norma superior exige a emissão de nova versão imutável nas normas inferiores correspondentes, garantindo determinismo histórico e auditabilidade perene.
+
+### 2.2 Anatomia Documental e Frontmatter Canônico
+Todo documento normativo DEVE ser redigido em Markdown UTF-8 com Frontmatter YAML obrigatório em inglês declarando:
+`standard`, `tier`, `version`, `locale`, `authority`, `published_at` e o bloco `inherits_from` com `base_url` canônica apontando para o portal público (`https://<norma>.2lp.in/<versao>/`).
+
+---
+
+## 3. Filosofia e Licenciamento
 
 Todo projeto em conformidade com o GOST **DEVE** declarar sua licença de forma explícita na raiz do repositório através de um arquivo `LICENSE`. A especificação técnica detalhada, perfis e matriz normativa encontram-se em [specs/legal/licenses.md](./specs/legal/licenses.md).
 
@@ -82,7 +118,7 @@ O arquivo `.gost/metadata.json` é a autoridade central (SSOT) para identidade, 
 * `tags`: Lista contendo entre 3 e 8 tags em kebab-case ($\le 20$ caracteres cada).
 * `icon`: Ícone representativo ou caractere visual.
 * `theme`: Objeto com `bg_color` e `accent_color` em formato hexadecimal.
-* **Filtro Anti-Jargão:** As descrições em prosa **NÃO DEVEM** conter termos técnicos vazios ou autorreferenciais (`"soberano"`, `"soberana"`, `"hexagonal"`, `"ssot"`, `"rust puro"`, `"em rust"`, `"em php"`, `"wasm"`).
+* **Filtro Anti-Jargão:** As descrições em prosa **NÃO DEVEM** conter termos técnicos vazios ou autorreferenciais (`"autônomo"`, `"autônomo"`, `"hexagonal"`, `"ssot"`, `"rust puro"`, `"em rust"`, `"em php"`, `"wasm"`).
 
 ---
 
