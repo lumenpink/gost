@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Documentation
+- **spec:** normatizar camada fundamental gost v3.0.0 com hierarquia e frontmatter (closes #32)
 - **spec:** normatizar arquitetura produtor-curador e principio de retencao de artefatos (closes #31)
 
 ## [2.0.0] - 2026-10-26
