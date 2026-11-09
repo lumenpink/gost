@@ -1,11 +1,32 @@
 # GOST v3.0.0 — Canonical Rules Specification (rules.toml)
 # Universal Declarative Conformance Rules with Embedded Lua Validation Scripts
+# Tier 1: Fundamental Axioms (5 Universal Repository Integrity Rules)
 
 [rules.GOST-001]
-name = "LICENSE-EXISTS"
+name = "GOSTVER-FILE-REQUIRED"
 severity = "error"
 scope = "root"
 docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-001"
+description = "The repository must contain a non-empty GOSTVER file in the root directory declaring its GOST specification"
+script = '''
+if not gost.file_exists("GOSTVER") then
+    return false, "ERR_GOSTVER_MISSING", {}
+end
+local content = gost.read_file("GOSTVER")
+if not content or #content:match("^%s*(.-)%s*$") == 0 then
+    return false, "ERR_GOSTVER_EMPTY", {}
+end
+return true
+'''
+[rules.GOST-001.messages]
+ERR_GOSTVER_MISSING = "Root GOSTVER file is missing"
+ERR_GOSTVER_EMPTY = "Root GOSTVER file is empty"
+
+[rules.GOST-002]
+name = "LICENSE-FILE-REQUIRED"
+severity = "error"
+scope = "root"
+docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-002"
 description = "The repository must contain a non-empty LICENSE file in the root directory"
 script = '''
 if not gost.file_exists("LICENSE") then
@@ -17,360 +38,72 @@ if not content or #content:match("^%s*(.-)%s*$") == 0 then
 end
 return true
 '''
-[rules.GOST-001.messages]
+[rules.GOST-002.messages]
 ERR_LICENSE_MISSING = "Root LICENSE file is missing"
 ERR_LICENSE_EMPTY = "Root LICENSE file is empty"
 
-[rules.GOST-002]
-name = "ANATOMY-ROOT-ESSENTIALS"
-severity = "error"
-scope = "root"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-002"
-description = "The repository root must contain all essential project files (README, CHANGELOG, etc.)"
-script = '''
-local essentials = {"README.md", "CHANGELOG.md", "VERSION", ".gitignore"}
-local missing = {}
-for _, file in ipairs(essentials) do
-    if not gost.file_exists(file) then
-        table.insert(missing, file)
-    end
-end
-if #missing > 0 then
-    return false, "ERR_ROOT_FILES_MISSING", { files = table.concat(missing, ", ") }
-end
-return true
-'''
-[rules.GOST-002.messages]
-ERR_ROOT_FILES_MISSING = "Essential root files are missing: {files}"
-
 [rules.GOST-003]
-name = "VERSION-SEMVER-PARITY"
+name = "VERSION-SEMVER-SYNTAX"
 severity = "error"
 scope = "root"
 docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-003"
-description = "The VERSION file must contain a valid SemVer 2.0 without a 'v' prefix"
+description = "The VERSION file must contain a valid SemVer 2.0.0 semantic version string"
 script = '''
 if not gost.file_exists("VERSION") then
     return false, "ERR_VERSION_MISSING", {}
 end
 local ver = gost.read_file("VERSION"):match("^%s*(.-)%s*$")
-if ver:sub(1, 1) == "v" then
-    return false, "ERR_VERSION_V_PREFIX", { version = ver }
+if not ver or #ver == 0 then
+    return false, "ERR_VERSION_EMPTY", {}
 end
-if not ver:match("^%d+%.%d+%.%d+") then
+local clean_ver = ver:match("^v?(%d+%.%d+%.%d+.*)$")
+if not clean_ver then
     return false, "ERR_VERSION_SEMVER_INVALID", { version = ver }
 end
 return true
 '''
 [rules.GOST-003.messages]
 ERR_VERSION_MISSING = "VERSION file is missing"
-ERR_VERSION_V_PREFIX = "Version '{version}' must not include a 'v' prefix"
+ERR_VERSION_EMPTY = "VERSION file is empty"
 ERR_VERSION_SEMVER_INVALID = "Version '{version}' is not a valid SemVer 2.0 string"
 
 [rules.GOST-004]
-name = "COMMIT-PHASE-TAGGING"
+name = "README-FILE-REQUIRED"
 severity = "error"
-scope = "git"
+scope = "root"
 docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-004"
-description = "Feature and fix commits must tag the DD-TDD phase and ticket reference"
+description = "The repository must contain a non-empty README.md file in the root directory"
 script = '''
-local commits = gost.git_commits(5)
-for _, c in ipairs(commits) do
-    local header = c.header or ""
-    if (header:match("^feat") or header:match("^fix")) and not (header:match("%(ref #%d+") or header:match("%(closes #%d+")) then
-        return false, "ERR_COMMIT_UNTYPED", { header = header }
-    end
+if not gost.file_exists("README.md") then
+    return false, "ERR_README_MISSING", {}
+end
+local content = gost.read_file("README.md")
+if not content or #content:match("^%s*(.-)%s*$") == 0 then
+    return false, "ERR_README_EMPTY", {}
 end
 return true
 '''
 [rules.GOST-004.messages]
-ERR_COMMIT_UNTYPED = "Commit header '{header}' does not reference an active ticket tag"
+ERR_README_MISSING = "Root README.md file is missing"
+ERR_README_EMPTY = "Root README.md file is empty"
 
 [rules.GOST-005]
-name = "RESOLUTION-REPORT-BODY"
+name = "ZERO-BINARIES-IN-GIT"
 severity = "error"
-scope = "git"
+scope = "git-history"
 docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-005"
-description = "Closing commits must contain structured resolution sections ([Resumo], [Solução], [Validação])"
+description = "Zero pre-compiled binary files or libraries (.apk, .exe, .so, .bin, .dll, .dylib) committed in git"
 script = '''
-local commits = gost.git_commits(1)
-if #commits > 0 then
-    local c = commits[1]
-    if (c.header or ""):match("%(closes #%d+ %- ph9%)") then
-        local body = c.body or ""
-        if not (body:match("%[Resumo%]:") and body:match("%[Solução%]:") and body:match("%[Validação%]:")) then
-            return false, "ERR_RESOLUTION_REPORT_INCOMPLETE", {}
+local binary_exts = {".apk", ".exe", ".so", ".bin", ".dll", ".dylib"}
+local files = gost.git_ls_files()
+for _, f in ipairs(files) do
+    for _, ext in ipairs(binary_exts) do
+        if f:sub(-#ext) == ext then
+            return false, "ERR_BINARY_IN_GIT", { file = f }
         end
     end
 end
 return true
 '''
 [rules.GOST-005.messages]
-ERR_RESOLUTION_REPORT_INCOMPLETE = "Closing commit (ph9) body lacks mandatory resolution sections"
-
-[rules.GOST-006]
-name = "BRANCH-DEDICATED-TICKET"
-severity = "error"
-scope = "git"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-006"
-description = "Working branches must follow standard ticket prefixes (feat/, fix/, chore/, docs/)"
-script = '''
-local branch = gost.git_branch()
-if branch == "main" or branch:match("^v%d+") or branch:match("^release/") then
-    return true
-end
-if not (branch:match("^feat/%d+") or branch:match("^fix/%d+") or branch:match("^chore/%d+") or branch:match("^docs/%d+")) then
-    return false, "ERR_BRANCH_NAME_INVALID", { branch = branch }
-end
-return true
-'''
-[rules.GOST-006.messages]
-ERR_BRANCH_NAME_INVALID = "Branch '{branch}' is not a canonical ticket branch (expected type/<id>-description)"
-
-[rules.GOST-007]
-name = "STATIC-ZERO-WARNINGS"
-severity = "error"
-scope = "ci"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-007"
-description = "Static analysis and linters must execute with zero warnings (-D warnings or strict)"
-script = '''
-if gost.file_exists(".forgejo/workflows/ci.yml") then
-    local content = gost.read_file(".forgejo/workflows/ci.yml")
-    if not (content:match("%-D warnings") or content:match("%-%-strict") or content:match("deny")) then
-        return false, "ERR_CI_ZERO_WARNINGS_NOT_ENFORCED", {}
-    end
-end
-return true
-'''
-[rules.GOST-007.messages]
-ERR_CI_ZERO_WARNINGS_NOT_ENFORCED = "CI workflow does not explicitly enforce zero-warnings policy"
-
-[rules.GOST-008]
-name = "FORMAT-DETERMINISTIC"
-severity = "error"
-scope = "ci"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-008"
-description = "Deterministic code formatting verification must be declared in CI quality gates"
-script = '''
-if gost.file_exists(".forgejo/workflows/ci.yml") then
-    local content = gost.read_file(".forgejo/workflows/ci.yml")
-    if not (content:match("fmt %-%-check") or content:match("format %-%-check") or content:match("prettier %-%-check")) then
-        return false, "ERR_CI_FORMAT_CHECK_MISSING", {}
-    end
-end
-return true
-'''
-[rules.GOST-008.messages]
-ERR_CI_FORMAT_CHECK_MISSING = "CI workflow lacks a deterministic format checking step"
-
-[rules.GOST-009]
-name = "SITE-SECURITY-HEADERS"
-severity = "error"
-scope = "doc"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-009"
-description = "Websites and documentation portals must declare security headers in site/_headers"
-script = '''
-if gost.is_dir("site") then
-    if not gost.file_exists("site/_headers") then
-        return false, "ERR_SITE_HEADERS_MISSING", {}
-    end
-    local h = gost.read_file("site/_headers")
-    if not (h:match("X%-Content%-Type%-Options") and h:match("X%-Frame%-Options")) then
-        return false, "ERR_SITE_SECURITY_HEADERS_INCOMPLETE", {}
-    end
-end
-return true
-'''
-[rules.GOST-009.messages]
-ERR_SITE_HEADERS_MISSING = "Site directory exists but site/_headers security policy is missing"
-ERR_SITE_SECURITY_HEADERS_INCOMPLETE = "site/_headers is missing essential security headers (X-Content-Type-Options, etc.)"
-
-[rules.GOST-010]
-name = "CI-HERMETIC-WORKFLOW"
-severity = "error"
-scope = "ci"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-010"
-description = "CI pipelines must reside in a single hermetic .forgejo/workflows/ci.yml file"
-script = '''
-if not gost.file_exists(".forgejo/workflows/ci.yml") then
-    return false, "ERR_CI_WORKFLOW_MISSING", {}
-end
-return true
-'''
-[rules.GOST-010.messages]
-ERR_CI_WORKFLOW_MISSING = "Hermetic CI workflow '.forgejo/workflows/ci.yml' is missing"
-
-[rules.GOST-011]
-name = "INTL-PARITY"
-severity = "warning"
-scope = "doc"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-011"
-description = "Documentation packages should provide internationalized translations"
-script = '''
-if gost.is_dir("specs/locales") or gost.is_dir("locales") then
-    return true
-end
-return true
-'''
-[rules.GOST-011.messages]
-ERR_LOCALES_MISSING = "Translation locales directory is missing"
-
-[rules.GOST-012]
-name = "BANNER-AND-OG-PARITY"
-severity = "warning"
-scope = "doc"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-012"
-description = "Portal banners must adhere to standard 1200x630 aspect ratio and Safe Zone"
-script = '''
-if gost.file_exists("site/assets/banner.png") or gost.file_exists("assets/banner.png") then
-    return true
-end
-return true
-'''
-[rules.GOST-012.messages]
-ERR_BANNER_MISSING = "Project banner artifact is missing in site/assets/"
-
-[rules.GOST-013]
-name = "XDG-BASE-DIRECTORY-SPEC"
-severity = "error"
-scope = "src"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-013"
-description = "Applications must strictly follow the XDG Base Directory specification"
-script = '''
-if gost.is_dir("src") then
-    return true
-end
-return true
-'''
-[rules.GOST-013.messages]
-ERR_XDG_VIOLATION = "Application writes state or configuration outside of XDG directory paths"
-
-[rules.GOST-014]
-name = "CLI-AUTO-UPDATE-CONTRACT"
-severity = "error"
-scope = "src"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-014"
-description = "CLI utilities must provide standard update check interfaces"
-script = '''
-if gost.file_exists("Cargo.toml") or gost.file_exists("package.json") then
-    return true
-end
-return true
-'''
-[rules.GOST-014.messages]
-ERR_CLI_UPDATE_MISSING = "CLI lacks standard update command contracts"
-
-[rules.GOST-015]
-name = "OCI-COMPOSE-PURE"
-severity = "error"
-scope = "root"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-015"
-description = "Legacy or conflicting container orchestrations must not pollute the root directory"
-script = '''
-if gost.file_exists("docker-compose.yml") then
-    return false, "ERR_LEGACY_DOCKER_COMPOSE", {}
-end
-return true
-'''
-[rules.GOST-015.messages]
-ERR_LEGACY_DOCKER_COMPOSE = "Legacy 'docker-compose.yml' detected in root directory (use standard compose.yml or clean stacks)"
-
-[rules.GOST-020]
-name = "README-MAX-LINES"
-severity = "error"
-scope = "root"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-020"
-description = "The README.md file must not exceed {max} lines"
-script = '''
-local max_lines = 50
-local lines = gost.count_lines("README.md")
-if lines > max_lines then
-    return false, "ERR_README_EXCEEDED", { count = lines, max = max_lines }
-end
-return true
-'''
-[rules.GOST-020.messages]
-ERR_README_EXCEEDED = "README exceeds standard ceiling of {max} lines (contains {count} lines)"
-
-[rules.GOST-024]
-name = "ZERO-BINARIES-IN-GIT"
-severity = "error"
-scope = "root"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-024"
-description = "Compiled binary executables and heavy packages must not be committed to Git"
-script = '''
-local extensions = {"%.apk$", "%.exe$", "%.bin$", "%.so$", "%.dylib$"}
-local files = gost.list_files(".", true)
-for _, file in ipairs(files) do
-    if not file:match("^%.git/") and not file:match("^site/") then
-        for _, ext in ipairs(extensions) do
-            if file:match(ext) then
-                return false, "ERR_BINARY_IN_GIT", { file = file }
-            end
-        end
-    end
-end
-return true
-'''
-[rules.GOST-024.messages]
-ERR_BINARY_IN_GIT = "Compiled binary artifact '{file}' detected in Git repository"
-
-[rules.GOST-025]
-name = "REMOTES-AND-INBOX-QUARANTINE"
-severity = "error"
-scope = "git"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-025"
-description = "External mirror remotes must disable push and quarantine external PR branches"
-script = '''
-local branch = gost.git_branch()
-if branch:match("^inbox/") then
-    return true
-end
-return true
-'''
-[rules.GOST-025.messages]
-ERR_REMOTES_MISCONFIGURED = "External mirror remotes allow accidental direct pushes"
-
-[rules.GOST-026]
-name = "METADATA-MANIFEST-SSOT"
-severity = "error"
-scope = "root"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-026"
-description = "The project metadata manifest must adhere to strict schema limits and anti-jargon filters"
-script = '''
-if gost.file_exists(".gost/metadata.json") then
-    local content = gost.read_file(".gost/metadata.json")
-    local meta = gost.parse_json(content)
-    if not (meta.slug and meta.title and meta.summary and meta.abstract) then
-        return false, "ERR_METADATA_INCOMPLETE", {}
-    end
-    if #meta.slug > 24 or #meta.title > 25 then
-        return false, "ERR_METADATA_LENGTH_EXCEEDED", {}
-    end
-end
-return true
-'''
-[rules.GOST-026.messages]
-ERR_METADATA_INCOMPLETE = "Manifest .gost/metadata.json lacks mandatory fields"
-ERR_METADATA_LENGTH_EXCEEDED = "Manifest .gost/metadata.json fields exceed length boundaries"
-
-[rules.GOST-027]
-name = "DDD-HEXAGONAL-PURITY"
-severity = "error"
-scope = "src"
-docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-027"
-description = "The business domain core must have zero I/O imports or framework dependencies"
-script = '''
-if gost.is_dir("src/domain") then
-    local files = gost.list_files("src/domain", true)
-    for _, f in ipairs(files) do
-        local content = gost.read_file(f)
-        if content and (content:match("std::fs") or content:match("std::net") or content:match("reqwest")) then
-            return false, "ERR_DOMAIN_IO_LEAK", { file = f }
-        end
-    end
-end
-return true
-'''
-[rules.GOST-027.messages]
-ERR_DOMAIN_IO_LEAK = "I/O or network dependency leak detected in pure domain file '{file}'"
+ERR_BINARY_IN_GIT = "Pre-compiled binary file detected in git repository: {file}"

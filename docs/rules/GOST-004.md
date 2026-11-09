@@ -1,24 +1,21 @@
-# GOST-004 — COMMIT-PHASE-TAGGING
+# GOST-004 — README-FILE-REQUIRED
 
 ## Severidade
 `ERROR` (Bloqueante)
 
 ## Escopo
-`git`
+`root`
 
 ## Descrição do Requisito
-Commits de feat e fix devem referenciar a fase DD-TDD e a tag do ticket correspondente.
+O repositório deve conter um arquivo README.md não vazio no diretório raiz apresentando o projeto.
 
 ## Caso Prático de Erro
-O motor de governança emite `[FAIL] GOST-004` quando a condição da regra é violada durante a auditoria local ou na esteira de integração contínua.
+O motor de governança emite `[FAIL] GOST-004` quando o arquivo `README.md` está ausente ou vazio na raiz do projeto.
 
 ## Como Resolver
-1. Inspecione o diagnóstico retornado pelo comando de verificação.
-2. Ajuste o arquivo ou estrutura indicada para atender ao padrão canônico exigido pela norma.
-3. Re-execute o comando de verificação local para certificar-se da conformidade.
+1. Crie o arquivo `README.md` na raiz do repositório.
+2. Adicione a apresentação institucional, objetivos e instruções essenciais do projeto.
+3. Re-execute o comando de verificação para validar a conformidade.
 
 ## Desativação Declarativa
-Caso este projeto possua uma deliberação formal justificando a isenção desta regra, declare seu identificador em `.gost/config`:
-```ini
-DISABLED_RULES = GOST-004
-```
+Regras fundamentais de integridade constitucional não admitem desativação declarativa arbitrária.

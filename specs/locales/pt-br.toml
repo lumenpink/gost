@@ -1,86 +1,32 @@
-# GOST v3.0.0 — Catálogo de Localização em Português Brasileiro (pt-br.toml)
+# GOST v3.0.0 — Catálogo de Tradução das Regras Fundamentais (pt-BR)
+# Tier 1: Axiomas Fundamentais
 
 [rules.GOST-001]
-description = "O repositório deve conter um arquivo LICENSE não-vazio no diretório raiz"
-messages.ERR_LICENSE_MISSING = "Arquivo LICENSE obrigatório ausente na raiz"
-messages.ERR_LICENSE_EMPTY = "Arquivo LICENSE na raiz está vazio"
+description = "O repositório deve conter um arquivo GOSTVER não vazio no diretório raiz declarando a especificação GOST adotada"
+[rules.GOST-001.messages]
+ERR_GOSTVER_MISSING = "Arquivo GOSTVER não encontrado na raiz do repositório"
+ERR_GOSTVER_EMPTY = "Arquivo GOSTVER está vazio"
 
 [rules.GOST-002]
-description = "A raiz do repositório deve conter os arquivos essenciais (README, CHANGELOG, etc.)"
-messages.ERR_ROOT_FILES_MISSING = "Arquivos essenciais ausentes na raiz do projeto: {files}"
+description = "O repositório deve conter um arquivo LICENSE não vazio no diretório raiz"
+[rules.GOST-002.messages]
+ERR_LICENSE_MISSING = "Arquivo LICENSE não encontrado na raiz do repositório"
+ERR_LICENSE_EMPTY = "Arquivo LICENSE está vazio"
 
 [rules.GOST-003]
-description = "O arquivo VERSION deve conter uma versão SemVer 2.0 válida sem o prefixo 'v'"
-messages.ERR_VERSION_MISSING = "Arquivo VERSION ausente na raiz"
-messages.ERR_VERSION_V_PREFIX = "Versão '{version}' não deve conter o prefixo 'v'"
-messages.ERR_VERSION_SEMVER_INVALID = "Versão '{version}' não é uma string SemVer 2.0 válida"
+description = "O arquivo VERSION deve conter uma versão válida segundo a especificação SemVer 2.0.0"
+[rules.GOST-003.messages]
+ERR_VERSION_MISSING = "Arquivo VERSION não encontrado na raiz do repositório"
+ERR_VERSION_EMPTY = "Arquivo VERSION está vazio"
+ERR_VERSION_SEMVER_INVALID = "Versão '{version}' não é uma sequência válida de SemVer 2.0"
 
 [rules.GOST-004]
-description = "Commits de feat e fix devem referenciar a fase DD-TDD e a tag do ticket correspondente"
-messages.ERR_COMMIT_UNTYPED = "Cabeçalho do commit '{header}' não referencia a tag de ticket ativo"
+description = "O repositório deve conter um arquivo README.md não vazio no diretório raiz"
+[rules.GOST-004.messages]
+ERR_README_MISSING = "Arquivo README.md não encontrado na raiz do repositório"
+ERR_README_EMPTY = "Arquivo README.md está vazio"
 
 [rules.GOST-005]
-description = "Commits de fechamento (ph9) devem conter laudo estruturado ([Resumo], [Solução], [Validação])"
-messages.ERR_RESOLUTION_REPORT_INCOMPLETE = "Corpo do commit de fechamento (ph9) não contém as seções mandatórias do laudo"
-
-[rules.GOST-006]
-description = "Branches de trabalho devem seguir os prefixos canônicos de ticket (feat/, fix/, chore/, docs/)"
-messages.ERR_BRANCH_NAME_INVALID = "Branch '{branch}' não é uma branch canônica de ticket (esperado tipo/<id>-descricao)"
-
-[rules.GOST-007]
-description = "Análise estática e linters devem executar com tolerância zero a avisos (-D warnings)"
-messages.ERR_CI_ZERO_WARNINGS_NOT_ENFORCED = "Esteira de CI não impõe formalmente a política de zero warnings"
-
-[rules.GOST-008]
-description = "A verificação de formatação determinística de código deve ser declarada no CI"
-messages.ERR_CI_FORMAT_CHECK_MISSING = "Esteira de CI não possui etapa de checagem determinística de formatação"
-
-[rules.GOST-009]
-description = "Portais e sites de documentação devem declarar cabeçalhos de segurança em site/_headers"
-messages.ERR_SITE_HEADERS_MISSING = "Pasta site/ detectada, mas arquivo site/_headers está ausente"
-messages.ERR_SITE_SECURITY_HEADERS_INCOMPLETE = "site/_headers não declara cabeçalhos de segurança essenciais (X-Content-Type-Options, etc.)"
-
-[rules.GOST-010]
-description = "As esteiras de CI devem residir em arquivo hermético único .forgejo/workflows/ci.yml"
-messages.ERR_CI_WORKFLOW_MISSING = "Workflow hermético de CI '.forgejo/workflows/ci.yml' está ausente"
-
-[rules.GOST-011]
-description = "Pacotes de documentação devem fornecer paridade de internacionalização"
-messages.ERR_LOCALES_MISSING = "Diretório de traduções locais está ausente"
-
-[rules.GOST-012]
-description = "Banners devem respeitar a proporção canônica 1200x630 e Safe Zone"
-messages.ERR_BANNER_MISSING = "Artefato visual de banner ausente em site/assets/"
-
-[rules.GOST-013]
-description = "Aplicações de usuário final devem respeitar a especificação XDG Base Directory"
-messages.ERR_XDG_VIOLATION = "Aplicação grava configurações ou dados fora dos diretórios padrão XDG"
-
-[rules.GOST-014]
-description = "Utilitários CLI devem disponibilizar interfaces padronizadas de consulta de atualização"
-messages.ERR_CLI_UPDATE_MISSING = "CLI não implementa o contrato padrão de comandos de atualização"
-
-[rules.GOST-015]
-description = "Orquestrações legadas de contêineres não devem poluir a raiz do repositório"
-messages.ERR_LEGACY_DOCKER_COMPOSE = "Arquivo legado 'docker-compose.yml' detectado na raiz (use compose.yml ou stacks limpas)"
-
-[rules.GOST-020]
-description = "O arquivo README.md não deve ultrapassar {max} linhas"
-messages.ERR_README_EXCEEDED = "README excede o teto normativo de {max} linhas (possui {count} linhas)"
-
-[rules.GOST-024]
-description = "Binários compilados e pacotes pesados não devem ser comitados no Git"
-messages.ERR_BINARY_IN_GIT = "Artefato binário compilado '{file}' detectado no repositório Git"
-
-[rules.GOST-025]
-description = "Espelhos externos devem proibir push direto e isolar branches de PR externo"
-messages.ERR_REMOTES_MISCONFIGURED = "Remotes de espelho externo permitem pushes diretos acidentais"
-
-[rules.GOST-026]
-description = "O manifesto de metadados deve respeitar os limites de caracteres e filtro anti-jargão"
-messages.ERR_METADATA_INCOMPLETE = "Manifesto .gost/metadata.json carece de campos obrigatórios"
-messages.ERR_METADATA_LENGTH_EXCEEDED = "Campos do manifesto .gost/metadata.json excedem os limites de tamanho"
-
-[rules.GOST-027]
-description = "O núcleo de domínio de negócio não deve conter dependências de I/O ou frameworks"
-messages.ERR_DOMAIN_IO_LEAK = "Vazamento de dependência de I/O ou rede detectado no núcleo de domínio puro: '{file}'"
+description = "Tolerância zero a arquivos binários compilados (.apk, .exe, .so, .bin, .dll, .dylib) versionados no git"
+[rules.GOST-005.messages]
+ERR_BINARY_IN_GIT = "Arquivo binário pré-compilado detectado no repositório git: {file}"

@@ -1,4 +1,4 @@
-# GOST-003 — VERSION-SEMVER-PARITY
+# GOST-003 — VERSION-SEMVER-SYNTAX
 
 ## Severidade
 `ERROR` (Bloqueante)
@@ -7,18 +7,15 @@
 `root`
 
 ## Descrição do Requisito
-O arquivo VERSION deve conter uma versão SemVer 2.0 válida sem o prefixo 'v'.
+O arquivo `VERSION` na raiz deve conter uma versão válida segundo a especificação SemVer 2.0.0.
 
 ## Caso Prático de Erro
-O motor de governança emite `[FAIL] GOST-003` quando a condição da regra é violada durante a auditoria local ou na esteira de integração contínua.
+O motor de governança emite `[FAIL] GOST-003` quando o arquivo `VERSION` está ausente, vazio ou não segue a sintaxe de versão semântica (`MAJOR.MINOR.PATCH`).
 
 ## Como Resolver
-1. Inspecione o diagnóstico retornado pelo comando de verificação.
-2. Ajuste o arquivo ou estrutura indicada para atender ao padrão canônico exigido pela norma.
-3. Re-execute o comando de verificação local para certificar-se da conformidade.
+1. Inspecione o arquivo `VERSION` na raiz do projeto.
+2. Certifique-se de que contém uma versão semântica válida (ex.: `1.0.0`).
+3. Re-execute o comando de verificação para validar a conformidade.
 
 ## Desativação Declarativa
-Caso este projeto possua uma deliberação formal justificando a isenção desta regra, declare seu identificador em `.gost/config`:
-```ini
-DISABLED_RULES = GOST-003
-```
+Regras fundamentais de integridade constitucional não admitem desativação declarativa arbitrária.
