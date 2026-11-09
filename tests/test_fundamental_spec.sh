@@ -56,13 +56,21 @@ check "3. Verificando definição do Princípio da Tríade Normativa Fechada" gr
 
 check "4. Verificando convenção de base_url no SPEC.md" grep -qi "base_url" "$SPEC_FILE"
 
-check "5. Verificando taxonomia de escopos de regras (commit-msg, project, pre-push)" python3 -c '
+check "5. Verificando taxonomia de escopos de regras (commit-msg, project, pre-push, git-history, post-build)" python3 -c '
 with open("'$SPEC_FILE'", "r", encoding="utf-8") as f:
     text = f.read()
 assert "commit-msg" in text, "Escopo commit-msg ausente"
 assert "project" in text, "Escopo project ausente"
 assert "pre-push" in text, "Escopo pre-push ausente"
 assert "git-history" in text, "Escopo git-history ausente"
+assert "post-build" in text, "Escopo post-build ausente"
+'
+
+check "6. Verificando definição dos 4 arquétipos de aplicação (web, hybrid, binary, manifesto)" python3 -c '
+with open("'$SPEC_FILE'", "r", encoding="utf-8") as f:
+    text = f.read()
+assert "APP_TYPE" in text or "site_type" in text, "Declaração de arquétipo ausente"
+assert "web" in text and "hybrid" in text and "binary" in text and "manifesto" in text, "Arquétipos incompletos"
 '
 
 # Teste de mutação: Rejeitar frontmatter sem tier fundamental
