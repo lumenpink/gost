@@ -246,9 +246,12 @@ Todo projeto deve adotar um formatador oficial determinístico verificado com fl
 
 ## 9. Vitrine Pública, SSOT e Banners
 
-### 9.1 Topologia de Vitrine (`site_type`)
-* **`site_type: doc`:** O diretório `./site/` serve documentação técnica, tutoriais e especificações.
-* **`site_type: app`:** O diretório `./site/` hospeda a aplicação gráfica/interativa, reservando o subdiretório `./site/doc/` para manuais e documentação de apoio.
+### 9.1 Topologia de Vitrine e Arquétipos de Aplicação (`APP_TYPE` / `site_type`)
+Todo repositório deve declarar sua natureza estrutural através do metadado `APP_TYPE` (ou `site_type`) no `GOSTVER` ou frontmatter de projeto, categorizado sob quatro arquétipos canônicos:
+1. **`web` (Webapps Autônomas e Autorais):** O componente principal é uma aplicação gráfica interativa web (*ex.: Navalha, Lírica*). A frontpage é a própria aplicação ou manifesto vivo, com liberdade estética e de design absoluta. Documentação técnica e de apoio é embutida sob rota `/docs` ou diretório `docs/`.
+2. **`hybrid` (Aplicações Híbridas):** O foco principal reside no utilitário binário ou serviço compilado, acompanhado de uma interface web por conveniência (*ex.: Lacraia, Lauda*). A frontpage apresenta o produto e documentação de usuário (`docs/user/`), reservando subdiretório dedicado (`web/` ou subrota `/app/`) para a webapp interativa.
+3. **`binary` (Utilitários Binários Puros):** Ferramentas de linha de comando (CLI) ou daemons sem interface web interativa (*ex.: CCCP, Kombinat, Lunokhod*). O site institucional é 100% voltado à apresentação, manuais de usuário, documentação técnica e notas de versão, gerado de forma determinística por motor SSG padronizado.
+4. **`manifesto` (Documentações e Manifestos Puros):** Projetos estritamente textuais, normativos ou literários sem compilação binária (*ex.: GOST, Travesti*). O site é uma publicação editorial de alta legibilidade, índice remissivo e preservação integral dos textos.
 
 ### 9.2 SSOT em Markdown e README Enxuto
 * **SSOT:** Documentações, manuais e guias residem estritamente em Markdown. É proibido duplicar textos extensos manualmente em HTML.
@@ -370,4 +373,8 @@ As regras e verificações declaradas em toda a hierarquia normativa (`rules.tom
    - **Gatilho de Execução:** Auditoria retroativa e checagem de integridade profunda.
    - **Alvo:** Grafo e cadeia de commits da branch contra a base canônica.
    - **Responsabilidade:** Garantia de que a sequência de fases DD-TDD e laudos históricos não foram alterados ou corrompidos.
+5. **Escopo `post-build` (Sanidade e Conformidade de Artefatos Compilados):**
+   - **Gatilho de Execução:** Pós-compilação em auditorias locais (`cccp check --scope post-build`), rotinas de build e esteiras de integração contínua (CI/CD).
+   - **Alvo:** Artefatos executáveis ou empacotados gerados em `target/debug`, `target/release` ou `dist/`.
+   - **Responsabilidade:** Verificação funcional dinâmica (*smoke tests*), prevenção de falhas de segmentação (`SIGSEGV`) ou *panics* imediatos de inicialização, integridade de ligação dinâmica (*dynamic linking* / bibliotecas compartilhadas ausentes) e conformidade das interfaces mínimas (`--help`, `--version` idêntico à versão canônica e subcomandos de ciclo de vida).
 
