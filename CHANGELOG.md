@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+- **spec:** sanear catálogo de regras fundamentais GOST 3.0 com 5 axiomas (closes #37)
 - **spec:** formalizar escopo post-build e 4 arquétipos de aplicação (closes #36)
 - **spec:** formalizar taxonomia de escopos de regras (commit-msg, project, pre-push) (closes #35)
 
