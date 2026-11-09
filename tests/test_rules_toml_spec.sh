@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# 🧪 [TESTE] Validação do Padrão rules.toml Tridigital e Locales i18n (#33)
+# 🧪 [TESTE] Validação do Padrão rules.toml Tridigital e Locales i18n (#37)
 # ==============================================================================
 set -euo pipefail
 
@@ -25,13 +25,13 @@ check() {
 }
 
 echo "================================================================="
-echo "🧪 [TESTE] Auditoria de rules.toml, Lua gost.* e Locales (#33)"
+echo "🧪 [TESTE] Auditoria de rules.toml, Lua gost.* e Locales (#37)"
 echo "================================================================="
 
 check "1. Verificando existência de specs/rules.toml" test -f "$RULES_TOML"
 check "2. Verificando existência de specs/locales/pt-br.toml" test -f "$LOCALES_PT_BR"
 
-check "3. Verificando identificadores estritamente tridigitais (GOST-001 a GOST-999)" python3 -c '
+check "3. Verificando identificadores estritamente tridigitais e 5 axiomas fundamentais" python3 -c '
 import re
 import tomllib
 
@@ -39,14 +39,24 @@ with open("'$RULES_TOML'", "rb") as f:
     data = tomllib.load(f)
 
 rules = data.get("rules", {})
-assert len(rules) >= 20, f"Contagem insuficiente de regras: {len(rules)}"
+expected_names = {
+    "GOST-001": "GOSTVER-FILE-REQUIRED",
+    "GOST-002": "LICENSE-FILE-REQUIRED",
+    "GOST-003": "VERSION-SEMVER-SYNTAX",
+    "GOST-004": "README-FILE-REQUIRED",
+    "GOST-005": "ZERO-BINARIES-IN-GIT",
+}
 
-for rule_id, rule_body in rules.items():
-    assert re.match(r"^GOST-\d{3}$", rule_id), f"ID deve ter exatamente 3 dígitos: {rule_id}"
-    assert "name" in rule_body, f"Campo name ausente em {rule_id}"
-    assert "severity" in rule_body, f"Campo severity ausente em {rule_id}"
-    assert "script" in rule_body, f"Campo script ausente em {rule_id}"
-    assert "gost." in rule_body["script"], f"Script deve invocar namespace gost.* em {rule_id}"
+assert len(rules) == 5, f"Contagem deve ser estritamente 5 regras fundamentais, obtido: {len(rules)}"
+for expected_id, expected_name in expected_names.items():
+    assert expected_id in rules, f"Regra fundamental {expected_id} ausente"
+    rule = rules[expected_id]
+    assert re.match(r"^GOST-\d{3}$", expected_id), f"ID deve ter 3 dígitos: {expected_id}"
+    actual_name = rule.get("name")
+    assert actual_name == expected_name, f"Nome incorreto em {expected_id}: {actual_name} != {expected_name}"
+    assert "severity" in rule, f"Campo severity ausente em {expected_id}"
+    assert "script" in rule, f"Campo script ausente em {expected_id}"
+    assert "gost." in rule["script"], f"Script deve invocar namespace gost.* em {expected_id}"
 '
 
 check "4. Verificando paridade de chaves no catálogo de tradução pt-br.toml" python3 -c '
@@ -58,6 +68,7 @@ with open("'$RULES_TOML'", "rb") as f:
 with open("'$LOCALES_PT_BR'", "rb") as f:
     loc = tomllib.load(f).get("rules", {})
 
+assert len(loc) == 5, f"Locales pt-br deve ter 5 regras, obtido: {len(loc)}"
 for rule_id in canon.keys():
     assert rule_id in loc, f"Regra {rule_id} ausente em locales/pt-br.toml"
     assert "description" in loc[rule_id], f"description ausente em {rule_id} (pt-br)"
