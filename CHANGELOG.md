@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Features
+- **spec:** formalizar taxonomia de escopos de regras (commit-msg, project, pre-push) (closes #35)
+
 ### Documentation
 - **rules:** documentar casos praticos de erro e solucao para o catalogo base (closes #34)
 - **rules:** formalizar padrao rules.toml tridigital e runtime lua com interface gost (closes #33)
@@ -104,6 +107,9 @@
 - **scripts:** enforce Kollontai profile in conform and init
 
 ## [Unreleased]
+
+### Features
+- **spec:** formalizar taxonomia de escopos de regras (commit-msg, project, pre-push) (closes #35)
 
 ### Features
   - (spec) formalizar compilação soberana exclusiva na esteira e proibir builds de release locais (closes #25)
