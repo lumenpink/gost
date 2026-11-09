@@ -347,3 +347,27 @@ O remote `origin` na forja primária é o único destino autorizado para operaç
 
 ### 15.2 Quarentena de Contribuições Externas
 Contribuições externas e Pull Requests vindos de espelhos são recebidos sob isolamento no namespace `refs/heads/inbox/*`, sujeitos a esteiras não-confiáveis offline antes de qualquer integração.
+
+---
+
+## 16. Taxonomia e Contratos dos Escopos de Avaliação de Regras
+
+As regras e verificações declaradas em toda a hierarquia normativa (`rules.toml`) operam sob escopos canônicos de avaliação que delimitam estritamente o momento do ciclo de vida, o alvo inspecionado e o contexto dos dados injetados:
+
+1. **Escopo `commit-msg` (Interceptação Atômica de Commit):**
+   - **Gatilho de Execução:** Hook de interceptação `commit-msg` ou comando do Maestro (`cccp commit`).
+   - **Alvo:** Mensagem e corpo do commit em preparação (`.git/COMMIT_EDITMSG`).
+   - **Responsabilidade:** Validação de convenções sintáticas de Conventional Commits, referências obrigatórias a tickets, declaração explícita de fase DD-TDD e completude do laudo estruturado de fechamento na Fase 9.
+2. **Escopo `project` (Auditoria Estática de Repositório):**
+   - **Gatilho de Execução:** Auditoria local (`cccp check`) e esteiras de integração contínua (CI).
+   - **Alvo:** Sistema de arquivos da árvore de trabalho do projeto.
+   - **Responsabilidade:** Validação da anatomia mínima da raiz, metadados (`VERSION`, `CHANGELOG.md`, `.cccprc`), manifestos de contêineres OCI, contratos OpenAPI e higiene documental permanente.
+3. **Escopo `pre-push` (Interceptação de Envio Remoto):**
+   - **Gatilho de Execução:** Hook `pre-push` ou comando do Maestro (`cccp push`).
+   - **Alvo:** Branches locais contra referências remotas.
+   - **Responsabilidade:** Prevenção de commits diretos na branch principal, confirmação de fechamento de tickets associados e checagens rápidas de integridade pré-publicação.
+4. **Escopo `git-history` (Integridade Retroativa):**
+   - **Gatilho de Execução:** Auditoria retroativa e checagem de integridade profunda.
+   - **Alvo:** Grafo e cadeia de commits da branch contra a base canônica.
+   - **Responsabilidade:** Garantia de que a sequência de fases DD-TDD e laudos históricos não foram alterados ou corrompidos.
+
