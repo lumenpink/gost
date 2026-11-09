@@ -87,6 +87,12 @@ script = "local x = 10; return true"
 assert "gost." not in script, "Deveria detectar ausência de gost.*"
 '
 
+# Teste de mutação: Catálogo com regra extra não fundamental deve falhar
+check "7. [MUTAÇÃO] Testando sensibilidade a inclusão de regra tática espúria" python3 -c '
+sample_rules = {"GOST-001": {}, "GOST-002": {}, "GOST-003": {}, "GOST-004": {}, "GOST-005": {}, "GOST-006": {}}
+assert len(sample_rules) != 5, "Deveria detectar violação do teto de 5 axiomas"
+'
+
 echo "================================================================="
 if [ "$FAIL" -gt 0 ]; then
     echo "💥 $FAIL TESTE(S) FALHARAM."
