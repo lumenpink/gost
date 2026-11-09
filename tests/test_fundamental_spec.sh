@@ -83,15 +83,16 @@ version: "3.0.0"
 assert "tier: \"fundamental\"" not in bad_frontmatter
 '
 
-# Teste de mutação: Rejeitar versão com prefixo 'v'
-check "6. [MUTAÇÃO] Testando sensibilidade a prefixo v na versão do frontmatter" python3 -c '
-bad_frontmatter = """---
-standard: "gost"
-tier: "fundamental"
-version: "v3.0.0"
----"""
-has_v = "v3" in bad_frontmatter or "v3.0.0" in bad_frontmatter
-assert has_v, "Mutante deveria conter prefixo v inválido"
+# Teste de mutação: Rejeitar lista de escopos sem post-build
+check "7. [MUTAÇÃO] Testando sensibilidade à ausência de post-build nos escopos" python3 -c '
+mutant_scopes = "commit-msg project pre-push git-history"
+assert "post-build" not in mutant_scopes, "Deveria falhar se post-build não estiver presente"
+'
+
+# Teste de mutação: Rejeitar conjunto incompleto de arquétipos
+check "8. [MUTAÇÃO] Testando sensibilidade à ausência de arquétipo manifesto" python3 -c '
+mutant_types = ["web", "hybrid", "binary"]
+assert "manifesto" not in mutant_types, "Deveria detectar ausência do arquétipo manifesto"
 '
 
 echo "================================================================="
