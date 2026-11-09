@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+- **spec:** formalizar escopo post-build e 4 arquétipos de aplicação (closes #36)
 - **spec:** formalizar taxonomia de escopos de regras (commit-msg, project, pre-push) (closes #35)
 
 ### Documentation
