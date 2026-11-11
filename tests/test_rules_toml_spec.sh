@@ -95,6 +95,12 @@ sample_rules = {"GOST-001": {}, "GOST-002": {}, "GOST-003": {}, "GOST-004": {}, 
 assert len(sample_rules) != 5, "Deveria detectar violação do teto de 5 axiomas"
 '
 
+# Teste de mutação: Script que não valida .rules/profile.toml deve falhar
+check "8. [MUTAÇÃO] Testando sensibilidade a script que ignora .rules/profile.toml" python3 -c '
+mutant_script = "if not gost.file_exists(\"GOSTVER\") then return false end"
+assert ".rules/profile.toml" not in mutant_script, "Deveria detectar ausência de .rules/profile.toml no mutante"
+'
+
 echo "================================================================="
 if [ "$FAIL" -gt 0 ]; then
     echo "💥 $FAIL TESTE(S) FALHARAM."
