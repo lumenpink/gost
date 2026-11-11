@@ -40,7 +40,7 @@ with open("'$RULES_TOML'", "rb") as f:
 
 rules = data.get("rules", {})
 expected_names = {
-    "GOST-001": "GOSTVER-FILE-REQUIRED",
+    "GOST-001": "RULES-PROFILE-REQUIRED",
     "GOST-002": "LICENSE-FILE-REQUIRED",
     "GOST-003": "VERSION-SEMVER-SYNTAX",
     "GOST-004": "README-FILE-REQUIRED",
@@ -57,6 +57,8 @@ for expected_id, expected_name in expected_names.items():
     assert "severity" in rule, f"Campo severity ausente em {expected_id}"
     assert "script" in rule, f"Campo script ausente em {expected_id}"
     assert "gost." in rule["script"], f"Script deve invocar namespace gost.* em {expected_id}"
+
+assert ".rules/profile.toml" in rules["GOST-001"]["script"], "GOST-001 deve inspecionar .rules/profile.toml"
 '
 
 check "4. Verificando paridade de chaves no catálogo de tradução pt-br.toml" python3 -c '
