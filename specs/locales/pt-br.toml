@@ -2,10 +2,10 @@
 # Tier 1: Axiomas Fundamentais
 
 [rules.GOST-001]
-description = "O repositório deve conter um arquivo GOSTVER não vazio no diretório raiz declarando a especificação GOST adotada"
+description = "O repositório deve conter um arquivo .rules/profile.toml não vazio declarando seu perfil normativo"
 [rules.GOST-001.messages]
-ERR_GOSTVER_MISSING = "Arquivo GOSTVER não encontrado na raiz do repositório"
-ERR_GOSTVER_EMPTY = "Arquivo GOSTVER está vazio"
+ERR_RULES_PROFILE_MISSING = "Configuração de perfil normativo '.rules/profile.toml' não encontrada"
+ERR_RULES_PROFILE_EMPTY = "Configuração de perfil normativo '.rules/profile.toml' está vazia"
 
 [rules.GOST-002]
 description = "O repositório deve conter um arquivo LICENSE não vazio no diretório raiz"

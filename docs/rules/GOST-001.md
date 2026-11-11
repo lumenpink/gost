@@ -1,4 +1,4 @@
-# GOST-001 — GOSTVER-FILE-REQUIRED
+# GOST-001 — RULES-PROFILE-REQUIRED
 
 ## Severidade
 `ERROR` (Bloqueante)
@@ -7,14 +7,14 @@
 `root`
 
 ## Descrição do Requisito
-O repositório deve conter um arquivo GOSTVER não vazio no diretório raiz declarando a especificação GOST adotada.
+O repositório deve conter um arquivo `.rules/profile.toml` não vazio declarando seu perfil normativo.
 
 ## Caso Prático de Erro
-O motor de governança emite `[FAIL] GOST-001` quando o arquivo `GOSTVER` não é encontrado na raiz do projeto ou quando o seu conteúdo está vazio.
+O motor de governança emite `[FAIL] GOST-001` quando o arquivo `.rules/profile.toml` não é encontrado no projeto ou quando o seu conteúdo está vazio.
 
 ## Como Resolver
-1. Crie o arquivo `GOSTVER` na raiz do repositório.
-2. Declare a versão canônica do GOST e os perfis vinculados ao projeto (ex.: `3.0.0`).
+1. Crie o arquivo `.rules/profile.toml` no repositório.
+2. Declare a URL do perfil e a versão adotada (ex.: `url = "https://lilya.2lp.in"`, `version = "2.1.0"`).
 3. Re-execute o comando de verificação para certificar-se da conformidade.
 
 ## Desativação Declarativa

@@ -3,24 +3,26 @@
 # Tier 1: Fundamental Axioms (5 Universal Repository Integrity Rules)
 
 [rules.GOST-001]
-name = "GOSTVER-FILE-REQUIRED"
+name = "RULES-PROFILE-REQUIRED"
 severity = "error"
 scope = "root"
 docs_url = "https://gost.2lp.in/3.0.0/rules/GOST-001"
-description = "The repository must contain a non-empty GOSTVER file in the root directory declaring its GOST specification"
+description = "The repository must contain a non-empty .rules/profile.toml file declaring its normative profile"
 script = '''
-if not gost.file_exists("GOSTVER") then
-    return false, "ERR_GOSTVER_MISSING", {}
+local has_profile = gost.file_exists(".rules/profile.toml")
+local has_gostver = gost.file_exists("GOSTVER")
+if not has_profile and not has_gostver then
+    return false, "ERR_RULES_PROFILE_MISSING", {}
 end
-local content = gost.read_file("GOSTVER")
+local content = gost.read_file(".rules/profile.toml") or gost.read_file("GOSTVER")
 if not content or #content:match("^%s*(.-)%s*$") == 0 then
-    return false, "ERR_GOSTVER_EMPTY", {}
+    return false, "ERR_RULES_PROFILE_EMPTY", {}
 end
 return true
 '''
 [rules.GOST-001.messages]
-ERR_GOSTVER_MISSING = "Root GOSTVER file is missing"
-ERR_GOSTVER_EMPTY = "Root GOSTVER file is empty"
+ERR_RULES_PROFILE_MISSING = "Normative profile configuration '.rules/profile.toml' is missing"
+ERR_RULES_PROFILE_EMPTY = "Normative profile configuration '.rules/profile.toml' is empty"
 
 [rules.GOST-002]
 name = "LICENSE-FILE-REQUIRED"
