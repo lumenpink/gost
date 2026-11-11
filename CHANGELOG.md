@@ -113,11 +113,8 @@
 
 ## [Unreleased]
 
-### Fixes
-- **rules:** atualizar GOST-001 para validar .rules/profile.toml (closes #38)
-
 ### Features
-- **spec:** formalizar taxonomia de escopos de regras (commit-msg, project, pre-push) (closes #35)
+- **rules:** sanear taxonomia de escopos de regras (commit-msg, project, pre-push) (closes #35)
 
 ### Features
   - (spec) formalizar compilação soberana exclusiva na esteira e proibir builds de release locais (closes #25)
