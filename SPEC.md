@@ -186,8 +186,13 @@ O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **
 
 ## 6. O Maestro de Governança
 
-### 6.1 Política de Ponto Único de Entrada (*Single Entrypoint*)
-O gerenciamento do ciclo de vida, git, tickets e conformidade deve ser operado exclusivamente através do Maestro de Governança CLI. É terminantemente proibido o uso de comandos manuais do Git (`git commit`, `git merge`, `git push`, `git pull`, `git tag`) ou ferramentas ad-hoc de terceiros (`tea`, `gh`, `glab`).
+### 6.1 Política de Ponto Único de Entrada (*Single Entrypoint*) e Papéis Abstratos
+O ecossistema divide as responsabilidades em três papéis abstratos cooperantes:
+1. **Maestro Local:** Orquestra o ciclo de vida local do repositório, execução das fases DD-TDD, interceptação de convenções de commit, higiene e integração de branches.
+2. **Autoridade de Forja e Abastecimento:** Gerencia a comunicação com forjas remotas, consulta e ciclo de vida de tickets, triagem assistida, inventário e operações de catálogo multi-repositório.
+3. **Motor de Avaliação Normativa:** Avalia regras declarativas (`rules.toml`), laudos de conformidade e testes de sanidade em tempo de execução.
+
+O gerenciamento do ciclo de vida, git, tickets e conformidade deve ser operado exclusivamente através das ferramentas normatizadas do ecossistema. É terminantemente proibido o uso de comandos manuais do Git (`git commit`, `git merge`, `git push`, `git pull`, `git tag`) ou ferramentas ad-hoc de terceiros sem respaldo normativo (`tea`, `gh`, `glab`).
 
 ### 6.2 Contrato Universal de Subcomandos do Maestro
 Qualquer implementação do Maestro de Governança compatível com a GOST deve expor a seguinte interface determinística:
@@ -250,7 +255,7 @@ Todo projeto deve adotar um formatador oficial determinístico verificado com fl
 Todo repositório deve declarar sua natureza estrutural através do metadado `APP_TYPE` (ou `site_type`) no `GOSTVER` ou frontmatter de projeto, categorizado sob quatro arquétipos canônicos:
 1. **`web` (Webapps Autônomas e Autorais):** O componente principal é uma aplicação gráfica interativa web (*ex.: Navalha, Lírica*). A frontpage é a própria aplicação ou manifesto vivo, com liberdade estética e de design absoluta. Documentação técnica e de apoio é embutida sob rota `/docs` ou diretório `docs/`.
 2. **`hybrid` (Aplicações Híbridas):** O foco principal reside no utilitário binário ou serviço compilado, acompanhado de uma interface web por conveniência (*ex.: Lacraia, Lauda*). A frontpage apresenta o produto e documentação de usuário (`docs/user/`), reservando subdiretório dedicado (`web/` ou subrota `/app/`) para a webapp interativa.
-3. **`binary` (Utilitários Binários Puros):** Ferramentas de linha de comando (CLI) ou daemons sem interface web interativa (*ex.: CCCP, Kombinat, Lunokhod*). O site institucional é 100% voltado à apresentação, manuais de usuário, documentação técnica e notas de versão, gerado de forma determinística por motor SSG padronizado.
+3. **`binary` (Utilitários Binários Puros):** Ferramentas de linha de comando (CLI) ou daemons sem interface web interativa (*ex.: compiladores, utilitários de sistema e motores de auditoria*). O site institucional é 100% voltado à apresentação, manuais de usuário, documentação técnica e notas de versão, gerado de forma determinística por motor SSG padronizado.
 4. **`manifesto` (Documentações e Manifestos Puros):** Projetos estritamente textuais, normativos ou literários sem compilação binária (*ex.: GOST, Travesti*). O site é uma publicação editorial de alta legibilidade, índice remissivo e preservação integral dos textos.
 
 ### 9.2 SSOT em Markdown e README Enxuto
@@ -358,15 +363,15 @@ Contribuições externas e Pull Requests vindos de espelhos são recebidos sob i
 As regras e verificações declaradas em toda a hierarquia normativa (`rules.toml`) operam sob escopos canônicos de avaliação que delimitam estritamente o momento do ciclo de vida, o alvo inspecionado e o contexto dos dados injetados:
 
 1. **Escopo `commit-msg` (Interceptação Atômica de Commit):**
-   - **Gatilho de Execução:** Hook de interceptação `commit-msg` ou comando do Maestro (`cccp commit`).
+   - **Gatilho de Execução:** Hook de interceptação `commit-msg` ou comando do Maestro Local.
    - **Alvo:** Mensagem e corpo do commit em preparação (`.git/COMMIT_EDITMSG`).
    - **Responsabilidade:** Validação de convenções sintáticas de Conventional Commits, referências obrigatórias a tickets, declaração explícita de fase DD-TDD e completude do laudo estruturado de fechamento na Fase 9.
 2. **Escopo `project` (Auditoria Estática de Repositório):**
-   - **Gatilho de Execução:** Auditoria local (`cccp check`) e esteiras de integração contínua (CI).
+   - **Gatilho de Execução:** Auditoria local pelo Motor de Avaliação Normativa e esteiras de integração contínua (CI).
    - **Alvo:** Sistema de arquivos da árvore de trabalho do projeto.
-   - **Responsabilidade:** Validação da anatomia mínima da raiz, metadados (`VERSION`, `CHANGELOG.md`, `.cccprc`), manifestos de contêineres OCI, contratos OpenAPI e higiene documental permanente.
+   - **Responsabilidade:** Validação da anatomia mínima da raiz, metadados (`VERSION`, `CHANGELOG.md`, arquivos de configuração de perfil), manifestos de contêineres OCI, contratos OpenAPI e higiene documental permanente.
 3. **Escopo `pre-push` (Interceptação de Envio Remoto):**
-   - **Gatilho de Execução:** Hook `pre-push` ou comando do Maestro (`cccp push`).
+   - **Gatilho de Execução:** Hook `pre-push` ou comando de envio do Maestro Local.
    - **Alvo:** Branches locais contra referências remotas.
    - **Responsabilidade:** Prevenção de commits diretos na branch principal, confirmação de fechamento de tickets associados e checagens rápidas de integridade pré-publicação.
 4. **Escopo `git-history` (Integridade Retroativa):**
@@ -374,7 +379,7 @@ As regras e verificações declaradas em toda a hierarquia normativa (`rules.tom
    - **Alvo:** Grafo e cadeia de commits da branch contra a base canônica.
    - **Responsabilidade:** Garantia de que a sequência de fases DD-TDD e laudos históricos não foram alterados ou corrompidos.
 5. **Escopo `post-build` (Sanidade e Conformidade de Artefatos Compilados):**
-   - **Gatilho de Execução:** Pós-compilação em auditorias locais (`cccp check --scope post-build`), rotinas de build e esteiras de integração contínua (CI/CD).
+   - **Gatilho de Execução:** Pós-compilação em auditorias locais pelo Motor de Avaliação Normativa, rotinas de build e esteiras de integração contínua (CI/CD).
    - **Alvo:** Artefatos executáveis ou empacotados gerados em `target/debug`, `target/release` ou `dist/`.
    - **Responsabilidade:** Verificação funcional dinâmica (*smoke tests*), prevenção de falhas de segmentação (`SIGSEGV`) ou *panics* imediatos de inicialização, integridade de ligação dinâmica (*dynamic linking* / bibliotecas compartilhadas ausentes) e conformidade das interfaces mínimas (`--help`, `--version` idêntico à versão canônica e subcomandos de ciclo de vida).
 

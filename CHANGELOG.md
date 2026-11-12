@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Documentation
+- **spec:** atualizar papéis abstratos e expurgar nomes de ferramentas (closes #39)
+
 ### Fixes
 - **rules:** atualizar GOST-001 para validar .rules/profile.toml (closes #38)
 
