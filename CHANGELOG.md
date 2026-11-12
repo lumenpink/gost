@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Documentation
+- **spec:** formalizar papeis abstratos de cd e fronteira (closes #40)
 - **spec:** atualizar papéis abstratos e expurgar nomes de ferramentas (closes #39)
 
 ### Fixes

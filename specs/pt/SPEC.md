@@ -187,10 +187,12 @@ O fluxo de trabalho em repositórios GOST **DEVE** seguir o ciclo rigoroso de **
 ## 6. O Maestro de Governança
 
 ### 6.1 Política de Ponto Único de Entrada (*Single Entrypoint*) e Papéis Abstratos
-O ecossistema divide as responsabilidades em três papéis abstratos cooperantes:
+O ecossistema divide as responsabilidades em cinco papéis abstratos cooperantes:
 1. **Maestro Local:** Orquestra o ciclo de vida local do repositório, execução das fases DD-TDD, interceptação de convenções de commit, higiene e integração de branches.
 2. **Autoridade de Forja e Abastecimento:** Gerencia a comunicação com forjas remotas, consulta e ciclo de vida de tickets, triagem assistida, inventário e operações de catálogo multi-repositório.
 3. **Motor de Avaliação Normativa:** Avalia regras declarativas (`rules.toml`), laudos de conformidade e testes de sanidade em tempo de execução.
+4. **Agente de Entrega e Orquestração Contínua (CD):** Valida artefatos compilados, orquestra o despacho para storages de distribuição, purga estágios efêmeros, comanda o deploy de serviços conteinerizados e propaga atualizações de versão em cascata.
+5. **Controlador de Fronteira e Quarentena:** Gerencia a sincronização de espelhos públicos externos, reconciliação de webhooks multi-forja e o isolamento de contribuições externas no namespace de quarentena `refs/heads/inbox/*`.
 
 O gerenciamento do ciclo de vida, git, tickets e conformidade deve ser operado exclusivamente através das ferramentas normatizadas do ecossistema. É terminantemente proibido o uso de comandos manuais do Git (`git commit`, `git merge`, `git push`, `git pull`, `git tag`) ou ferramentas ad-hoc de terceiros sem respaldo normativo (`tea`, `gh`, `glab`).
 
